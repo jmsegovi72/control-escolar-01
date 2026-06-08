@@ -1,0 +1,141 @@
+.ui-skeleton {
+  --skeleton-base: var(--color-muted);
+  --skeleton-shine: var(--color-surface);
+}
+
+.ui-skeleton__bone {
+  display: block;
+  min-width: 0;
+  border-radius: var(--radius-2);
+  background: var(--skeleton-base);
+}
+
+.ui-skeleton[data-animated="true"] .ui-skeleton__bone,
+.ui-skeleton__bone[data-animated="true"] {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-shine) 45%,
+    var(--skeleton-base) 90%
+  );
+  background-size: 220% 100%;
+  animation: ui-skeleton-shimmer 1.2s var(--ease-in-out) infinite;
+}
+
+.ui-skeleton-lines {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.ui-skeleton-lines .ui-skeleton__bone {
+  height: 0.8rem;
+}
+
+.ui-skeleton-lines[data-size="sm"] .ui-skeleton__bone {
+  height: 0.65rem;
+}
+
+.ui-skeleton-lines[data-size="lg"] .ui-skeleton__bone {
+  height: 1rem;
+}
+
+.ui-skeleton-lines[data-variant="block"] .ui-skeleton__bone {
+  height: 4rem;
+}
+
+.ui-skeleton-lines .ui-skeleton__bone:nth-child(2n) {
+  width: 82%;
+}
+
+.ui-skeleton-lines .ui-skeleton__bone:nth-child(3n) {
+  width: 64%;
+}
+
+.ui-skeleton-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-round);
+}
+
+.ui-skeleton-avatar[data-size="sm"] {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ui-skeleton-avatar[data-size="lg"] {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.ui-skeleton-table {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  background: var(--color-surface);
+}
+
+.ui-skeleton-table__header,
+.ui-skeleton-table__row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.7fr 0.8fr;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+}
+
+.ui-skeleton-table__header {
+  background: var(--color-muted);
+}
+
+.ui-skeleton-table__row {
+  border-top: 1px solid var(--color-border);
+}
+
+.ui-skeleton-table__header .ui-skeleton__bone,
+.ui-skeleton-table__row .ui-skeleton__bone {
+  height: 0.85rem;
+}
+
+.ui-skeleton-form {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.ui-skeleton-form__field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ui-skeleton-form__label {
+  width: 36%;
+  height: 0.75rem;
+}
+
+.ui-skeleton-form__input {
+  height: 2.65rem;
+}
+
+@keyframes ui-skeleton-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .ui-skeleton-table__header,
+  .ui-skeleton-table__row {
+    grid-template-columns: 1fr 0.8fr;
+  }
+
+  .ui-skeleton-table__header .ui-skeleton__bone:nth-child(n + 3),
+  .ui-skeleton-table__row .ui-skeleton__bone:nth-child(n + 3) {
+    display: none;
+  }
+}

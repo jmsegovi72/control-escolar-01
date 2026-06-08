@@ -1,0 +1,12 @@
+.ui-input[type="date"] {
+  min-height: 1.4rem;
+}
+
+.ui-input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.62;
+}
+
+.ui-input[type="date"]:disabled::-webkit-calendar-picker-indicator {
+  cursor: not-allowed;
+}

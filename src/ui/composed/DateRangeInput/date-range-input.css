@@ -1,0 +1,44 @@
+.ui-date-range {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ui-date-range__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.ui-date-range__field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.ui-date-range__field > span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.ui-date-range__message {
+  color: var(--field-hint);
+  font-size: var(--field-message-size);
+  line-height: 1.45;
+}
+
+.ui-date-range[data-invalid="true"] .ui-date-range__message {
+  color: var(--field-error);
+}
+
+.ui-date-range[data-disabled="true"] {
+  opacity: 0.72;
+}
+
+@media (max-width: 560px) {
+  .ui-date-range__fields {
+    grid-template-columns: 1fr;
+  }
+}

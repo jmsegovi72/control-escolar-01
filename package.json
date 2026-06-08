@@ -28,10 +28,14 @@
     "@builder.io/qwik": "^1.20.0",
     "@builder.io/qwik-city": "^1.20.0",
     "@types/node": "20.19.0",
+    "ignore": "^7.0.5",
     "typescript": "5.4.5",
     "typescript-plugin-css-modules": "latest",
     "undici": "*",
     "vite": "7.3.1",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "dependencies": {
+    "axios": "^1.17.0"
   }
 }

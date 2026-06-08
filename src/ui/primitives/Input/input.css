@@ -1,0 +1,127 @@
+.ui-input-shell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--field-height-md);
+  color: var(--field-text);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.ui-input-shell[data-full-width="true"] {
+  width: 100%;
+}
+
+.ui-input-shell[data-size="sm"] {
+  min-height: var(--field-height-sm);
+}
+
+.ui-input-shell[data-size="lg"] {
+  min-height: var(--field-height-lg);
+}
+
+.ui-input-shell__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+}
+
+.ui-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  outline: 0;
+  padding: 0;
+}
+
+.ui-input::placeholder {
+  color: var(--field-placeholder);
+}
+
+.ui-input:disabled {
+  cursor: not-allowed;
+}
+
+.ui-input-shell[data-disabled="true"] {
+  color: var(--field-text-disabled);
+  cursor: not-allowed;
+}
+
+.ui-input-shell[data-variant="line"] {
+  border-bottom: 1px solid var(--field-border);
+  padding: 0 var(--space-1);
+}
+
+.ui-input-shell[data-variant="line"]::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--field-border-focus);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 360ms var(--ease-in-out);
+}
+
+.ui-input-shell[data-variant="line"]:hover {
+  border-bottom-color: var(--field-border-hover);
+}
+
+.ui-input-shell[data-variant="line"]:focus-within::after {
+  transform: scaleX(1);
+}
+
+.ui-input-shell[data-variant="box"],
+.ui-input-shell[data-variant="quiet"] {
+  border: 1px solid var(--field-border);
+  border-radius: var(--field-radius);
+  padding: 0 var(--field-padding-x-md);
+}
+
+.ui-input-shell[data-variant="box"] {
+  background: var(--field-bg);
+}
+
+.ui-input-shell[data-variant="quiet"] {
+  background: var(--color-muted);
+}
+
+.ui-input-shell[data-variant="box"]:hover,
+.ui-input-shell[data-variant="quiet"]:hover {
+  border-color: var(--field-border-hover);
+}
+
+.ui-input-shell[data-variant="box"]:focus-within,
+.ui-input-shell[data-variant="quiet"]:focus-within {
+  border-color: var(--field-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.ui-input-shell[data-invalid="true"] {
+  color: var(--field-text);
+}
+
+.ui-input-shell[data-invalid="true"][data-variant="line"] {
+  border-bottom-color: var(--field-border-error);
+}
+
+.ui-input-shell[data-invalid="true"][data-variant="line"]::after {
+  background: var(--field-border-error);
+}
+
+.ui-input-shell[data-invalid="true"][data-variant="box"],
+.ui-input-shell[data-invalid="true"][data-variant="quiet"] {
+  border-color: var(--field-border-error);
+}
+
+.ui-input-shell[data-disabled="true"][data-variant="box"],
+.ui-input-shell[data-disabled="true"][data-variant="quiet"] {
+  background: var(--field-bg-disabled);
+}

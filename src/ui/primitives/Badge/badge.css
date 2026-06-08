@@ -1,0 +1,49 @@
+.ui-badge {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+}
+
+.ui-badge[data-size="sm"] {
+  min-height: 1.25rem;
+  padding: 0 var(--space-2);
+}
+
+.ui-badge[data-tone="neutral"] {
+  border-color: var(--color-border);
+  background: var(--color-muted);
+  color: var(--color-text-soft);
+}
+
+.ui-badge[data-tone="primary"] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.ui-badge[data-tone="success"] {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.ui-badge[data-tone="warning"] {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.ui-badge[data-tone="danger"] {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.ui-badge[data-tone="info"] {
+  background: var(--color-info-soft);
+  color: var(--color-info);
+}

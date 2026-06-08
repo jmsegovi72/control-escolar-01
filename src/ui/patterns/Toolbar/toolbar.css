@@ -1,0 +1,76 @@
+.ui-toolbar {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4);
+}
+
+.ui-toolbar[data-density="compact"] {
+  padding: var(--space-3);
+}
+
+.ui-toolbar[data-wrap="true"] {
+  grid-template-columns: minmax(14rem, 1fr) minmax(12rem, auto) auto;
+}
+
+.ui-toolbar__group,
+.ui-toolbar__extra {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ui-toolbar[data-wrap="true"] .ui-toolbar__group,
+.ui-toolbar[data-wrap="true"] .ui-toolbar__extra {
+  flex-wrap: wrap;
+}
+
+.ui-toolbar__leading {
+  justify-content: flex-start;
+}
+
+.ui-toolbar__center {
+  justify-content: center;
+}
+
+.ui-toolbar__actions {
+  justify-content: flex-end;
+}
+
+.ui-toolbar__extra {
+  grid-column: 1 / -1;
+}
+
+.ui-toolbar__extra:empty,
+.ui-toolbar__leading:empty,
+.ui-toolbar__center:empty,
+.ui-toolbar__actions:empty {
+  display: none;
+}
+
+.ui-toolbar .ui-input-shell {
+  max-width: 24rem;
+}
+
+.ui-toolbar .ui-date-range {
+  min-width: min(100%, 26rem);
+}
+
+@media (max-width: 900px) {
+  .ui-toolbar,
+  .ui-toolbar[data-wrap="true"] {
+    grid-template-columns: 1fr;
+  }
+
+  .ui-toolbar__center,
+  .ui-toolbar__actions {
+    justify-content: flex-start;
+  }
+}

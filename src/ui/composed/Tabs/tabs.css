@@ -1,0 +1,175 @@
+.ui-tabs {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.ui-tabs[data-orientation="vertical"] {
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+  align-items: start;
+}
+
+.ui-tabs__list {
+  display: flex;
+  gap: var(--space-1);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.ui-tabs[data-orientation="vertical"] .ui-tabs__list {
+  display: grid;
+  overflow: visible;
+}
+
+.ui-tabs__trigger {
+  position: relative;
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  min-width: max-content;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-soft);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  padding: 0 var(--space-3);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.ui-tabs[data-size="sm"] .ui-tabs__trigger {
+  min-height: 2.1rem;
+  font-size: var(--font-size-xs);
+  padding-inline: var(--space-2);
+}
+
+.ui-tabs[data-size="lg"] .ui-tabs__trigger {
+  min-height: 2.9rem;
+  font-size: var(--font-size-md);
+  padding-inline: var(--space-4);
+}
+
+.ui-tabs[data-full-width="true"] .ui-tabs__trigger {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.ui-tabs__trigger:hover {
+  color: var(--color-primary);
+}
+
+.ui-tabs__trigger:focus-visible {
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}
+
+.ui-tabs__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ui-tabs__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-tabs__icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.ui-tabs__badge {
+  min-width: 1.25rem;
+  border-radius: var(--radius-round);
+  background: var(--color-surface-raised);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  padding: 0.25rem 0.45rem;
+}
+
+.ui-tabs[data-variant="line"] .ui-tabs__list {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ui-tabs[data-variant="line"] .ui-tabs__trigger::after {
+  position: absolute;
+  right: var(--space-2);
+  bottom: -1px;
+  left: var(--space-2);
+  height: 2px;
+  border-radius: var(--radius-round);
+  background: var(--color-primary);
+  content: "";
+  transform: scaleX(0);
+  transition: transform var(--duration-slow) var(--ease-in-out);
+}
+
+.ui-tabs[data-variant="line"] .ui-tabs__trigger[data-active="true"] {
+  color: var(--color-primary);
+}
+
+.ui-tabs[data-variant="line"] .ui-tabs__trigger[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+.ui-tabs[data-variant="contained"] .ui-tabs__list {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface-subtle);
+  padding: var(--space-1);
+}
+
+.ui-tabs[data-variant="contained"] .ui-tabs__trigger {
+  border-radius: var(--radius-2);
+}
+
+.ui-tabs[data-variant="contained"] .ui-tabs__trigger[data-active="true"] {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-1);
+}
+
+.ui-tabs[data-variant="pills"] .ui-tabs__trigger {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-round);
+  background: var(--color-surface);
+}
+
+.ui-tabs[data-variant="pills"] .ui-tabs__trigger[data-active="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.ui-tabs[data-variant="pills"]
+  .ui-tabs__trigger[data-active="true"]
+  .ui-tabs__badge {
+  background: rgb(255 255 255 / 0.18);
+  color: var(--color-on-primary);
+}
+
+.ui-tabs__panel {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .ui-tabs[data-orientation="vertical"] {
+    grid-template-columns: 1fr;
+  }
+
+  .ui-tabs[data-orientation="vertical"] .ui-tabs__list {
+    display: flex;
+    overflow-x: auto;
+  }
+}

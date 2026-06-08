@@ -1,0 +1,113 @@
+.ui-textarea-shell {
+  position: relative;
+  display: inline-flex;
+  min-height: calc(var(--field-height-md) * 2);
+  color: var(--field-text);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.ui-textarea-shell[data-full-width="true"] {
+  width: 100%;
+}
+
+.ui-textarea {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: var(--line-height-base);
+  outline: 0;
+  padding: var(--space-3) 0;
+}
+
+.ui-textarea::placeholder {
+  color: var(--field-placeholder);
+}
+
+.ui-textarea-shell[data-resize="none"] .ui-textarea {
+  resize: none;
+}
+
+.ui-textarea-shell[data-resize="vertical"] .ui-textarea {
+  resize: vertical;
+}
+
+.ui-textarea-shell[data-disabled="true"] {
+  color: var(--field-text-disabled);
+  cursor: not-allowed;
+}
+
+.ui-textarea-shell[data-variant="line"] {
+  border-bottom: 1px solid var(--field-border);
+  padding: 0 var(--space-1);
+}
+
+.ui-textarea-shell[data-variant="line"]::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--field-border-focus);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 360ms var(--ease-in-out);
+}
+
+.ui-textarea-shell[data-variant="line"]:hover {
+  border-bottom-color: var(--field-border-hover);
+}
+
+.ui-textarea-shell[data-variant="line"]:focus-within::after {
+  transform: scaleX(1);
+}
+
+.ui-textarea-shell[data-variant="box"],
+.ui-textarea-shell[data-variant="quiet"] {
+  border: 1px solid var(--field-border);
+  border-radius: var(--field-radius);
+  padding: 0 var(--field-padding-x-md);
+}
+
+.ui-textarea-shell[data-variant="box"] {
+  background: var(--field-bg);
+}
+
+.ui-textarea-shell[data-variant="quiet"] {
+  background: var(--color-muted);
+}
+
+.ui-textarea-shell[data-variant="box"]:hover,
+.ui-textarea-shell[data-variant="quiet"]:hover {
+  border-color: var(--field-border-hover);
+}
+
+.ui-textarea-shell[data-variant="box"]:focus-within,
+.ui-textarea-shell[data-variant="quiet"]:focus-within {
+  border-color: var(--field-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.ui-textarea-shell[data-invalid="true"][data-variant="line"] {
+  border-bottom-color: var(--field-border-error);
+}
+
+.ui-textarea-shell[data-invalid="true"][data-variant="line"]::after {
+  background: var(--field-border-error);
+}
+
+.ui-textarea-shell[data-invalid="true"][data-variant="box"],
+.ui-textarea-shell[data-invalid="true"][data-variant="quiet"] {
+  border-color: var(--field-border-error);
+}
+
+.ui-textarea-shell[data-disabled="true"][data-variant="box"],
+.ui-textarea-shell[data-disabled="true"][data-variant="quiet"] {
+  background: var(--field-bg-disabled);
+}
