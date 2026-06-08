@@ -1,0 +1,23 @@
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-summary .ui-stat-card {
+  gap: var(--space-3);
+  min-height: 8.5rem;
+  border-radius: var(--radius-2);
+  padding: var(--space-3);
+}
+
+.dashboard-summary .ui-stat-card__value {
+  font-size: var(--font-size-2xl);
+}
+
+@media (max-width: 900px) {
+  .dashboard-summary {
+    grid-template-columns: 1fr;
+  }
+}

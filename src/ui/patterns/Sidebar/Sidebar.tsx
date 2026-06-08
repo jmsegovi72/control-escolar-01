@@ -114,6 +114,7 @@ export const Sidebar = component$<SidebarProps>(
     activeItem,
     openItems,
     collapsed,
+    behavior = 'fixed',
     clock,
     systemStatus,
     user,
@@ -123,6 +124,8 @@ export const Sidebar = component$<SidebarProps>(
     onNavigate$,
     onToggleItem$,
     onToggleCollapse$,
+    onPointerEnter$,
+    onPointerLeave$,
   }) => {
     const initials = user?.initials ?? (user ? getInitials(user.name) : '');
 
@@ -130,7 +133,10 @@ export const Sidebar = component$<SidebarProps>(
       <aside
         class="ui-sidebar"
         data-collapsed={collapsed ? 'true' : undefined}
+        data-behavior={behavior}
         aria-label="Navegacion principal"
+        onMouseEnter$={() => onPointerEnter$?.()}
+        onMouseLeave$={() => onPointerLeave$?.()}
       >
         <div class="ui-sidebar__brand">
           <div class="ui-sidebar__brand-mark" aria-hidden="true">
@@ -154,6 +160,40 @@ export const Sidebar = component$<SidebarProps>(
           </button>
         </div>
 
+        {user && (
+          <div class="ui-sidebar__profile">
+            {userActions?.length ? (
+              <div class="ui-sidebar__user-menu">
+                <UserMenu
+                  compact={collapsed}
+                  align="start"
+                  user={user}
+                  actions={userActions}
+                  sessionLabel={userMenuSessionLabel}
+                />
+              </div>
+            ) : (
+              <div
+                class="ui-sidebar__user"
+                title={collapsed ? user.name : undefined}
+              >
+                <div class="ui-sidebar__avatar" aria-hidden="true">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" width={40} height={40} />
+                  ) : (
+                    <span>{initials}</span>
+                  )}
+                </div>
+                <div class="ui-sidebar__user-copy">
+                  <strong>{user.name}</strong>
+                  {user.role && <span>{user.role}</span>}
+                  {user.status && <small>{user.status}</small>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {clock && (
           <div
             class="ui-sidebar__clock"
@@ -167,49 +207,6 @@ export const Sidebar = component$<SidebarProps>(
               <strong>{clock.time}</strong>
               {clock.date && <small>{clock.date}</small>}
             </span>
-          </div>
-        )}
-
-        {systemStatus && (
-          <div class="ui-sidebar__system">
-            {systemStatus.items?.length ? (
-              <div class="ui-sidebar__status-list">
-                {systemStatus.items.map((item) => (
-                  <div
-                    class="ui-sidebar__status"
-                    data-tone={item.tone}
-                    title={
-                      collapsed
-                        ? `${item.label}${item.value ? `: ${item.value}` : ''}`
-                        : undefined
-                    }
-                    key={item.id}
-                  >
-                    <span class="ui-sidebar__status-dot" aria-hidden="true" />
-                    <span class="ui-sidebar__status-copy">
-                      <span>{item.label}</span>
-                      {item.value && <strong>{item.value}</strong>}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            {systemStatus.session && (
-              <div
-                class="ui-sidebar__session"
-                data-tone={systemStatus.session.tone ?? 'neutral'}
-                title={collapsed ? systemStatus.session.remaining : undefined}
-              >
-                <span class="ui-sidebar__session-icon" aria-hidden="true">
-                  <AppIcon intent="lock" size="sm" />
-                </span>
-                <span class="ui-sidebar__session-copy">
-                  <span>{systemStatus.session.label ?? 'Sesion'}</span>
-                  <strong>{systemStatus.session.remaining}</strong>
-                </span>
-              </div>
-            )}
           </div>
         )}
 
@@ -237,6 +234,49 @@ export const Sidebar = component$<SidebarProps>(
         </nav>
 
         <div class="ui-sidebar__footer">
+          {systemStatus && (
+            <div class="ui-sidebar__system">
+              {systemStatus.items?.length ? (
+                <div class="ui-sidebar__status-list">
+                  {systemStatus.items.map((item) => (
+                    <div
+                      class="ui-sidebar__status"
+                      data-tone={item.tone}
+                      title={
+                        collapsed
+                          ? `${item.label}${item.value ? `: ${item.value}` : ''}`
+                          : undefined
+                      }
+                      key={item.id}
+                    >
+                      <span class="ui-sidebar__status-dot" aria-hidden="true" />
+                      <span class="ui-sidebar__status-copy">
+                        <span>{item.label}</span>
+                        {item.value && <strong>{item.value}</strong>}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              {systemStatus.session && (
+                <div
+                  class="ui-sidebar__session"
+                  data-tone={systemStatus.session.tone ?? 'neutral'}
+                  title={collapsed ? systemStatus.session.remaining : undefined}
+                >
+                  <span class="ui-sidebar__session-icon" aria-hidden="true">
+                    <AppIcon intent="lock" size="sm" />
+                  </span>
+                  <span class="ui-sidebar__session-copy">
+                    <span>{systemStatus.session.label ?? 'Sesion'}</span>
+                    <strong>{systemStatus.session.remaining}</strong>
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
           {footerItems?.length ? (
             <div class="ui-sidebar__footer-items">
               {footerItems.map((item) => (
@@ -250,36 +290,6 @@ export const Sidebar = component$<SidebarProps>(
                   onToggleItem$={onToggleItem$}
                 />
               ))}
-            </div>
-          ) : null}
-
-          {user && userActions?.length ? (
-            <div class="ui-sidebar__user-menu">
-              <UserMenu
-                compact={collapsed}
-                align="start"
-                user={user}
-                actions={userActions}
-                sessionLabel={userMenuSessionLabel}
-              />
-            </div>
-          ) : user ? (
-            <div
-              class="ui-sidebar__user"
-              title={collapsed ? user.name : undefined}
-            >
-              <div class="ui-sidebar__avatar" aria-hidden="true">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="" width={40} height={40} />
-                ) : (
-                  <span>{initials}</span>
-                )}
-              </div>
-              <div class="ui-sidebar__user-copy">
-                <strong>{user.name}</strong>
-                {user.role && <span>{user.role}</span>}
-                {user.status && <small>{user.status}</small>}
-              </div>
             </div>
           ) : null}
         </div>

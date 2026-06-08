@@ -62,12 +62,15 @@ export type SidebarSection = {
   items: SidebarItem[];
 };
 
+export type SidebarBehavior = 'fixed' | 'hover';
+
 export type SidebarProps = {
   brand: SidebarBrand;
   sections: SidebarSection[];
   activeItem?: string;
   openItems?: string[];
   collapsed?: boolean;
+  behavior?: SidebarBehavior;
   clock?: SidebarClock;
   systemStatus?: SidebarSystemStatus;
   user?: SidebarUser;
@@ -77,4 +80,6 @@ export type SidebarProps = {
   onNavigate$?: QRL<(item: SidebarItem) => void>;
   onToggleItem$?: QRL<(item: SidebarItem, open: boolean) => void>;
   onToggleCollapse$?: QRL<() => void>;
+  onPointerEnter$?: QRL<() => void>;
+  onPointerLeave$?: QRL<() => void>;
 };

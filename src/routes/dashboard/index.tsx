@@ -1,60 +1,43 @@
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { useNavigate } from '@builder.io/qwik-city';
-
+import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
-import { authService } from '~/services/auth/auth.service';
-import { Button, PageHeader, Panel } from '~/ui';
-import { sessionStore } from '~/utils/session';
+import { Panel, StatCard } from '~/ui';
+import './dashboard.css';
 
 export default component$(() => {
-  const nav = useNavigate();
-  const userName = useSignal('');
-
-  useVisibleTask$(async () => {
-    if (authService.requiresPasswordChange()) {
-      await nav('/change-password');
-      return;
-    }
-
-    if (!authService.isAuthenticated()) {
-      await nav('/login');
-      return;
-    }
-
-    userName.value = sessionStore.getUser()?.fullName ?? 'Usuario';
-  });
-
   return (
-    <main class="app-frame">
-      <div class="page-shell">
-        <PageHeader
-          eyebrow={appConfig.name}
-          title="Dashboard"
-          description={`Bienvenido, ${userName.value || 'Usuario'}. Esta sera la entrada principal del sistema.`}
-        >
-          <Button
-            q:slot="actions"
-            variant="secondary"
-            iconLeft="logout"
-            onClick$={async () => {
-              authService.logout();
-              await nav('/login');
-            }}
-          >
-            Cerrar sesion
-          </Button>
-        </PageHeader>
-
-        <Panel
-          title="Sesion activa"
-          description="Primer destino despues del login."
-        >
-          El login ya puede enviar aqui una sesion normal. Despues construiremos
-          el dashboard real con sidebar, estado del sistema y modulos.
-        </Panel>
+    <AuthenticatedShell
+      eyebrow={appConfig.name}
+      title="Dashboard"
+      description="Entrada principal del sistema. Desde aqui iremos montando los modulos reales."
+      meta="Vista inicial"
+    >
+      <div class="dashboard-summary">
+        <StatCard label="Sesion" value="Activa" tone="success" icon="lock" />
+        <StatCard
+          label="Backend"
+          value="Por validar"
+          tone="neutral"
+          icon="settings"
+        />
+        <StatCard
+          label="Modulo siguiente"
+          value="Usuarios"
+          tone="info"
+          icon="user-settings"
+        />
       </div>
-    </main>
+
+      <Panel
+        title="Estructura autenticada"
+        description="El dashboard ya usa el AppShell y Sidebar del almacen UI."
+      >
+        Esta pantalla ya vive dentro del esqueleto real de la aplicacion. El
+        siguiente paso natural es construir el modulo de usuarios dentro de esta
+        misma estructura.
+      </Panel>
+    </AuthenticatedShell>
   );
 });
 

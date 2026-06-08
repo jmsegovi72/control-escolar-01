@@ -38,6 +38,7 @@
   --color-primary: var(--raw-teal-600);
   --color-primary-hover: var(--raw-teal-700);
   --color-primary-soft: var(--raw-teal-50);
+  --color-on-primary: var(--raw-white);
 
   --color-accent: var(--raw-amber-600);
   --color-accent-soft: var(--raw-amber-50);

@@ -2,12 +2,12 @@
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  min-height: 46rem;
+  min-height: 100dvh;
   overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-3);
-  background: var(--color-surface-subtle);
-  box-shadow: var(--shadow-lg);
+  border: 0;
+  border-radius: 0;
+  background: var(--color-bg);
+  box-shadow: none;
 }
 
 .ui-app-shell__overlay,
@@ -17,13 +17,15 @@
 
 .ui-app-shell__sidebar {
   min-width: 0;
-  background: var(--color-surface);
+  border-right: 1px solid var(--color-border-strong);
+  background: linear-gradient(180deg, #edf6f4 0%, #f3f8f7 42%, #eef5f3 100%);
 }
 
 .ui-app-shell__sidebar .ui-sidebar {
   min-height: 100%;
   border: 0;
   border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
@@ -32,6 +34,7 @@
   grid-template-rows: auto auto 1fr;
   min-width: 0;
   min-height: 0;
+  background: var(--color-bg);
 }
 
 .ui-app-shell__header {
@@ -142,6 +145,7 @@
   min-height: 0;
   overflow: auto;
   padding: var(--space-5);
+  background: var(--color-bg);
 }
 
 .ui-app-shell[data-density="compact"] .ui-app-shell__content {
