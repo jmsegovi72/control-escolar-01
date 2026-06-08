@@ -12,7 +12,7 @@ import { ENV } from '~/config/env';
 import { authService } from '~/services/auth/auth.service';
 import { healthService } from '~/services/health/health.service';
 import type { User } from '~/types/auth.types';
-import { AppShell, Button, Sidebar } from '~/ui';
+import { AppShell, Button, Panel, Sidebar } from '~/ui';
 import type {
   SidebarBehavior,
   SidebarItem,
@@ -27,6 +27,10 @@ type AuthenticatedShellProps = {
   title: string;
   description?: string;
   meta?: string;
+  allowedUserTypes?: string[];
+  allowedRoles?: string[];
+  accessDeniedTitle?: string;
+  accessDeniedDescription?: string;
 };
 
 const getInitials = (name: string) =>
@@ -231,8 +235,45 @@ const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
   return sections;
 };
 
+const normalizeAccessValue = (value?: string) =>
+  value?.trim().toUpperCase() ?? '';
+
+const canAccessRoute = (
+  user: User | null,
+  allowedUserTypes?: string[],
+  allowedRoles?: string[],
+) => {
+  if (!allowedUserTypes?.length && !allowedRoles?.length) {
+    return true;
+  }
+
+  if (!user) {
+    return false;
+  }
+
+  const normalizedUserType = normalizeAccessValue(user.userTypeCode);
+  const normalizedRole = normalizeAccessValue(user.roleName);
+  const userTypeAllowed = allowedUserTypes?.some(
+    (type) => normalizeAccessValue(type) === normalizedUserType,
+  );
+  const roleAllowed = allowedRoles?.some(
+    (role) => normalizeAccessValue(role) === normalizedRole,
+  );
+
+  return Boolean(userTypeAllowed || roleAllowed);
+};
+
 export const AuthenticatedShell = component$<AuthenticatedShellProps>(
-  ({ eyebrow, title, description, meta }) => {
+  ({
+    eyebrow,
+    title,
+    description,
+    meta,
+    allowedUserTypes,
+    allowedRoles,
+    accessDeniedTitle = 'Acceso restringido',
+    accessDeniedDescription = 'Tu usuario no tiene permisos para entrar a este modulo.',
+  }) => {
     const nav = useNavigate();
     const location = useLocation();
     const collapsed = useSignal(false);
@@ -252,6 +293,8 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
       value: 'Validando',
       tone: 'neutral' as SidebarStatusTone,
     });
+    const authorizationReady = useSignal(false);
+    const authorized = useSignal(false);
     const sidebarUser = useSignal<SidebarUser | undefined>();
     const sections = useSignal<SidebarSection[]>([]);
 
@@ -277,6 +320,8 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
       const user = sessionStore.getUser();
       const isSuper = user?.userTypeCode === 'SUPER';
       const hasControlAccess = isSuper || user?.userTypeCode === 'CE';
+      authorized.value = canAccessRoute(user, allowedUserTypes, allowedRoles);
+      authorizationReady.value = true;
 
       sidebarUser.value = user
         ? {
@@ -500,7 +545,23 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           Cerrar sesion
         </Button>
 
-        <Slot />
+        {authorizationReady.value && authorized.value && <Slot />}
+
+        {authorizationReady.value && !authorized.value && (
+          <Panel
+            eyebrow="Permisos"
+            title={accessDeniedTitle}
+            description={accessDeniedDescription}
+          >
+            <Button
+              variant="secondary"
+              iconLeft="back"
+              onClick$={async () => await nav('/dashboard')}
+            >
+              Volver al dashboard
+            </Button>
+          </Panel>
+        )}
       </AppShell>
     );
   },
