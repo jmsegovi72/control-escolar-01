@@ -125,7 +125,7 @@
 
 .edit-user__result {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-3);
   align-items: center;
   border: 1px solid var(--color-border);

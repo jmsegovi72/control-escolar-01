@@ -10,7 +10,6 @@ import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
 import type { UserListItem } from '~/types/user.types';
 import {
-  Badge,
   Button,
   Field,
   Input,
@@ -324,9 +323,6 @@ export default component$(() => {
                         <strong>{result.fullName}</strong>
                         <span>{result.username}</span>
                       </div>
-                      <Badge tone={result.isActive ? 'success' : 'danger'}>
-                        {result.isActive ? 'Activo' : 'Inactivo'}
-                      </Badge>
                       <Button
                         size="sm"
                         iconLeft="edit"
