@@ -8,6 +8,7 @@ import {
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { ENV } from '~/config/env';
 import { authService } from '~/services/auth/auth.service';
 import { healthService } from '~/services/health/health.service';
@@ -57,7 +58,8 @@ const formatTime = (date: Date) =>
 
 const getTokenRemaining = () => {
   const token = sessionStore.getToken();
-  if (!token) return { label: 'Sin sesion', tone: 'offline' as const };
+  if (!token)
+    return { label: messages.layout.shell.noSession, tone: 'offline' as const };
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
@@ -79,7 +81,10 @@ const getTokenRemaining = () => {
 
     return { label, tone };
   } catch {
-    return { label: 'No disponible', tone: 'neutral' as const };
+    return {
+      label: messages.layout.shell.tokenUnavailable,
+      tone: 'neutral' as const,
+    };
   }
 };
 
@@ -105,45 +110,45 @@ const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
   const sections: SidebarSection[] = [
     {
       id: 'main',
-      label: 'Menu principal',
+      label: messages.layout.shell.menuMain,
       items: [
         {
           id: 'dashboard',
-          label: 'Dashboard',
+          label: messages.layout.shell.nav.dashboard,
           icon: 'dashboard',
           href: '/dashboard',
           disabled: !hasControlAccess,
         },
         {
           id: 'persons',
-          label: 'Personas',
+          label: messages.layout.shell.nav.persons,
           icon: 'person',
           disabled: !hasControlAccess,
           children: [
             {
               id: 'persons-management',
-              label: 'Gestion',
+              label: messages.layout.shell.nav.personsManagement,
               icon: 'person',
               href: '/persons',
               disabled: true,
             },
             {
               id: 'persons-addresses',
-              label: 'Direccion',
+              label: messages.layout.shell.nav.personsAddresses,
               icon: 'school',
               href: '/addresses',
               disabled: true,
             },
             {
               id: 'persons-demographics',
-              label: 'Demografia',
+              label: messages.layout.shell.nav.personsDemographics,
               icon: 'dashboard',
               href: '/demographics',
               disabled: true,
             },
             {
               id: 'persons-emergency',
-              label: 'Contactos emergencia',
+              label: messages.layout.shell.nav.personsEmergency,
               icon: 'phone',
               href: '/persons/emergency-contacts',
               disabled: true,
@@ -152,27 +157,27 @@ const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
         },
         {
           id: 'students',
-          label: 'Estudiantes',
+          label: messages.layout.shell.nav.students,
           icon: 'student',
           disabled: !hasControlAccess,
           children: [
             {
               id: 'students-admission',
-              label: 'Admision',
+              label: messages.layout.shell.nav.studentsAdmission,
               icon: 'add',
               href: '/students/admission',
               disabled: true,
             },
             {
               id: 'students-enrollment',
-              label: 'Matricula',
+              label: messages.layout.shell.nav.studentsEnrollment,
               icon: 'save',
               href: '/students/enrollment',
               disabled: true,
             },
             {
               id: 'students-grades',
-              label: 'Calificaciones',
+              label: messages.layout.shell.nav.studentsGrades,
               icon: 'check',
               href: '/students/grades',
               disabled: true,
@@ -181,32 +186,32 @@ const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
         },
         {
           id: 'teachers',
-          label: 'Docentes',
+          label: messages.layout.shell.nav.teachers,
           icon: 'teacher',
           disabled: true,
         },
         {
           id: 'staff',
-          label: 'Personal',
+          label: messages.layout.shell.nav.staff,
           icon: 'staff',
           disabled: true,
         },
         {
           id: 'catalogs',
-          label: 'Catalogos',
+          label: messages.layout.shell.nav.catalogs,
           icon: 'settings',
           disabled: !hasControlAccess,
           children: [
             {
               id: 'catalogs-zip-codes',
-              label: 'Codigos postales',
+              label: messages.layout.shell.nav.catalogsZipCodes,
               icon: 'school',
               href: '/zip-codes',
               disabled: true,
             },
             {
               id: 'catalogs-classes',
-              label: 'Clases',
+              label: messages.layout.shell.nav.catalogsClasses,
               icon: 'class',
               href: '/classes',
               disabled: true,
@@ -220,11 +225,11 @@ const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
   if (isSuper) {
     sections.push({
       id: 'admin',
-      label: 'Administracion',
+      label: messages.layout.shell.menuAdmin,
       items: [
         {
           id: 'users',
-          label: 'Usuarios',
+          label: messages.layout.shell.nav.users,
           icon: 'user-settings',
           href: '/users',
         },
@@ -271,8 +276,8 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     meta,
     allowedUserTypes,
     allowedRoles,
-    accessDeniedTitle = 'Acceso restringido',
-    accessDeniedDescription = 'Tu usuario no tiene permisos para entrar a este modulo.',
+    accessDeniedTitle = messages.layout.shell.accessDeniedTitle,
+    accessDeniedDescription = messages.layout.shell.accessDeniedDescription,
   }) => {
     const nav = useNavigate();
     const location = useLocation();
@@ -329,7 +334,9 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             role: user.roleName || user.userTypeName,
             initials: getInitials(user.fullName),
             avatarUrl: getAvatarUrl(user),
-            status: user.isActive ? 'Sesion activa' : 'Usuario inactivo',
+            status: user.isActive
+              ? messages.layout.shell.userActiveStatus
+              : messages.layout.shell.userInactiveStatus,
           }
         : undefined;
       sections.value = createNavigation(
@@ -421,7 +428,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           collapsed={sidebarCollapsed}
           behavior={sidebarBehavior.value}
           clock={{
-            label: 'Hora actual',
+            label: messages.layout.shell.clockLabel,
             time: time.value,
             date: date.value,
           }}
@@ -429,36 +436,39 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             items: [
               {
                 id: 'api',
-                label: 'Backend',
+                label: messages.layout.shell.backend,
                 value: backendStatus.value.value,
                 tone: backendStatus.value.tone,
               },
               {
                 id: 'database',
-                label: 'Base de datos',
+                label: messages.layout.shell.database,
                 value: databaseStatus.value.value,
                 tone: databaseStatus.value.tone,
               },
             ],
             session: {
-              label: 'Sesion',
+              label: messages.layout.shell.sessionLabel,
               remaining: sessionRemaining.value,
               tone: sessionTone.value,
             },
           }}
           user={sidebarUser.value}
-          userMenuSessionLabel={`Sesion: ${sessionRemaining.value}`}
+          userMenuSessionLabel={messages.layout.shell.userMenuSession.replace(
+            '{remaining}',
+            sessionRemaining.value,
+          )}
           userActions={[
             {
               id: 'settings',
-              label: 'Configuracion',
+              label: messages.layout.shell.userActions.settings,
               icon: 'settings',
               disabled: true,
             },
             { type: 'separator', id: 'session-separator' },
             {
               id: 'logout',
-              label: 'Cerrar sesion',
+              label: messages.layout.shell.userActions.logout,
               icon: 'logout',
               tone: 'danger',
               onSelect$: $(async () => {
@@ -470,15 +480,15 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           footerItems={[
             {
               id: 'settings',
-              label: 'Configuracion',
+              label: messages.layout.shell.sidebarSettings,
               icon: 'settings',
               children: [
                 {
                   id: 'sidebar-behavior',
                   label:
                     sidebarBehavior.value === 'hover'
-                      ? 'Usar sidebar fijo'
-                      : 'Auto colapso',
+                      ? messages.layout.shell.sidebarFixed
+                      : messages.layout.shell.sidebarHover,
                   icon: sidebarBehavior.value === 'hover' ? 'pin' : 'toggle',
                 },
               ],
@@ -542,7 +552,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             await nav('/login');
           }}
         >
-          Cerrar sesion
+          {messages.layout.shell.logoutLabel}
         </Button>
 
         {authorizationReady.value && authorized.value && (
@@ -562,7 +572,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
               iconLeft="back"
               onClick$={async () => await nav('/dashboard')}
             >
-              Volver al dashboard
+              {messages.layout.shell.returnToDashboard}
             </Button>
           </Panel>
         )}

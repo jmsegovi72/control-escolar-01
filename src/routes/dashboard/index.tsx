@@ -2,6 +2,7 @@ import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { Panel, StatCard } from '~/ui';
 import './dashboard.css';
 
@@ -9,33 +10,36 @@ export default component$(() => {
   return (
     <AuthenticatedShell
       eyebrow={appConfig.name}
-      title="Dashboard"
-      description="Entrada principal del sistema. Desde aqui iremos montando los modulos reales."
-      meta="Vista inicial"
+      title={messages.dashboard.title}
+      description={messages.dashboard.description}
+      meta={messages.dashboard.meta}
     >
       <div class="dashboard-summary">
-        <StatCard label="Sesion" value="Activa" tone="success" icon="lock" />
         <StatCard
-          label="Backend"
-          value="Por validar"
+          label={messages.dashboard.statSession}
+          value={messages.dashboard.statSessionValue}
+          tone="success"
+          icon="lock"
+        />
+        <StatCard
+          label={messages.dashboard.statBackend}
+          value={messages.dashboard.statBackendValue}
           tone="neutral"
           icon="settings"
         />
         <StatCard
-          label="Modulo siguiente"
-          value="Usuarios"
+          label={messages.dashboard.statNextModule}
+          value={messages.dashboard.statNextModuleValue}
           tone="info"
           icon="user-settings"
         />
       </div>
 
       <Panel
-        title="Estructura autenticada"
-        description="El dashboard ya usa el AppShell y Sidebar del almacen UI."
+        title={messages.dashboard.panelTitle}
+        description={messages.dashboard.panelDescription}
       >
-        Esta pantalla ya vive dentro del esqueleto real de la aplicacion. El
-        siguiente paso natural es construir el modulo de usuarios dentro de esta
-        misma estructura.
+        {messages.dashboard.panelContent}
       </Panel>
     </AuthenticatedShell>
   );

@@ -8,6 +8,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { authService } from '~/services/auth/auth.service';
 import type { ChangePasswordCredentials } from '~/types/auth.types';
 import { Button, Field, Input } from '~/ui';
@@ -54,24 +55,26 @@ export default component$(() => {
 
   return (
     <main class="change-password-page">
-      <section class="change-password-card" aria-label="Cambio de contrasena">
+      <section
+        class="change-password-card"
+        aria-label={messages.auth.changePassword.title}
+      >
         <header class="change-password-header">
           <p class="change-password-header__system">{appConfig.name}</p>
           <span class="change-password-header__icon" aria-hidden="true">
             <AppIcon intent="unlock" size="xl" />
           </span>
-          <h1 class="change-password-header__title">Cambiar contrasena</h1>
+          <h1 class="change-password-header__title">
+            {messages.auth.changePassword.title}
+          </h1>
           <p class="change-password-header__copy">
-            Por seguridad debes crear una nueva contrasena antes de continuar.
+            {messages.auth.changePassword.copy}
           </p>
         </header>
 
         <div class="change-password-alert">
           <AppIcon intent="warning" size="sm" />
-          <span>
-            Este acceso es temporal y solo permite completar el cambio de
-            contrasena.
-          </span>
+          <span>{messages.auth.changePassword.alert}</span>
         </div>
 
         {error.value && (
@@ -89,26 +92,25 @@ export default component$(() => {
             errorField.value = '';
 
             if (!form.value.currentPassword) {
-              error.value = 'Ingresa tu contrasena temporal.';
+              error.value = messages.auth.changePassword.errors.missingCurrent;
               errorField.value = 'currentPassword';
               return;
             }
 
             if (!isValidPassword(form.value.newPassword)) {
-              error.value = 'La nueva contrasena no cumple los requisitos.';
+              error.value = messages.auth.changePassword.errors.invalidNew;
               errorField.value = 'newPassword';
               return;
             }
 
             if (form.value.newPassword !== form.value.confirmPassword) {
-              error.value = 'Las contrasenas no coinciden.';
+              error.value = messages.auth.changePassword.errors.mismatch;
               errorField.value = 'confirmPassword';
               return;
             }
 
             if (form.value.currentPassword === form.value.newPassword) {
-              error.value =
-                'La nueva contrasena debe ser diferente a la temporal.';
+              error.value = messages.auth.changePassword.errors.sameAsCurrent;
               errorField.value = 'newPassword';
               return;
             }
@@ -122,7 +124,7 @@ export default component$(() => {
             } catch (changePasswordError) {
               const normalized = normalizeError(
                 changePasswordError,
-                'Error al cambiar la contrasena.',
+                messages.errors.changePasswordFailed,
               );
               error.value = normalized.message;
               errorField.value = normalized.invalidField ?? '';
@@ -132,7 +134,7 @@ export default component$(() => {
           }}
         >
           <div class="change-password-visibility">
-            <span>Campos de contrasena</span>
+            <span>{messages.auth.changePassword.visibilityLabel}</span>
             <button
               type="button"
               disabled={isLoading.value}
@@ -140,17 +142,19 @@ export default component$(() => {
                 showPasswords.value = !showPasswords.value;
               }}
             >
-              {showPasswords.value ? 'Ocultar' : 'Ver'}
+              {showPasswords.value
+                ? messages.auth.changePassword.hidePasswords
+                : messages.auth.changePassword.showPasswords}
             </button>
           </div>
 
           <Field
-            label="Contrasena temporal"
+            label={messages.auth.changePassword.currentPasswordLabel}
             required
             htmlFor="currentPassword"
             error={
               errorField.value === 'currentPassword'
-                ? 'Revisa este campo.'
+                ? messages.auth.changePassword.errors.fieldError
                 : undefined
             }
           >
@@ -158,7 +162,9 @@ export default component$(() => {
               id="currentPassword"
               type={showPasswords.value ? 'text' : 'password'}
               name="currentPassword"
-              placeholder="Ingresa tu contrasena temporal"
+              placeholder={
+                messages.auth.changePassword.currentPasswordPlaceholder
+              }
               autoComplete="current-password"
               iconLeft="lock"
               value={form.value.currentPassword}
@@ -176,12 +182,12 @@ export default component$(() => {
           </Field>
 
           <Field
-            label="Nueva contrasena"
+            label={messages.auth.changePassword.newPasswordLabel}
             required
             htmlFor="newPassword"
             error={
               errorField.value === 'newPassword'
-                ? 'Revisa este campo.'
+                ? messages.auth.changePassword.errors.fieldError
                 : undefined
             }
           >
@@ -189,7 +195,7 @@ export default component$(() => {
               id="newPassword"
               type={showPasswords.value ? 'text' : 'password'}
               name="newPassword"
-              placeholder="8 a 12 caracteres"
+              placeholder={messages.auth.changePassword.newPasswordPlaceholder}
               autoComplete="new-password"
               iconLeft="unlock"
               value={form.value.newPassword}
@@ -210,40 +216,46 @@ export default component$(() => {
             />
           </Field>
 
-          <div class="password-rules" aria-label="Reglas de contrasena">
+          <div
+            class="password-rules"
+            aria-label={messages.auth.changePassword.rulesLabel}
+          >
             <PasswordRule
               valid={passwordRules.value.hasUpperCase}
-              label="Una mayuscula"
+              label={messages.auth.changePassword.rules.upperCase}
             />
             <PasswordRule
               valid={passwordRules.value.hasLowerCase}
-              label="Una minuscula"
+              label={messages.auth.changePassword.rules.lowerCase}
             />
             <PasswordRule
               valid={passwordRules.value.hasNumber}
-              label="Un numero"
+              label={messages.auth.changePassword.rules.number}
             />
             <PasswordRule
               valid={passwordRules.value.hasAllowedSpecialChar}
-              label={`Un especial permitido: ${allowedPasswordSpecialCharacters}`}
+              label={messages.auth.changePassword.rules.specialChar.replace(
+                '{chars}',
+                allowedPasswordSpecialCharacters,
+              )}
             />
             <PasswordRule
               valid={passwordRules.value.hasOnlyAllowedCharacters}
-              label="Sin caracteres fuera de la lista"
+              label={messages.auth.changePassword.rules.onlyAllowed}
             />
             <PasswordRule
               valid={passwordRules.value.hasValidLength}
-              label="Entre 8 y 12 caracteres"
+              label={messages.auth.changePassword.rules.validLength}
             />
           </div>
 
           <Field
-            label="Confirmar contrasena"
+            label={messages.auth.changePassword.confirmPasswordLabel}
             required
             htmlFor="confirmPassword"
             error={
               errorField.value === 'confirmPassword'
-                ? 'Revisa este campo.'
+                ? messages.auth.changePassword.errors.fieldError
                 : undefined
             }
           >
@@ -251,7 +263,9 @@ export default component$(() => {
               id="confirmPassword"
               type={showPasswords.value ? 'text' : 'password'}
               name="confirmPassword"
-              placeholder="Repite la nueva contrasena"
+              placeholder={
+                messages.auth.changePassword.confirmPasswordPlaceholder
+              }
               autoComplete="new-password"
               iconLeft={passwordsMatch.value ? 'success' : 'lock'}
               value={form.value.confirmPassword}
@@ -277,7 +291,9 @@ export default component$(() => {
             loading={isLoading.value}
             iconRight="chevron-right"
           >
-            {isLoading.value ? 'Guardando cambio' : 'Guardar nueva contrasena'}
+            {isLoading.value
+              ? messages.auth.changePassword.loadingLabel
+              : messages.auth.changePassword.submitLabel}
           </Button>
         </form>
       </section>

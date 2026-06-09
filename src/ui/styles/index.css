@@ -26,7 +26,7 @@ body {
 .page-kicker {
   color: var(--color-primary);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -35,7 +35,7 @@ body {
   max-width: 760px;
   margin: var(--space-2) 0 0;
   font-size: clamp(2rem, 4vw, 4rem);
-  font-weight: 760;
+  font-weight: var(--font-weight-bold);
   line-height: 0.96;
 }
 

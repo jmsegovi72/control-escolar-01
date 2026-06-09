@@ -3,6 +3,14 @@
   border-radius: var(--radius-3);
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.ui-panel:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-2);
 }
 
 .ui-panel[data-variant="subtle"] {
@@ -30,15 +38,15 @@
 
 .ui-panel__eyebrow {
   color: var(--color-accent);
-  font-size: 0.75rem;
-  font-weight: 760;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .ui-panel__title {
   margin: var(--space-1) 0 0;
-  font-size: 1.05rem;
+  font-size: var(--font-size-lg);
   line-height: 1.25;
 }
 

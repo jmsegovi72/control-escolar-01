@@ -4,6 +4,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { Badge, Button, Panel, Toolbar } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import './users.css';
@@ -22,69 +23,69 @@ type UserAction = {
 const primaryActions: UserAction[] = [
   {
     id: 'search',
-    title: 'Busqueda avanzada',
-    description: 'Consulta usuarios con filtros, estados y acciones por fila.',
+    title: messages.users.hub.primaryActions.search.title,
+    description: messages.users.hub.primaryActions.search.description,
     href: '/users/search',
     icon: 'search',
     tone: 'primary',
-    badge: 'Principal',
+    badge: messages.users.hub.primaryActions.search.badge,
   },
   {
     id: 'create',
-    title: 'Crear usuario',
-    description: 'Registra acceso inicial y prepara contrasena temporal.',
+    title: messages.users.hub.primaryActions.create.title,
+    description: messages.users.hub.primaryActions.create.description,
     href: '/users/create',
     icon: 'add',
     tone: 'info',
-    badge: 'Alta',
+    badge: messages.users.hub.primaryActions.create.badge,
   },
 ];
 
 const operationalActions: UserAction[] = [
   {
     id: 'detail',
-    title: 'Ver usuario',
-    description: 'Consulta datos, rol, tipo y estado de acceso.',
+    title: messages.users.hub.operationalActions.detail.title,
+    description: messages.users.hub.operationalActions.detail.description,
     href: '/users/detail',
     icon: 'view',
     tone: 'neutral',
-    badge: 'Seleccion',
+    badge: messages.users.hub.operationalActions.detail.badge,
   },
   {
     id: 'edit',
-    title: 'Editar usuario',
-    description: 'Modifica datos de acceso y permisos administrativos.',
+    title: messages.users.hub.operationalActions.edit.title,
+    description: messages.users.hub.operationalActions.edit.description,
     href: '/users/edit',
     icon: 'edit',
     tone: 'neutral',
-    badge: 'Seleccion',
+    badge: messages.users.hub.operationalActions.edit.badge,
   },
   {
     id: 'toggle',
-    title: 'Activar / Desactivar',
-    description: 'Cambia el acceso al sistema sin eliminar la cuenta.',
+    title: messages.users.hub.operationalActions.toggle.title,
+    description: messages.users.hub.operationalActions.toggle.description,
     href: '/users/toggle',
     icon: 'toggle',
     tone: 'warning',
-    badge: 'Control',
+    badge: messages.users.hub.operationalActions.toggle.badge,
   },
   {
     id: 'unlock',
-    title: 'Desbloquear usuario',
-    description: 'Libera cuentas bloqueadas por intentos fallidos.',
+    title: messages.users.hub.operationalActions.unlock.title,
+    description: messages.users.hub.operationalActions.unlock.description,
     href: '/users/unlock',
     icon: 'unlock',
     tone: 'warning',
-    badge: 'Soporte',
+    badge: messages.users.hub.operationalActions.unlock.badge,
   },
   {
     id: 'reset-login',
-    title: 'Resetear primer login',
-    description: 'Genera flujo obligatorio de cambio de contrasena.',
+    title: messages.users.hub.operationalActions.resetLogin.title,
+    description: messages.users.hub.operationalActions.resetLogin.description,
     href: '/users/reset-login',
     icon: 'login-reset',
     tone: 'danger',
-    badge: 'Admin',
+    badge: messages.users.hub.operationalActions.resetLogin.badge,
   },
 ];
 
@@ -93,45 +94,42 @@ export default component$(() => {
 
   return (
     <AuthenticatedShell
-      eyebrow="Administracion"
-      title="Usuarios"
-      description="Gestion de cuentas, acceso inicial, bloqueo y restablecimiento administrado."
-      meta="Modulo SUPER"
+      eyebrow={messages.users.hub.eyebrow}
+      title={messages.users.hub.title}
+      description={messages.users.hub.description}
+      meta={messages.users.hub.meta}
       allowedUserTypes={['SUPER']}
-      accessDeniedDescription="El modulo de usuarios esta reservado para cuentas SUPER."
+      accessDeniedDescription={messages.users.hub.accessDenied}
     >
       <Toolbar q:slot="toolbar">
-        <span q:slot="leading">Hub de acciones</span>
-        <span q:slot="center">
-          Consulta, alta y administracion de accesos del sistema.
-        </span>
+        <span q:slot="leading">{messages.users.hub.toolbarLeading}</span>
+        <span q:slot="center">{messages.users.hub.toolbarCenter}</span>
         <Button
           q:slot="actions"
           iconLeft="add"
           onClick$={async () => await nav('/users/create')}
         >
-          Nuevo usuario
+          {messages.users.hub.newUser}
         </Button>
       </Toolbar>
 
       <div class="users-hub">
         <section class="users-hub__hero">
           <div>
-            <span class="users-hub__kicker">Centro de administracion</span>
-            <h2>Gestiona accesos sin perder el contexto</h2>
-            <p>
-              Administra cuentas, permisos, bloqueos y primer acceso desde un
-              solo modulo.
-            </p>
+            <span class="users-hub__kicker">
+              {messages.users.hub.heroKicker}
+            </span>
+            <h2>{messages.users.hub.heroTitle}</h2>
+            <p>{messages.users.hub.heroDescription}</p>
           </div>
           <div class="users-hub__summary" aria-label="Resumen del modulo">
             <span>
               <strong>7</strong>
-              acciones
+              {messages.users.hub.summaryActions}
             </span>
             <span>
-              <strong>SUPER</strong>
-              acceso
+              <strong>{appConfig.initials}</strong>
+              {messages.users.hub.summaryAccess}
             </span>
           </div>
         </section>
@@ -158,15 +156,15 @@ export default component$(() => {
                 iconRight="chevron-right"
                 onClick$={async () => await nav(action.href)}
               >
-                Abrir
+                {messages.users.hub.openButton}
               </Button>
             </article>
           ))}
         </section>
 
         <Panel
-          title="Acciones operativas"
-          description="Flujos administrativos para consulta, mantenimiento y soporte de cuentas."
+          title={messages.users.hub.panelTitle}
+          description={messages.users.hub.panelDescription}
           density="compact"
         >
           <div class="users-hub__grid">
@@ -194,7 +192,7 @@ export default component$(() => {
                   iconRight="chevron-right"
                   onClick$={async () => await nav(action.href)}
                 >
-                  Ir
+                  {messages.users.hub.goButton}
                 </Button>
               </article>
             ))}

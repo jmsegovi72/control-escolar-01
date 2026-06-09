@@ -3,6 +3,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { authService } from '~/services/auth/auth.service';
 import type { LoginCredentials } from '~/types/auth.types';
 import { isFirstLoginResponse } from '~/types/auth.types';
@@ -65,25 +66,10 @@ export default component$(() => {
 
         <div class="login-brand__content">
           <p class="login-kicker">{appConfig.description}</p>
-          <h1 class="login-title">Bienvenido a {appConfig.name}</h1>
-          <p class="login-copy">
-            Gestion escolar con acceso seguro para el trabajo administrativo.
-          </p>
-        </div>
-
-        <div class="login-health" aria-label="Estado inicial del sistema">
-          <div class="login-health__item">
-            <span class="login-health__label">API</span>
-            <span class="login-health__value">Pendiente de conectar</span>
-          </div>
-          <div class="login-health__item">
-            <span class="login-health__label">Base de datos</span>
-            <span class="login-health__value">Sin verificar</span>
-          </div>
-          <div class="login-health__item">
-            <span class="login-health__label">Sesion</span>
-            <span class="login-health__value">No iniciada</span>
-          </div>
+          <h1 class="login-title">
+            {messages.auth.login.welcome.replace('{name}', appConfig.name)}
+          </h1>
+          <p class="login-copy">{messages.auth.login.copy}</p>
         </div>
       </section>
 
@@ -94,10 +80,8 @@ export default component$(() => {
             <span class="login-access__icon" aria-hidden="true">
               <AppIcon intent="lock" size="xl" />
             </span>
-            <h2 class="login-access__title">Iniciar sesion</h2>
-            <p class="login-access__copy">
-              Usa tus credenciales para entrar al sistema.
-            </p>
+            <h2 class="login-access__title">{messages.auth.login.formTitle}</h2>
+            <p class="login-access__copy">{messages.auth.login.formCopy}</p>
           </header>
 
           <form
@@ -112,7 +96,7 @@ export default component$(() => {
                 !credentials.value.login.trim() ||
                 !credentials.value.password
               ) {
-                error.value = 'Ingresa tu correo y contrasena.';
+                error.value = messages.auth.login.validationError;
                 return;
               }
 
@@ -156,7 +140,10 @@ export default component$(() => {
 
                 error.value =
                   normalized.status === undefined
-                    ? `No se pudo conectar con el servidor. ${normalized.message}`
+                    ? messages.auth.login.connectionError.replace(
+                        '{message}',
+                        normalized.message,
+                      )
                     : normalized.message;
               } finally {
                 isLoading.value = false;
@@ -166,10 +153,7 @@ export default component$(() => {
             {sessionExpired.value && (
               <div class="login-alert" data-variant="warning" role="alert">
                 <AppIcon intent="warning" size="sm" />
-                <span>
-                  Tu sesion o acceso temporal expiro. Inicia sesion nuevamente o
-                  contacta al administrador.
-                </span>
+                <span>{messages.auth.login.sessionExpiredMessage}</span>
               </div>
             )}
 
@@ -183,7 +167,7 @@ export default component$(() => {
               )}
 
             <Field
-              label="Usuario o correo"
+              label={messages.auth.login.usernameLabel}
               required
               htmlFor="login"
               disabled={isLocked.value}
@@ -192,7 +176,7 @@ export default component$(() => {
                 id="login"
                 type="text"
                 name="email"
-                placeholder="usuario o correo"
+                placeholder={messages.auth.login.usernamePlaceholder}
                 autoComplete="username"
                 inputMode="email"
                 iconLeft="mail"
@@ -211,7 +195,7 @@ export default component$(() => {
             </Field>
 
             <Field
-              label="Contrasena"
+              label={messages.auth.login.passwordLabel}
               required
               htmlFor="password"
               disabled={isLocked.value}
@@ -221,7 +205,7 @@ export default component$(() => {
                   id="password"
                   type={showPassword.value ? 'text' : 'password'}
                   name="password"
-                  placeholder="Ingresa tu contrasena"
+                  placeholder={messages.auth.login.passwordPlaceholder}
                   autoComplete="current-password"
                   iconLeft="lock"
                   value={credentials.value.password}
@@ -242,14 +226,16 @@ export default component$(() => {
                   disabled={isLocked.value || isLoading.value}
                   aria-label={
                     showPassword.value
-                      ? 'Ocultar contrasena'
-                      : 'Mostrar contrasena'
+                      ? messages.auth.login.hidePassword
+                      : messages.auth.login.showPassword
                   }
                   onClick$={() => {
                     showPassword.value = !showPassword.value;
                   }}
                 >
-                  {showPassword.value ? 'Ocultar' : 'Ver'}
+                  {showPassword.value
+                    ? messages.auth.login.hidePassword
+                    : messages.auth.login.showPassword}
                 </button>
               </div>
             </Field>
@@ -259,26 +245,24 @@ export default component$(() => {
                 <AppIcon intent="schedule" size="sm" />
                 <div>
                   <strong>{error.value}</strong>
-                  <span>
-                    Si necesitas acceso antes, presentate con el administrador.
-                  </span>
+                  <span>{messages.auth.login.lockoutNote}</span>
                 </div>
               </div>
             )}
 
             <Dialog
               open={showLockoutDialog.value}
-              title="Cuenta bloqueada temporalmente"
+              title={messages.auth.login.dialogs.lockout.title}
               description={error.value}
               tone="warning"
               icon="lock"
-              closeLabel="Entendido"
+              closeLabel={messages.auth.login.dialogs.lockout.closeLabel}
               onClose$={() => {
                 showLockoutDialog.value = false;
               }}
             >
               <p class="login-dialog-copy">
-                Si necesitas acceso antes, presentate con el administrador.
+                {messages.auth.login.dialogs.lockout.description}
               </p>
               <Button
                 q:slot="footer"
@@ -287,7 +271,7 @@ export default component$(() => {
                   showLockoutDialog.value = false;
                 }}
               >
-                Entendido
+                {messages.auth.login.dialogs.lockout.closeLabel}
               </Button>
             </Dialog>
 
@@ -295,25 +279,25 @@ export default component$(() => {
               open={showExpiredDialog.value}
               title={
                 expiredReason.value === 'temporary'
-                  ? 'Acceso temporal expirado'
-                  : 'Sesion expirada'
+                  ? messages.auth.login.dialogs.expired.temporaryTitle
+                  : messages.auth.login.dialogs.expired.sessionTitle
               }
               description={
                 expiredReason.value === 'temporary'
-                  ? 'El tiempo para cambiar tu contrasena termino.'
-                  : 'Tu sesion expiro.'
+                  ? messages.auth.login.dialogs.expired.temporaryDescription
+                  : messages.auth.login.dialogs.expired.sessionDescription
               }
               tone="warning"
               icon="warning"
-              closeLabel="Volver al login"
+              closeLabel={messages.auth.login.dialogs.expired.closeLabel}
               onClose$={() => {
                 showExpiredDialog.value = false;
               }}
             >
               <p class="login-dialog-copy">
                 {expiredReason.value === 'temporary'
-                  ? 'Inicia sesion nuevamente con la contrasena temporal proporcionada por el administrador o solicita una nueva.'
-                  : 'Inicia sesion nuevamente para continuar trabajando.'}
+                  ? messages.auth.login.dialogs.expired.temporaryAction
+                  : messages.auth.login.dialogs.expired.sessionAction}
               </p>
               <Button
                 q:slot="footer"
@@ -322,23 +306,25 @@ export default component$(() => {
                   showExpiredDialog.value = false;
                 }}
               >
-                Volver al login
+                {messages.auth.login.dialogs.expired.closeLabel}
               </Button>
             </Dialog>
 
             <Dialog
               open={showDisabledAccountDialog.value}
-              title="Cuenta desactivada"
+              title={messages.auth.login.dialogs.disabledAccount.title}
               description={error.value}
               tone="danger"
               icon="warning"
-              closeLabel="Entendido"
+              closeLabel={
+                messages.auth.login.dialogs.disabledAccount.closeLabel
+              }
               onClose$={() => {
                 showDisabledAccountDialog.value = false;
               }}
             >
               <p class="login-dialog-copy">
-                Contacta al administrador para revisar el acceso de esta cuenta.
+                {messages.auth.login.dialogs.disabledAccount.description}
               </p>
               <Button
                 q:slot="footer"
@@ -347,7 +333,7 @@ export default component$(() => {
                   showDisabledAccountDialog.value = false;
                 }}
               >
-                Entendido
+                {messages.auth.login.dialogs.disabledAccount.closeLabel}
               </Button>
             </Dialog>
 
@@ -362,7 +348,7 @@ export default component$(() => {
                   ).checked;
                 }}
               >
-                Recordar este equipo
+                {messages.auth.login.rememberDevice}
               </Checkbox>
               <button
                 class="login-link"
@@ -371,17 +357,14 @@ export default component$(() => {
                   showHelp.value = !showHelp.value;
                 }}
               >
-                Recuperar contrasena
+                {messages.auth.login.recoverPassword}
               </button>
             </div>
 
             {showHelp.value && (
               <div class="login-help-note">
                 <AppIcon intent="info" size="sm" />
-                <span>
-                  Contacta al administrador para generar una contrasena temporal
-                  y activar el cambio obligatorio.
-                </span>
+                <span>{messages.auth.login.helpText}</span>
               </div>
             )}
 
@@ -392,7 +375,9 @@ export default component$(() => {
               loading={isLoading.value}
               disabled={isLocked.value}
             >
-              {isLoading.value ? 'Validando acceso' : 'Entrar al sistema'}
+              {isLoading.value
+                ? messages.auth.login.loadingLabel
+                : messages.auth.login.submitLabel}
             </Button>
           </form>
         </div>

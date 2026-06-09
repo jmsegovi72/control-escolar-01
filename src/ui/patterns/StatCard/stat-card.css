@@ -7,6 +7,14 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-1);
   padding: var(--space-4);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.ui-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
 }
 
 .ui-stat-card__top {

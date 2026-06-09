@@ -1,5 +1,7 @@
+import { messages } from './messages';
+
 export const appConfig = {
-  name: 'SICES V1',
-  description: 'Sistema de Control Escolar',
-  initials: 'SI',
+  name: messages.app.name,
+  description: messages.app.description,
+  initials: messages.app.initials,
 };

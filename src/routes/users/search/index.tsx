@@ -4,6 +4,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
@@ -34,8 +35,12 @@ type UserRow = Record<string, unknown> &
 
 const toRow = (user: UserListItem): UserRow => ({
   ...user,
-  activeLabel: user.isActive ? 'Activo' : 'Inactivo',
-  firstLoginLabel: user.firstLogin ? 'Pendiente' : 'Completado',
+  activeLabel: user.isActive
+    ? messages.users.search.statusActive
+    : messages.users.search.statusInactive,
+  firstLoginLabel: user.firstLogin
+    ? messages.users.search.firstLoginPending
+    : messages.users.search.firstLoginCompleted,
 });
 
 export default component$(() => {
@@ -67,13 +72,13 @@ export default component$(() => {
   }));
 
   const activeOptions = [
-    { value: 'true', label: 'Activo' },
-    { value: 'false', label: 'Inactivo' },
+    { value: 'true', label: messages.users.search.statusActive },
+    { value: 'false', label: messages.users.search.statusInactive },
   ];
 
   const firstLoginOptions = [
-    { value: 'true', label: 'Pendiente' },
-    { value: 'false', label: 'Completado' },
+    { value: 'true', label: messages.users.search.firstLoginPending },
+    { value: 'false', label: messages.users.search.firstLoginCompleted },
   ];
 
   const hasActiveFilters =
@@ -123,10 +128,7 @@ export default component$(() => {
     } catch (err) {
       rows.value = [];
       total.value = 0;
-      error.value = normalizeError(
-        err,
-        'No se pudo realizar la busqueda',
-      ).message;
+      error.value = normalizeError(err, messages.errors.searchFailed).message;
     } finally {
       loading.value = false;
     }
@@ -177,64 +179,70 @@ export default component$(() => {
   const columns: DataTableColumn<UserRow>[] = [
     {
       key: 'fullName',
-      label: 'Nombre completo',
+      label: messages.users.search.columns.fullName,
       sortable: true,
-      filter: { type: 'text', placeholder: 'Nombre' },
+      filter: {
+        type: 'text',
+        placeholder: messages.users.search.columns.fullNamePlaceholder,
+      },
     },
     {
       key: 'username',
-      label: 'Usuario',
-      filter: { type: 'text', placeholder: 'Usuario' },
+      label: messages.users.search.columns.username,
+      filter: {
+        type: 'text',
+        placeholder: messages.users.search.columns.usernamePlaceholder,
+      },
     },
     {
       key: 'roleName',
-      label: 'Rol',
+      label: messages.users.search.columns.role,
       filter: {
         type: 'select',
-        placeholder: 'Todos',
+        placeholder: messages.users.search.filterRolePlaceholder,
         options: roleOptions,
       },
     },
     {
       key: 'userTypeName',
-      label: 'Tipo',
+      label: messages.users.search.columns.type,
       filter: {
         type: 'select',
-        placeholder: 'Todos',
+        placeholder: messages.users.search.filterTypePlaceholder,
         options: userTypeOptions,
       },
     },
     {
       key: 'activeLabel',
-      label: 'Estado',
+      label: messages.users.search.columns.status,
       align: 'center',
       width: '8rem',
       badge: {
         toneMap: {
-          Activo: 'success',
-          Inactivo: 'danger',
+          [messages.users.search.statusActive]: 'success',
+          [messages.users.search.statusInactive]: 'danger',
         },
       },
       filter: {
         type: 'select',
-        placeholder: 'Todos',
+        placeholder: messages.users.search.filterStatusPlaceholder,
         options: activeOptions,
       },
     },
     {
       key: 'firstLoginLabel',
-      label: 'Primer login',
+      label: messages.users.search.columns.firstLogin,
       align: 'center',
       width: '9rem',
       badge: {
         toneMap: {
-          Pendiente: 'warning',
-          Completado: 'success',
+          [messages.users.search.firstLoginPending]: 'warning',
+          [messages.users.search.firstLoginCompleted]: 'success',
         },
       },
       filter: {
         type: 'select',
-        placeholder: 'Todos',
+        placeholder: messages.users.search.filterFirstLoginPlaceholder,
         options: firstLoginOptions,
       },
     },
@@ -242,7 +250,7 @@ export default component$(() => {
 
   const actions: DataTableAction<UserRow>[] = [
     {
-      label: 'Ver detalle',
+      label: messages.users.search.actions.viewDetail,
       icon: 'view',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
@@ -250,7 +258,7 @@ export default component$(() => {
       }),
     },
     {
-      label: 'Editar',
+      label: messages.users.search.actions.edit,
       icon: 'edit',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
@@ -258,7 +266,7 @@ export default component$(() => {
       }),
     },
     {
-      label: 'Activar / Desactivar',
+      label: messages.users.search.actions.toggle,
       icon: 'toggle',
       tone: 'primary',
       onClick$: $(async (row) => {
@@ -267,7 +275,7 @@ export default component$(() => {
       }),
     },
     {
-      label: 'Desbloquear',
+      label: messages.users.search.actions.unlock,
       icon: 'unlock',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
@@ -275,7 +283,7 @@ export default component$(() => {
       }),
     },
     {
-      label: 'Resetear login',
+      label: messages.users.search.actions.resetLogin,
       icon: 'login-reset',
       tone: 'danger',
       onClick$: $(async (row) => {
@@ -287,12 +295,12 @@ export default component$(() => {
 
   return (
     <AuthenticatedShell
-      eyebrow="Administracion"
-      title="Busqueda avanzada"
-      description="Consulta usuarios por filtros y ejecuta acciones administrativas."
-      meta="Usuarios"
+      eyebrow={messages.users.search.eyebrow}
+      title={messages.users.search.title}
+      description={messages.users.search.description}
+      meta={messages.users.search.meta}
       allowedUserTypes={['SUPER']}
-      accessDeniedDescription="La busqueda de usuarios esta reservada para cuentas SUPER."
+      accessDeniedDescription={messages.users.search.accessDenied}
     >
       <Toolbar q:slot="toolbar">
         <Button
@@ -301,31 +309,29 @@ export default component$(() => {
           iconLeft="back"
           onClick$={async () => await nav('/users')}
         >
-          Regresar
+          {messages.users.search.toolbarBack}
         </Button>
-        <span q:slot="center">
-          Desde aqui puedes filtrar usuarios y volver al flujo anterior.
-        </span>
+        <span q:slot="center">{messages.users.search.toolbarCenter}</span>
         <Button
           q:slot="actions"
           iconLeft="add"
           onClick$={async () => await nav('/users/create')}
         >
-          Nuevo usuario
+          {messages.users.search.newUser}
         </Button>
       </Toolbar>
 
       <div class="users-search">
         <PageReturn
-          eyebrow="Modulo de usuarios"
-          title="Busqueda avanzada"
-          buttonLabel="Regresar"
+          eyebrow={messages.users.search.pageReturnEyebrow}
+          title={messages.users.search.title}
+          buttonLabel={messages.users.search.pageReturnLabel}
           onClick$={async () => await nav('/users')}
         />
 
         <Panel
-          title="Filtros"
-          description="Combina criterios para localizar cuentas del sistema."
+          title={messages.users.search.filterPanelTitle}
+          description={messages.users.search.filterPanelDescription}
           density="compact"
         >
           <form
@@ -337,10 +343,10 @@ export default component$(() => {
             }}
           >
             <div class="users-search__filters">
-              <Field label="Busqueda global">
+              <Field label={messages.users.search.filterGlobalLabel}>
                 <Input
                   iconLeft="search"
-                  placeholder="Nombre o usuario"
+                  placeholder={messages.users.search.filterGlobalPlaceholder}
                   value={searchTerm.value}
                   onInput$={(event) => {
                     searchTerm.value = (event.target as HTMLInputElement).value;
@@ -348,10 +354,10 @@ export default component$(() => {
                 />
               </Field>
 
-              <Field label="Nombre completo">
+              <Field label={messages.users.search.filterNameLabel}>
                 <Input
                   iconLeft="person"
-                  placeholder="Ej. Segovia Chan"
+                  placeholder={messages.users.search.filterNamePlaceholder}
                   value={fullName.value}
                   onInput$={(event) => {
                     fullName.value = (event.target as HTMLInputElement).value;
@@ -359,48 +365,50 @@ export default component$(() => {
                 />
               </Field>
 
-              <Field label="Rol">
+              <Field label={messages.users.search.filterRoleLabel}>
                 <Select
                   iconLeft="user-settings"
                   value={roleName.value}
                   options={roleOptions}
-                  placeholder="Todos"
+                  placeholder={messages.users.search.filterRolePlaceholder}
                   onChange$={(value) => {
                     roleName.value = value;
                   }}
                 />
               </Field>
 
-              <Field label="Tipo">
+              <Field label={messages.users.search.filterTypeLabel}>
                 <Select
                   iconLeft="person"
                   value={userTypeName.value}
                   options={userTypeOptions}
-                  placeholder="Todos"
+                  placeholder={messages.users.search.filterTypePlaceholder}
                   onChange$={(value) => {
                     userTypeName.value = value;
                   }}
                 />
               </Field>
 
-              <Field label="Estado">
+              <Field label={messages.users.search.filterStatusLabel}>
                 <Select
                   iconLeft="toggle"
                   value={isActive.value}
                   options={activeOptions}
-                  placeholder="Todos"
+                  placeholder={messages.users.search.filterStatusPlaceholder}
                   onChange$={(value) => {
                     isActive.value = value;
                   }}
                 />
               </Field>
 
-              <Field label="Primer login">
+              <Field label={messages.users.search.filterFirstLoginLabel}>
                 <Select
                   iconLeft="lock"
                   value={isFirstLogin.value}
                   options={firstLoginOptions}
-                  placeholder="Todos"
+                  placeholder={
+                    messages.users.search.filterFirstLoginPlaceholder
+                  }
                   onChange$={(value) => {
                     isFirstLogin.value = value;
                   }}
@@ -415,17 +423,20 @@ export default component$(() => {
                 iconLeft="cancel"
                 onClick$={clearFilters$}
               >
-                Limpiar
+                {messages.users.search.clearButton}
               </Button>
               <Button type="submit" iconLeft="search" loading={loading.value}>
-                Buscar
+                {messages.users.search.searchButton}
               </Button>
             </div>
           </form>
         </Panel>
 
         {error.value && (
-          <Panel variant="outlined" title="No se pudo buscar">
+          <Panel
+            variant="outlined"
+            title={messages.users.search.errorPanelTitle}
+          >
             {error.value}
           </Panel>
         )}
@@ -446,8 +457,8 @@ export default component$(() => {
             hasActiveFilters={hasActiveFilters}
             stickyHeader
             maxHeight="calc(100vh - 32rem)"
-            emptyTitle="Sin usuarios"
-            emptyDescription="No se encontraron usuarios con los criterios seleccionados."
+            emptyTitle={messages.users.search.tableEmptyTitle}
+            emptyDescription={messages.users.search.tableEmptyDescription}
             onFilter$={$(async (change) => {
               if (change.key === 'fullName') fullName.value = change.value;
               if (change.key === 'username') searchTerm.value = change.value;
