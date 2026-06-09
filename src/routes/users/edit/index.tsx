@@ -318,19 +318,15 @@ export default component$(() => {
               {searchResults.value.length > 0 && (
                 <div class="edit-user__results">
                   {searchResults.value.map((result) => (
-                    <article class="edit-user__result" key={result.id}>
-                      <div>
-                        <strong>{result.fullName}</strong>
-                        <span>{result.username}</span>
-                      </div>
-                      <Button
-                        size="sm"
-                        iconLeft="edit"
-                        onClick$={async () => await openManualEdit$(result.id)}
-                      >
-                        Editar
-                      </Button>
-                    </article>
+                    <button
+                      type="button"
+                      class="edit-user__result-card"
+                      key={result.id}
+                      onClick$={async () => await openManualEdit$(result.id)}
+                    >
+                      <strong>{result.fullName}</strong>
+                      <span>{result.username}</span>
+                    </button>
                   ))}
                 </div>
               )}
