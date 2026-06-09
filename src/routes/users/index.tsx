@@ -5,6 +5,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { Badge, Button, Panel, Toolbar } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import './users.css';
@@ -25,7 +26,7 @@ const primaryActions: UserAction[] = [
     id: 'search',
     title: messages.users.hub.primaryActions.search.title,
     description: messages.users.hub.primaryActions.search.description,
-    href: '/users/search',
+    href: ROUTES.USERS_SEARCH,
     icon: 'search',
     tone: 'primary',
     badge: messages.users.hub.primaryActions.search.badge,
@@ -34,7 +35,7 @@ const primaryActions: UserAction[] = [
     id: 'create',
     title: messages.users.hub.primaryActions.create.title,
     description: messages.users.hub.primaryActions.create.description,
-    href: '/users/create',
+    href: ROUTES.USERS_CREATE,
     icon: 'add',
     tone: 'info',
     badge: messages.users.hub.primaryActions.create.badge,
@@ -46,7 +47,7 @@ const operationalActions: UserAction[] = [
     id: 'detail',
     title: messages.users.hub.operationalActions.detail.title,
     description: messages.users.hub.operationalActions.detail.description,
-    href: '/users/detail',
+    href: ROUTES.USERS_DETAIL,
     icon: 'view',
     tone: 'neutral',
     badge: messages.users.hub.operationalActions.detail.badge,
@@ -55,7 +56,7 @@ const operationalActions: UserAction[] = [
     id: 'edit',
     title: messages.users.hub.operationalActions.edit.title,
     description: messages.users.hub.operationalActions.edit.description,
-    href: '/users/edit',
+    href: ROUTES.USERS_EDIT,
     icon: 'edit',
     tone: 'neutral',
     badge: messages.users.hub.operationalActions.edit.badge,
@@ -64,7 +65,7 @@ const operationalActions: UserAction[] = [
     id: 'toggle',
     title: messages.users.hub.operationalActions.toggle.title,
     description: messages.users.hub.operationalActions.toggle.description,
-    href: '/users/toggle',
+    href: ROUTES.USERS_TOGGLE,
     icon: 'toggle',
     tone: 'warning',
     badge: messages.users.hub.operationalActions.toggle.badge,
@@ -73,7 +74,7 @@ const operationalActions: UserAction[] = [
     id: 'unlock',
     title: messages.users.hub.operationalActions.unlock.title,
     description: messages.users.hub.operationalActions.unlock.description,
-    href: '/users/unlock',
+    href: ROUTES.USERS_UNLOCK,
     icon: 'unlock',
     tone: 'warning',
     badge: messages.users.hub.operationalActions.unlock.badge,
@@ -82,7 +83,7 @@ const operationalActions: UserAction[] = [
     id: 'reset-login',
     title: messages.users.hub.operationalActions.resetLogin.title,
     description: messages.users.hub.operationalActions.resetLogin.description,
-    href: '/users/reset-login',
+    href: ROUTES.USERS_RESET_LOGIN,
     icon: 'login-reset',
     tone: 'danger',
     badge: messages.users.hub.operationalActions.resetLogin.badge,
@@ -107,7 +108,7 @@ export default component$(() => {
         <Button
           q:slot="actions"
           iconLeft="add"
-          onClick$={async () => await nav('/users/create')}
+          onClick$={async () => await nav(ROUTES.USERS_CREATE)}
         >
           {messages.users.hub.newUser}
         </Button>

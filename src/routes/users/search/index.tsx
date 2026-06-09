@@ -5,6 +5,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
@@ -254,7 +255,7 @@ export default component$(() => {
       icon: 'view',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
-        await nav(`/users/detail?id=${row.id}&source=table`);
+        await nav(`${ROUTES.USERS_DETAIL}?id=${row.id}&source=table`);
       }),
     },
     {
@@ -262,7 +263,7 @@ export default component$(() => {
       icon: 'edit',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
-        await nav(`/users/edit?id=${row.id}`);
+        await nav(`${ROUTES.USERS_EDIT}?id=${row.id}`);
       }),
     },
     {
@@ -271,7 +272,7 @@ export default component$(() => {
       tone: 'primary',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
-        await nav(`/users/toggle?id=${row.id}`);
+        await nav(`${ROUTES.USERS_TOGGLE}?id=${row.id}`);
       }),
     },
     {
@@ -279,7 +280,7 @@ export default component$(() => {
       icon: 'unlock',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
-        await nav(`/users/unlock?id=${row.id}`);
+        await nav(`${ROUTES.USERS_UNLOCK}?id=${row.id}`);
       }),
     },
     {
@@ -288,7 +289,7 @@ export default component$(() => {
       tone: 'danger',
       onClick$: $(async (row) => {
         await saveWorkContext$(row);
-        await nav(`/users/reset-login?id=${row.id}&source=table`);
+        await nav(`${ROUTES.USERS_RESET_LOGIN}?id=${row.id}&source=table`);
       }),
     },
   ];
@@ -307,7 +308,7 @@ export default component$(() => {
           q:slot="leading"
           variant="ghost"
           iconLeft="back"
-          onClick$={async () => await nav('/users')}
+          onClick$={async () => await nav(ROUTES.USERS)}
         >
           {messages.users.search.toolbarBack}
         </Button>
@@ -315,7 +316,7 @@ export default component$(() => {
         <Button
           q:slot="actions"
           iconLeft="add"
-          onClick$={async () => await nav('/users/create')}
+          onClick$={async () => await nav(ROUTES.USERS_CREATE)}
         >
           {messages.users.search.newUser}
         </Button>
@@ -326,7 +327,7 @@ export default component$(() => {
           eyebrow={messages.users.search.pageReturnEyebrow}
           title={messages.users.search.title}
           buttonLabel={messages.users.search.pageReturnLabel}
-          onClick$={async () => await nav('/users')}
+          onClick$={async () => await nav(ROUTES.USERS)}
         />
 
         <Panel

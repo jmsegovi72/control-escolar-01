@@ -4,6 +4,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { authService } from '~/services/auth/auth.service';
 import type { LoginCredentials } from '~/types/auth.types';
 import { isFirstLoginResponse } from '~/types/auth.types';
@@ -45,7 +46,7 @@ export default component$(() => {
     showExpiredDialog.value = sessionExpired.value;
 
     if (authService.isAuthenticated()) {
-      await nav('/dashboard');
+      await nav(ROUTES.DASHBOARD);
       return;
     }
 
@@ -53,7 +54,7 @@ export default component$(() => {
       authService.requiresPasswordChange() &&
       expiredReason.value !== 'temporary'
     ) {
-      await nav('/change-password');
+      await nav(ROUTES.CHANGE_PASSWORD);
     }
   });
 
@@ -108,9 +109,9 @@ export default component$(() => {
                 authService.saveSession(response);
 
                 if (isFirstLoginResponse(response)) {
-                  await nav('/change-password');
+                  await nav(ROUTES.CHANGE_PASSWORD);
                 } else {
-                  await nav('/dashboard');
+                  await nav(ROUTES.DASHBOARD);
                 }
               } catch (loginError) {
                 const normalized = normalizeError(

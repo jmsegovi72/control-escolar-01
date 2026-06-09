@@ -9,10 +9,9 @@ import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
-import { ENV } from '~/config/env';
+import { ROUTES } from '~/config/routes';
 import { authService } from '~/services/auth/auth.service';
 import { healthService } from '~/services/health/health.service';
-import type { User } from '~/types/auth.types';
 import { AppShell, Button, Panel, Sidebar } from '~/ui';
 import type {
   SidebarBehavior,
@@ -22,6 +21,14 @@ import type {
   SidebarUser,
 } from '~/ui/patterns/Sidebar/sidebar.types';
 import { sessionStore } from '~/utils/session';
+import {
+  formatDate,
+  formatTime,
+  getAvatarUrl,
+  getInitials,
+  getTokenRemaining,
+} from '~/utils/session-utils';
+import { canAccessRoute, createNavigation } from '~/utils/navigation';
 
 type AuthenticatedShellProps = {
   eyebrow?: string;
@@ -32,240 +39,6 @@ type AuthenticatedShellProps = {
   allowedRoles?: string[];
   accessDeniedTitle?: string;
   accessDeniedDescription?: string;
-};
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
-
-const formatDate = (date: Date) =>
-  date.toLocaleDateString('es-MX', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-
-const formatTime = (date: Date) =>
-  date.toLocaleTimeString('es-MX', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-
-const getTokenRemaining = () => {
-  const token = sessionStore.getToken();
-  if (!token)
-    return { label: messages.layout.shell.noSession, tone: 'offline' as const };
-
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
-    const expiration = Number(payload.exp ?? 0) * 1000;
-    const remaining = expiration - Date.now();
-
-    if (remaining <= 0) {
-      return { label: '00:00:00', tone: 'offline' as const };
-    }
-
-    const hours = Math.floor(remaining / 3600000);
-    const minutes = Math.floor((remaining % 3600000) / 60000);
-    const seconds = Math.floor((remaining % 60000) / 1000);
-    const label = [hours, minutes, seconds]
-      .map((value) => String(value).padStart(2, '0'))
-      .join(':');
-    const tone: SidebarStatusTone =
-      remaining <= 30 * 60 * 1000 ? 'warning' : 'online';
-
-    return { label, tone };
-  } catch {
-    return {
-      label: messages.layout.shell.tokenUnavailable,
-      tone: 'neutral' as const,
-    };
-  }
-};
-
-const getAvatarUrl = (user: User) => {
-  if (!user.photoUrl) {
-    return user.userTypeCode === 'SUPER'
-      ? '/avatars/admin-default.svg'
-      : '/avatars/user-default.svg';
-  }
-
-  if (
-    user.photoUrl.startsWith('http') ||
-    user.photoUrl.startsWith('/avatars/')
-  ) {
-    return user.photoUrl;
-  }
-
-  const apiBase = ENV.API_URL.replace(/\/sices\/v\d+$/, '');
-  return `${apiBase}/${user.photoUrl.replace(/^\/+/, '')}`;
-};
-
-const createNavigation = (isSuper: boolean, hasControlAccess: boolean) => {
-  const sections: SidebarSection[] = [
-    {
-      id: 'main',
-      label: messages.layout.shell.menuMain,
-      items: [
-        {
-          id: 'dashboard',
-          label: messages.layout.shell.nav.dashboard,
-          icon: 'dashboard',
-          href: '/dashboard',
-          disabled: !hasControlAccess,
-        },
-        {
-          id: 'persons',
-          label: messages.layout.shell.nav.persons,
-          icon: 'person',
-          disabled: !hasControlAccess,
-          children: [
-            {
-              id: 'persons-management',
-              label: messages.layout.shell.nav.personsManagement,
-              icon: 'person',
-              href: '/persons',
-              disabled: true,
-            },
-            {
-              id: 'persons-addresses',
-              label: messages.layout.shell.nav.personsAddresses,
-              icon: 'school',
-              href: '/addresses',
-              disabled: true,
-            },
-            {
-              id: 'persons-demographics',
-              label: messages.layout.shell.nav.personsDemographics,
-              icon: 'dashboard',
-              href: '/demographics',
-              disabled: true,
-            },
-            {
-              id: 'persons-emergency',
-              label: messages.layout.shell.nav.personsEmergency,
-              icon: 'phone',
-              href: '/persons/emergency-contacts',
-              disabled: true,
-            },
-          ],
-        },
-        {
-          id: 'students',
-          label: messages.layout.shell.nav.students,
-          icon: 'student',
-          disabled: !hasControlAccess,
-          children: [
-            {
-              id: 'students-admission',
-              label: messages.layout.shell.nav.studentsAdmission,
-              icon: 'add',
-              href: '/students/admission',
-              disabled: true,
-            },
-            {
-              id: 'students-enrollment',
-              label: messages.layout.shell.nav.studentsEnrollment,
-              icon: 'save',
-              href: '/students/enrollment',
-              disabled: true,
-            },
-            {
-              id: 'students-grades',
-              label: messages.layout.shell.nav.studentsGrades,
-              icon: 'check',
-              href: '/students/grades',
-              disabled: true,
-            },
-          ],
-        },
-        {
-          id: 'teachers',
-          label: messages.layout.shell.nav.teachers,
-          icon: 'teacher',
-          disabled: true,
-        },
-        {
-          id: 'staff',
-          label: messages.layout.shell.nav.staff,
-          icon: 'staff',
-          disabled: true,
-        },
-        {
-          id: 'catalogs',
-          label: messages.layout.shell.nav.catalogs,
-          icon: 'settings',
-          disabled: !hasControlAccess,
-          children: [
-            {
-              id: 'catalogs-zip-codes',
-              label: messages.layout.shell.nav.catalogsZipCodes,
-              icon: 'school',
-              href: '/zip-codes',
-              disabled: true,
-            },
-            {
-              id: 'catalogs-classes',
-              label: messages.layout.shell.nav.catalogsClasses,
-              icon: 'class',
-              href: '/classes',
-              disabled: true,
-            },
-          ],
-        },
-      ],
-    },
-  ];
-
-  if (isSuper) {
-    sections.push({
-      id: 'admin',
-      label: messages.layout.shell.menuAdmin,
-      items: [
-        {
-          id: 'users',
-          label: messages.layout.shell.nav.users,
-          icon: 'user-settings',
-          href: '/users',
-        },
-      ],
-    });
-  }
-
-  return sections;
-};
-
-const normalizeAccessValue = (value?: string) =>
-  value?.trim().toUpperCase() ?? '';
-
-const canAccessRoute = (
-  user: User | null,
-  allowedUserTypes?: string[],
-  allowedRoles?: string[],
-) => {
-  if (!allowedUserTypes?.length && !allowedRoles?.length) {
-    return true;
-  }
-
-  if (!user) {
-    return false;
-  }
-
-  const normalizedUserType = normalizeAccessValue(user.userTypeCode);
-  const normalizedRole = normalizeAccessValue(user.roleName);
-  const userTypeAllowed = allowedUserTypes?.some(
-    (type) => normalizeAccessValue(type) === normalizedUserType,
-  );
-  const roleAllowed = allowedRoles?.some(
-    (role) => normalizeAccessValue(role) === normalizedRole,
-  );
-
-  return Boolean(userTypeAllowed || roleAllowed);
 };
 
 export const AuthenticatedShell = component$<AuthenticatedShellProps>(
@@ -305,12 +78,12 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
     useVisibleTask$(async () => {
       if (authService.requiresPasswordChange()) {
-        await nav('/change-password');
+        await nav(ROUTES.CHANGE_PASSWORD);
         return;
       }
 
       if (!authService.isAuthenticated()) {
-        await nav('/login');
+        await nav(ROUTES.LOGIN);
         return;
       }
 
@@ -355,7 +128,6 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
       const updateHealth = async () => {
         const systemHealth = await healthService.checkSystem();
-
         backendStatus.value = systemHealth.backend;
         databaseStatus.value = systemHealth.database;
       };
@@ -473,7 +245,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
               tone: 'danger',
               onSelect$: $(async () => {
                 authService.logout();
-                await nav('/login');
+                await nav(ROUTES.LOGIN);
               }),
             },
           ]}
@@ -549,7 +321,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           iconLeft="logout"
           onClick$={async () => {
             authService.logout();
-            await nav('/login');
+            await nav(ROUTES.LOGIN);
           }}
         >
           {messages.layout.shell.logoutLabel}
@@ -570,7 +342,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             <Button
               variant="secondary"
               iconLeft="back"
-              onClick$={async () => await nav('/dashboard')}
+              onClick$={async () => await nav(ROUTES.DASHBOARD)}
             >
               {messages.layout.shell.returnToDashboard}
             </Button>

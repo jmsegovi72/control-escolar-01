@@ -9,6 +9,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { authService } from '~/services/auth/auth.service';
 import type { ChangePasswordCredentials } from '~/types/auth.types';
 import { Button, Field, Input } from '~/ui';
@@ -44,12 +45,12 @@ export default component$(() => {
 
   useVisibleTask$(async () => {
     if (authService.isAuthenticated()) {
-      await nav('/dashboard');
+      await nav(ROUTES.DASHBOARD);
       return;
     }
 
     if (!authService.requiresPasswordChange()) {
-      await nav('/login');
+      await nav(ROUTES.LOGIN);
     }
   });
 
@@ -120,7 +121,7 @@ export default component$(() => {
             try {
               const response = await authService.changePassword(form.value);
               authService.saveChangedPasswordSession(response);
-              await nav('/dashboard');
+              await nav(ROUTES.DASHBOARD);
             } catch (changePasswordError) {
               const normalized = normalizeError(
                 changePasswordError,
