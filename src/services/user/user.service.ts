@@ -70,4 +70,12 @@ export const userService = {
 
     return 'data' in response.data ? response.data.data : response.data;
   },
+
+  async updateUser(
+    id: number,
+    dto: { username: string; roleId: number; userTypeId: number },
+  ): Promise<any> {
+    const response = await apiClient.patch<any>(`/users/${id}`, dto);
+    return response.data;
+  },
 };

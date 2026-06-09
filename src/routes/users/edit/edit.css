@@ -1,0 +1,126 @@
+.edit-user-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-user-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-user-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-user-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.edit-user-person {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface-subtle);
+  padding: var(--space-3);
+}
+
+.edit-user-person__avatar,
+.edit-user-photo__preview {
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.edit-user-person__avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.edit-user-person strong,
+.edit-user-person span,
+.edit-user-person small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edit-user-person span,
+.edit-user-person small {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.edit-user-photo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.edit-user-photo__preview {
+  width: 5.5rem;
+  height: 5.5rem;
+  overflow: hidden;
+}
+
+.edit-user-photo__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-user-photo__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.edit-user-photo__button {
+  display: inline-flex;
+  min-height: 2.4rem;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  padding: 0 var(--space-3);
+}
+
+.edit-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.edit-user__loading {
+  height: 0.75rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-subtle),
+    var(--color-border),
+    var(--color-surface-subtle)
+  );
+}
+
+@media (max-width: 760px) {
+  .edit-user-grid,
+  .edit-user-person {
+    grid-template-columns: 1fr;
+  }
+}
