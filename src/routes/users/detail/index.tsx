@@ -284,134 +284,136 @@ export default component$(() => {
         )}
 
         {!loading.value && currentUser && (
-          <>
-            <section class="user-detail__hero">
-              <div class="user-detail__avatar" aria-hidden="true">
-                {currentUser.photoUrl ? (
-                  <img src={getPhotoUrl(currentUser)} alt="" />
-                ) : (
-                  <span>{getInitials(currentUser.fullName)}</span>
-                )}
-              </div>
-              <div class="user-detail__identity">
-                <div class="user-detail__badges">
+          <div class="user-detail__layout">
+            <aside class="user-detail__sidebar">
+              <div class="user-detail__profile-card">
+                <div class="user-detail__avatar-wrapper">
+                  {currentUser.photoUrl ? (
+                    <img
+                      src={getPhotoUrl(currentUser)}
+                      alt={currentUser.fullName}
+                    />
+                  ) : (
+                    <span>{getInitials(currentUser.fullName)}</span>
+                  )}
+                </div>
+                <div class="user-detail__profile-info">
+                  <h2>{currentUser.fullName}</h2>
+                  <p>{currentUser.username}</p>
+                </div>
+                <div class="user-detail__profile-badges">
                   <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
                     {currentUser.isActive ? 'Activo' : 'Inactivo'}
                   </Badge>
                   <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
                     {currentUser.firstLogin
-                      ? 'Primer login pendiente'
-                      : 'Primer login completado'}
+                      ? 'Primer acceso pendiente'
+                      : 'Acceso completado'}
                   </Badge>
-                  {loadedFromContext.value && (
-                    <Badge tone="info">Desde tabla</Badge>
-                  )}
                 </div>
-                <h2>{currentUser.fullName}</h2>
-                <p>{currentUser.username}</p>
               </div>
-            </section>
 
-            <Panel
-              title="Origen del detalle"
-              description={originDescription.value}
-            >
-              <div class="user-detail__origin">
-                <div>
-                  <span>Origen</span>
-                  <strong>{originLabel.value}</strong>
+              <div class="user-detail__actions-card">
+                <h3>Acciones de cuenta</h3>
+                <div class="user-detail__action-list">
+                  <Button
+                    variant="primary"
+                    iconLeft="edit"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/edit?id=${currentUser.id}`)
+                    }
+                  >
+                    Editar datos
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="toggle"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/toggle?id=${currentUser.id}`)
+                    }
+                  >
+                    {currentUser.isActive
+                      ? 'Desactivar cuenta'
+                      : 'Activar cuenta'}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="unlock"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/unlock?id=${currentUser.id}`)
+                    }
+                  >
+                    Desbloquear cuenta
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="login-reset"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/reset-login?id=${currentUser.id}`)
+                    }
+                  >
+                    Restablecer acceso
+                  </Button>
                 </div>
-                <div>
-                  <span>Regreso</span>
-                  <strong>{returnLabel.value}</strong>
-                </div>
-                <Button variant="secondary" iconLeft="back" onClick$={goBack$}>
-                  {returnLabel.value}
-                </Button>
               </div>
-            </Panel>
+            </aside>
 
-            <div class="user-detail__grid">
-              <Panel title="Cuenta" description="Datos de identificacion">
-                <dl class="user-detail__list">
+            <main class="user-detail__main">
+              <Panel
+                title="Información de Cuenta"
+                description="Datos de acceso y registro"
+              >
+                <dl class="user-detail__info-grid">
                   <div>
-                    <dt>ID</dt>
+                    <dt>ID de registro</dt>
                     <dd>{currentUser.id}</dd>
                   </div>
                   <div>
-                    <dt>Usuario</dt>
+                    <dt>Usuario / Correo</dt>
                     <dd>{currentUser.username}</dd>
                   </div>
                   <div>
-                    <dt>Nombre</dt>
+                    <dt>Nombre Completo</dt>
                     <dd>{currentUser.fullName}</dd>
                   </div>
                 </dl>
               </Panel>
 
-              <Panel title="Permisos" description="Rol y tipo asignado">
-                <dl class="user-detail__list">
+              <Panel
+                title="Rol y Permisos asignados"
+                description="Nivel de acceso en la plataforma de control escolar"
+              >
+                <dl class="user-detail__info-grid">
                   <div>
-                    <dt>Rol</dt>
+                    <dt>Rol Principal</dt>
                     <dd>{currentUser.roleName}</dd>
                   </div>
                   <div>
-                    <dt>Descripcion de rol</dt>
-                    <dd>{currentUser.roleDescription}</dd>
+                    <dt>Descripción del Rol</dt>
+                    <dd>
+                      {currentUser.roleDescription ||
+                        'Sin descripción asignada.'}
+                    </dd>
                   </div>
                   <div>
-                    <dt>Tipo</dt>
+                    <dt>Tipo de Usuario</dt>
                     <dd>{currentUser.userTypeName}</dd>
                   </div>
                   <div>
-                    <dt>Descripcion de tipo</dt>
-                    <dd>{currentUser.userTypeDescription}</dd>
+                    <dt>Alcance del Tipo</dt>
+                    <dd>
+                      {currentUser.userTypeDescription ||
+                        'Sin descripción de alcance.'}
+                    </dd>
                   </div>
                 </dl>
               </Panel>
-            </div>
-
-            <Panel title="Acciones" description="Operaciones disponibles">
-              <div class="user-detail__actions">
-                <Button
-                  variant="secondary"
-                  iconLeft="edit"
-                  onClick$={async () =>
-                    await nav(`/users/edit?id=${currentUser.id}`)
-                  }
-                >
-                  Editar
-                </Button>
-                <Button
-                  variant="secondary"
-                  iconLeft="toggle"
-                  onClick$={async () =>
-                    await nav(`/users/toggle?id=${currentUser.id}`)
-                  }
-                >
-                  Activar / Desactivar
-                </Button>
-                <Button
-                  variant="secondary"
-                  iconLeft="unlock"
-                  onClick$={async () =>
-                    await nav(`/users/unlock?id=${currentUser.id}`)
-                  }
-                >
-                  Desbloquear
-                </Button>
-                <Button
-                  variant="secondary"
-                  iconLeft="login-reset"
-                  onClick$={async () =>
-                    await nav(`/users/reset-login?id=${currentUser.id}`)
-                  }
-                >
-                  Resetear login
-                </Button>
-              </div>
-            </Panel>
-          </>
+            </main>
+          </div>
         )}
       </div>
     </AuthenticatedShell>
