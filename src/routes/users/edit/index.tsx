@@ -15,6 +15,7 @@ import {
   Input,
   PageReturn,
   Panel,
+  SearchSelect,
   Select,
   Toast,
   Toolbar,
@@ -293,43 +294,33 @@ export default component$(() => {
                 label="Usuario"
                 hint="Escribe al menos 3 caracteres para buscar."
               >
-                <Input
-                  iconLeft="search"
+                <SearchSelect
+                  query={searchTerm.value}
+                  options={searchResults.value.map((result) => ({
+                    value: String(result.id),
+                    label: result.fullName,
+                    description: result.username,
+                  }))}
+                  loading={searching.value}
                   placeholder="Nombre o usuario"
-                  value={searchTerm.value}
-                  onInput$={(event) => {
-                    searchTerm.value = (event.target as HTMLInputElement).value;
+                  emptyMessage={
+                    searchTerm.value.length < 3
+                      ? 'Escribe al menos 3 caracteres'
+                      : 'No se encontraron usuarios'
+                  }
+                  onQueryChange$={(query) => {
+                    searchTerm.value = query;
+                    error.value = '';
                   }}
+                  onSelect$={async (option) => {
+                    await openManualEdit$(Number(option.value));
+                  }}
+                  onClear$={$(() => {
+                    searchTerm.value = '';
+                    searchResults.value = [];
+                  })}
                 />
               </Field>
-
-              {searching.value && (
-                <div class="edit-user__loading" aria-label="Buscando" />
-              )}
-
-              {searchTerm.value.trim().length >= 3 &&
-                !searching.value &&
-                searchResults.value.length === 0 && (
-                  <p class="edit-user-person span">
-                    No se encontraron usuarios con ese criterio.
-                  </p>
-                )}
-
-              {searchResults.value.length > 0 && (
-                <div class="edit-user__results">
-                  {searchResults.value.map((result) => (
-                    <button
-                      type="button"
-                      class="edit-user__result-card"
-                      key={result.id}
-                      onClick$={async () => await openManualEdit$(result.id)}
-                    >
-                      <strong>{result.fullName}</strong>
-                      <span>{result.username}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
           </Panel>
         )}
