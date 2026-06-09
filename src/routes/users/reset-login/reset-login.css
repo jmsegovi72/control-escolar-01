@@ -21,31 +21,50 @@
   gap: var(--space-2);
 }
 
-.reset-login__result {
+.reset-login__result-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-3);
   align-items: center;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface-subtle);
   padding: var(--space-3);
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  text-align: left;
 }
 
-.reset-login__result div {
+.reset-login__result-card:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.reset-login__result-info {
   display: grid;
   gap: var(--space-1);
   min-width: 0;
 }
 
-.reset-login__result strong,
-.reset-login__result span {
+.reset-login__result-info strong,
+.reset-login__result-info span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.reset-login__result span,
+.reset-login__result-info strong {
+  color: var(--color-text);
+}
+
+.reset-login__result-info span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
 .reset-login__success span {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
@@ -111,7 +130,7 @@
 }
 
 @media (max-width: 760px) {
-  .reset-login__result,
+  .reset-login__result-card,
   .reset-login__summary dl {
     grid-template-columns: 1fr;
   }

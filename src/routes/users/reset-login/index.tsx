@@ -259,8 +259,13 @@ export default component$(() => {
                 {searchResults.value.length > 0 && (
                   <div class="reset-login__results">
                     {searchResults.value.map((result) => (
-                      <article class="reset-login__result" key={result.id}>
-                        <div>
+                      <button
+                        type="button"
+                        class="reset-login__result-card"
+                        key={result.id}
+                        onClick$={async () => await openManualUser$(result.id)}
+                      >
+                        <div class="reset-login__result-info">
                           <strong>{result.fullName}</strong>
                           <span>{result.username}</span>
                         </div>
@@ -269,16 +274,7 @@ export default component$(() => {
                             ? 'Primer login pendiente'
                             : 'Primer login completado'}
                         </Badge>
-                        <Button
-                          size="sm"
-                          iconLeft="login-reset"
-                          onClick$={async () =>
-                            await openManualUser$(result.id)
-                          }
-                        >
-                          Elegir
-                        </Button>
-                      </article>
+                      </button>
                     ))}
                   </div>
                 )}

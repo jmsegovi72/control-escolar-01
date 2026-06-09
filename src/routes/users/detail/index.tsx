@@ -255,24 +255,20 @@ export default component$(() => {
               {searchResults.value.length > 0 && (
                 <div class="user-detail__results">
                   {searchResults.value.map((result) => (
-                    <article class="user-detail__result" key={result.id}>
-                      <div>
+                    <button
+                      type="button"
+                      class="user-detail__result-card"
+                      key={result.id}
+                      onClick$={async () => await openManualDetail$(result.id)}
+                    >
+                      <div class="user-detail__result-info">
                         <strong>{result.fullName}</strong>
                         <span>{result.username}</span>
                       </div>
                       <Badge tone={result.isActive ? 'success' : 'danger'}>
                         {result.isActive ? 'Activo' : 'Inactivo'}
                       </Badge>
-                      <Button
-                        size="sm"
-                        iconLeft="view"
-                        onClick$={async () =>
-                          await openManualDetail$(result.id)
-                        }
-                      >
-                        Ver
-                      </Button>
-                    </article>
+                    </button>
                   ))}
                 </div>
               )}
