@@ -545,7 +545,11 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           Cerrar sesion
         </Button>
 
-        {authorizationReady.value && authorized.value && <Slot />}
+        {authorizationReady.value && authorized.value && (
+          <div class="authenticated-shell__container">
+            <Slot />
+          </div>
+        )}
 
         {authorizationReady.value && !authorized.value && (
           <Panel
