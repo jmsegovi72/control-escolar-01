@@ -285,134 +285,129 @@ export default component$(() => {
 
         {!loading.value && currentUser && (
           <div class="user-detail__layout">
-            <aside class="user-detail__sidebar">
-              <div class="user-detail__profile-card">
-                <div class="user-detail__avatar-wrapper">
-                  {currentUser.photoUrl ? (
-                    <img
-                      src={getPhotoUrl(currentUser)}
-                      alt={currentUser.fullName}
-                    />
-                  ) : (
-                    <span>{getInitials(currentUser.fullName)}</span>
-                  )}
-                </div>
-                <div class="user-detail__profile-info">
-                  <h2>{currentUser.fullName}</h2>
-                  <p>{currentUser.username}</p>
-                </div>
-                <div class="user-detail__profile-badges">
-                  <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
-                    {currentUser.isActive ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                  <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
-                    {currentUser.firstLogin
-                      ? 'Primer acceso pendiente'
-                      : 'Acceso completado'}
-                  </Badge>
-                </div>
+            <div class="user-detail__profile-card">
+              <div class="user-detail__avatar-wrapper">
+                {currentUser.photoUrl ? (
+                  <img
+                    src={getPhotoUrl(currentUser)}
+                    alt={currentUser.fullName}
+                  />
+                ) : (
+                  <span>{getInitials(currentUser.fullName)}</span>
+                )}
               </div>
-
-              <div class="user-detail__actions-card">
-                <h3>Acciones de cuenta</h3>
-                <div class="user-detail__action-list">
-                  <Button
-                    variant="primary"
-                    iconLeft="edit"
-                    fullWidth
-                    onClick$={async () =>
-                      await nav(`/users/edit?id=${currentUser.id}`)
-                    }
-                  >
-                    Editar datos
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    iconLeft="toggle"
-                    fullWidth
-                    onClick$={async () =>
-                      await nav(`/users/toggle?id=${currentUser.id}`)
-                    }
-                  >
-                    {currentUser.isActive
-                      ? 'Desactivar cuenta'
-                      : 'Activar cuenta'}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    iconLeft="unlock"
-                    fullWidth
-                    onClick$={async () =>
-                      await nav(`/users/unlock?id=${currentUser.id}`)
-                    }
-                  >
-                    Desbloquear cuenta
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    iconLeft="login-reset"
-                    fullWidth
-                    onClick$={async () =>
-                      await nav(`/users/reset-login?id=${currentUser.id}`)
-                    }
-                  >
-                    Restablecer acceso
-                  </Button>
-                </div>
+              <div class="user-detail__profile-info">
+                <h2>{currentUser.fullName}</h2>
+                <p>{currentUser.username}</p>
               </div>
-            </aside>
+              <div class="user-detail__profile-badges">
+                <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
+                  {currentUser.isActive ? 'Activo' : 'Inactivo'}
+                </Badge>
+                <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
+                  {currentUser.firstLogin
+                    ? 'Primer acceso pendiente'
+                    : 'Acceso completado'}
+                </Badge>
+              </div>
+            </div>
 
-            <main class="user-detail__main">
-              <Panel
-                title="Información de Cuenta"
-                description="Datos de acceso y registro"
-              >
-                <dl class="user-detail__info-grid">
-                  <div>
-                    <dt>ID de registro</dt>
-                    <dd>{currentUser.id}</dd>
-                  </div>
-                  <div>
-                    <dt>Usuario / Correo</dt>
-                    <dd>{currentUser.username}</dd>
-                  </div>
-                  <div>
-                    <dt>Nombre Completo</dt>
-                    <dd>{currentUser.fullName}</dd>
-                  </div>
-                </dl>
-              </Panel>
+            <Panel
+              title="Información de Cuenta"
+              description="Datos de acceso y registro"
+            >
+              <dl class="user-detail__info-grid">
+                <div>
+                  <dt>ID de registro</dt>
+                  <dd>{currentUser.id}</dd>
+                </div>
+                <div>
+                  <dt>Usuario / Correo</dt>
+                  <dd>{currentUser.username}</dd>
+                </div>
+                <div>
+                  <dt>Nombre Completo</dt>
+                  <dd>{currentUser.fullName}</dd>
+                </div>
+              </dl>
+            </Panel>
 
-              <Panel
-                title="Rol y Permisos asignados"
-                description="Nivel de acceso en la plataforma de control escolar"
-              >
-                <dl class="user-detail__info-grid">
-                  <div>
-                    <dt>Rol Principal</dt>
-                    <dd>{currentUser.roleName}</dd>
-                  </div>
-                  <div>
-                    <dt>Descripción del Rol</dt>
-                    <dd>
-                      {currentUser.roleDescription ||
-                        'Sin descripción asignada.'}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Tipo de Usuario</dt>
-                    <dd>{currentUser.userTypeName}</dd>
-                  </div>
-                  <div>
-                    <dt>Alcance del Tipo</dt>
-                    <dd>
-                      {currentUser.userTypeDescription ||
-                        'Sin descripción de alcance.'}
-                    </dd>
-                  </div>
-                </dl>
-              </Panel>
-            </main>
+            <div class="user-detail__actions-card">
+              <h3>Acciones de cuenta</h3>
+              <div class="user-detail__action-list">
+                <Button
+                  variant="primary"
+                  iconLeft="edit"
+                  fullWidth
+                  onClick$={async () =>
+                    await nav(`/users/edit?id=${currentUser.id}`)
+                  }
+                >
+                  Editar datos
+                </Button>
+                <Button
+                  variant="secondary"
+                  iconLeft="toggle"
+                  fullWidth
+                  onClick$={async () =>
+                    await nav(`/users/toggle?id=${currentUser.id}`)
+                  }
+                >
+                  {currentUser.isActive
+                    ? 'Desactivar cuenta'
+                    : 'Activar cuenta'}
+                </Button>
+                <Button
+                  variant="secondary"
+                  iconLeft="unlock"
+                  fullWidth
+                  onClick$={async () =>
+                    await nav(`/users/unlock?id=${currentUser.id}`)
+                  }
+                >
+                  Desbloquear cuenta
+                </Button>
+                <Button
+                  variant="secondary"
+                  iconLeft="login-reset"
+                  fullWidth
+                  onClick$={async () =>
+                    await nav(`/users/reset-login?id=${currentUser.id}`)
+                  }
+                >
+                  Restablecer acceso
+                </Button>
+              </div>
+            </div>
+
+            <Panel
+              title="Rol y Permisos asignados"
+              description="Nivel de acceso en la plataforma de control escolar"
+            >
+              <dl class="user-detail__info-grid">
+                <div>
+                  <dt>Rol Principal</dt>
+                  <dd>{currentUser.roleName}</dd>
+                </div>
+                <div>
+                  <dt>Descripción del Rol</dt>
+                  <dd>
+                    {currentUser.roleDescription || 'Sin descripción asignada.'}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Tipo de Usuario</dt>
+                  <dd>{currentUser.userTypeName}</dd>
+                </div>
+                <div>
+                  <dt>Alcance del Tipo</dt>
+                  <dd>
+                    {currentUser.userTypeDescription ||
+                      'Sin descripción de alcance.'}
+                  </dd>
+                </div>
+              </dl>
+            </Panel>
           </div>
         )}
       </div>

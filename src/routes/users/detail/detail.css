@@ -1,6 +1,9 @@
 .user-detail {
   display: grid;
   gap: var(--space-4);
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Selector y Buscador Manual */
@@ -95,15 +98,8 @@
 .user-detail__layout {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: var(--space-5);
-  align-items: start;
-}
-
-/* Sidebar del Perfil */
-.user-detail__sidebar {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-4);
+  align-items: stretch;
 }
 
 .user-detail__profile-card {
@@ -187,13 +183,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-/* Área de Información Principal */
-.user-detail__main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 
 /* Rejilla de información de los paneles */
