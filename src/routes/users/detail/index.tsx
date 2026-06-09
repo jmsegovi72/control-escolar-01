@@ -7,7 +7,7 @@ import { appConfig } from '~/config/app.config';
 import { ENV } from '~/config/env';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import { Badge, Button, Field, Input, Panel, Toolbar } from '~/ui';
+import { Badge, Button, Field, Input, PageReturn, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { usersWorkflow } from '~/utils/users-workflow';
 import './detail.css';
@@ -187,15 +187,12 @@ export default component$(() => {
       </Toolbar>
 
       <div class="user-detail">
-        <nav class="user-detail__return" aria-label="Navegacion de usuarios">
-          <div>
-            <span>Modulo de usuarios</span>
-            <strong>Detalle de usuario</strong>
-          </div>
-          <Button variant="secondary" iconLeft="back" onClick$={goBack$}>
-            Regresar
-          </Button>
-        </nav>
+        <PageReturn
+          eyebrow="Modulo de usuarios"
+          title="Detalle de usuario"
+          buttonLabel={returnLabel.value}
+          onClick$={goBack$}
+        />
 
         {loading.value && (
           <Panel title="Cargando usuario" description="Consultando datos...">

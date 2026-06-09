@@ -20,6 +20,7 @@ import {
   Checkbox,
   Field,
   Input,
+  PageReturn,
   Panel,
   SearchSelect,
   Select,
@@ -199,6 +200,13 @@ export default component$(() => {
       </Toolbar>
 
       <div class="create-user-page">
+        <PageReturn
+          eyebrow="Modulo de usuarios"
+          title="Crear usuario"
+          buttonLabel="Regresar"
+          onClick$={async () => await nav('/users')}
+        />
+
         {error.value && (
           <Toast tone="danger" title="Revision necesaria">
             {error.value}

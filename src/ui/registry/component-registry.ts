@@ -244,6 +244,16 @@ export const componentRegistry = [
     docsPath: 'src/ui/composed/SystemHealth/system-health.usage.md',
   },
   {
+    id: 'page-return',
+    name: 'PageReturn',
+    category: 'composed',
+    status: 'ready',
+    description:
+      'Barra de navegacion superior con boton regresar y titulo de modulo.',
+    importPath: '~/ui',
+    docsPath: 'src/ui/composed/PageReturn/page-return.usage.md',
+  },
+  {
     id: 'breadcrumbs',
     name: 'Breadcrumbs',
     category: 'pattern',

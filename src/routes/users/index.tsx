@@ -103,8 +103,7 @@ export default component$(() => {
       <Toolbar q:slot="toolbar">
         <span q:slot="leading">Hub de acciones</span>
         <span q:slot="center">
-          La busqueda avanzada sera el centro del modulo; las demas acciones se
-          resolveran desde seleccion de usuario.
+          Consulta, alta y administracion de accesos del sistema.
         </span>
         <Button
           q:slot="actions"
@@ -121,9 +120,8 @@ export default component$(() => {
             <span class="users-hub__kicker">Centro de administracion</span>
             <h2>Gestiona accesos sin perder el contexto</h2>
             <p>
-              Primero construiremos la busqueda/listado con filtros y acciones
-              por fila. Este hub queda como entrada rapida para los flujos
-              administrativos.
+              Administra cuentas, permisos, bloqueos y primer acceso desde un
+              solo modulo.
             </p>
           </div>
           <div class="users-hub__summary" aria-label="Resumen del modulo">
@@ -156,7 +154,7 @@ export default component$(() => {
                 <p>{action.description}</p>
               </div>
               <Button
-                variant={action.id === 'search' ? 'primary' : 'secondary'}
+                variant="primary"
                 iconRight="chevron-right"
                 onClick$={async () => await nav(action.href)}
               >
@@ -168,7 +166,7 @@ export default component$(() => {
 
         <Panel
           title="Acciones operativas"
-          description="Estas acciones normalmente parten de un usuario seleccionado en la tabla."
+          description="Flujos administrativos para consulta, mantenimiento y soporte de cuentas."
           density="compact"
         >
           <div class="users-hub__grid">

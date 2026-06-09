@@ -6,6 +6,7 @@ export { DropdownMenu } from './composed/DropdownMenu/DropdownMenu';
 export { EmptyState } from './composed/EmptyState/EmptyState';
 export { FileUpload } from './composed/FileUpload/FileUpload';
 export { NotificationCenter } from './composed/NotificationCenter/NotificationCenter';
+export { PageReturn } from './composed/PageReturn/PageReturn';
 export { SearchSelect } from './composed/SearchSelect/SearchSelect';
 export { Skeleton } from './composed/Skeleton/Skeleton';
 export {
