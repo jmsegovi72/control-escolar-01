@@ -2,7 +2,7 @@ import {
   component$,
   useComputed$,
   useSignal,
-  useVisibleTask$,
+  useTask$,
 } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
@@ -43,7 +43,7 @@ export default component$(() => {
       form.value.newPassword === form.value.confirmPassword,
   );
 
-  useVisibleTask$(async () => {
+  useTask$(async () => {
     if (authService.isAuthenticated()) {
       await nav(ROUTES.DASHBOARD);
       return;

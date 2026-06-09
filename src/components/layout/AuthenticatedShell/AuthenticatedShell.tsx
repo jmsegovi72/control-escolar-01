@@ -3,6 +3,7 @@ import {
   component$,
   Slot,
   useSignal,
+  useTask$,
   useVisibleTask$,
 } from '@builder.io/qwik';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
@@ -76,7 +77,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     const sidebarUser = useSignal<SidebarUser | undefined>();
     const sections = useSignal<SidebarSection[]>([]);
 
-    useVisibleTask$(async () => {
+    useTask$(async () => {
       if (authService.requiresPasswordChange()) {
         await nav(ROUTES.CHANGE_PASSWORD);
         return;
@@ -87,13 +88,15 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         return;
       }
 
-      const storedCollapsed = localStorage.getItem('sidebar-collapsed');
-      collapsed.value = storedCollapsed === 'true';
-      sidebarBehavior.value =
-        localStorage.getItem('sidebar-behavior') === 'hover'
-          ? 'hover'
-          : 'fixed';
-      sidebarHovering.value = false;
+      if (typeof window !== 'undefined') {
+        const storedCollapsed = localStorage.getItem('sidebar-collapsed');
+        collapsed.value = storedCollapsed === 'true';
+        sidebarBehavior.value =
+          localStorage.getItem('sidebar-behavior') === 'hover'
+            ? 'hover'
+            : 'fixed';
+        sidebarHovering.value = false;
+      }
 
       const user = sessionStore.getUser();
       const isSuper = user?.userTypeCode === 'SUPER';
@@ -116,7 +119,9 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         Boolean(isSuper),
         Boolean(hasControlAccess),
       );
+    });
 
+    useVisibleTask$(() => {
       const updateClock = () => {
         const now = new Date();
         const remaining = getTokenRemaining();

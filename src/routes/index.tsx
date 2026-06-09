@@ -1,4 +1,4 @@
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
@@ -33,7 +33,7 @@ export default component$(() => {
   const showDisabledAccountDialog = useSignal(false);
   const expiredReason = useSignal<'session' | 'temporary' | null>(null);
 
-  useVisibleTask$(async () => {
+  useTask$(async () => {
     const params = new URLSearchParams(window.location.search);
     const expiredParam = params.get('expired');
     expiredReason.value =

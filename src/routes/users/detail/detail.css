@@ -37,7 +37,7 @@
 }
 
 .user-detail__result-card:hover {
-  background: var(--color-surface);
+  background: var(--color-primary-soft);
   border-color: var(--color-primary);
   box-shadow: var(--shadow-sm);
 }
