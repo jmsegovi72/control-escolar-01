@@ -10,6 +10,7 @@ import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
 import type { UserListItem } from '~/types/user.types';
 import {
+  Badge,
   Button,
   Field,
   Input,
@@ -316,13 +317,16 @@ export default component$(() => {
                 )}
 
               {searchResults.value.length > 0 && (
-                <div class="edit-user-layout">
+                <div class="edit-user__results">
                   {searchResults.value.map((result) => (
-                    <article class="edit-user-person" key={result.id}>
+                    <article class="edit-user__result" key={result.id}>
                       <div>
                         <strong>{result.fullName}</strong>
                         <span>{result.username}</span>
                       </div>
+                      <Badge tone={result.isActive ? 'success' : 'danger'}>
+                        {result.isActive ? 'Activo' : 'Inactivo'}
+                      </Badge>
                       <Button
                         size="sm"
                         iconLeft="edit"
