@@ -1,4 +1,10 @@
-import { $, component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import {
+  $,
+  component$,
+  useComputed$,
+  useSignal,
+  useVisibleTask$,
+} from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
@@ -6,9 +12,7 @@ import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/Authe
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
-import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
-import type { Role, UserType } from '~/types/catalog.types';
 import type { UserListItem } from '~/types/user.types';
 import {
   Button,
@@ -46,6 +50,9 @@ const toRow = (user: UserListItem): UserRow => ({
 
 export default component$(() => {
   const nav = useNavigate();
+  const allUsers = useSignal<UserListItem[]>([]);
+  const filteredList = useSignal<UserListItem[]>([]);
+  const loadingAll = useSignal(true);
   const rows = useSignal<UserRow[]>([]);
   const total = useSignal(0);
   const page = useSignal(1);
@@ -53,8 +60,6 @@ export default component$(() => {
   const loading = useSignal(false);
   const searched = useSignal(false);
   const error = useSignal('');
-  const roles = useSignal<Role[]>([]);
-  const userTypes = useSignal<UserType[]>([]);
   const searchTerm = useSignal('');
   const fullName = useSignal('');
   const roleName = useSignal('');
@@ -62,33 +67,84 @@ export default component$(() => {
   const isActive = useSignal('');
   const isFirstLogin = useSignal('');
 
-  const roleOptions = roles.value.map((role) => ({
-    value: role.name,
-    label: role.name,
-  }));
+  const roleOptions = useComputed$(() => {
+    const users = allUsers.value.filter((u) => {
+      if (userTypeName.value && u.userTypeName !== userTypeName.value)
+        return false;
+      if (isActive.value !== '') {
+        const activeBool = isActive.value === 'true';
+        if (u.isActive !== activeBool) return false;
+      }
+      if (isFirstLogin.value !== '') {
+        const firstLoginBool = isFirstLogin.value === 'true';
+        if (u.firstLogin !== firstLoginBool) return false;
+      }
+      return true;
+    });
+    const uniqueRoles = Array.from(
+      new Set(users.map((u) => u.roleName)),
+    ).filter(Boolean);
+    return uniqueRoles.map((role) => ({ value: role, label: role }));
+  });
 
-  const userTypeOptions = userTypes.value.map((userType) => ({
-    value: userType.name,
-    label: userType.name,
-  }));
+  const userTypeOptions = useComputed$(() => {
+    const users = allUsers.value.filter((u) => {
+      if (roleName.value && u.roleName !== roleName.value) return false;
+      if (isActive.value !== '') {
+        const activeBool = isActive.value === 'true';
+        if (u.isActive !== activeBool) return false;
+      }
+      if (isFirstLogin.value !== '') {
+        const firstLoginBool = isFirstLogin.value === 'true';
+        if (u.firstLogin !== firstLoginBool) return false;
+      }
+      return true;
+    });
+    const uniqueTypes = Array.from(
+      new Set(users.map((u) => u.userTypeName)),
+    ).filter(Boolean);
+    return uniqueTypes.map((type) => ({ value: type, label: type }));
+  });
 
-  const activeOptions = [
-    { value: 'true', label: messages.users.search.statusActive },
-    { value: 'false', label: messages.users.search.statusInactive },
-  ];
+  const activeOptions = useComputed$(() => {
+    const users = allUsers.value.filter((u) => {
+      if (roleName.value && u.roleName !== roleName.value) return false;
+      if (userTypeName.value && u.userTypeName !== userTypeName.value)
+        return false;
+      if (isFirstLogin.value !== '') {
+        const firstLoginBool = isFirstLogin.value === 'true';
+        if (u.firstLogin !== firstLoginBool) return false;
+      }
+      return true;
+    });
+    const uniqueActive = Array.from(new Set(users.map((u) => u.isActive)));
+    return uniqueActive.map((act) => ({
+      value: String(act),
+      label: act
+        ? messages.users.search.statusActive
+        : messages.users.search.statusInactive,
+    }));
+  });
 
-  const firstLoginOptions = [
-    { value: 'true', label: messages.users.search.firstLoginPending },
-    { value: 'false', label: messages.users.search.firstLoginCompleted },
-  ];
-
-  const hasActiveFilters =
-    Boolean(searchTerm.value) ||
-    Boolean(fullName.value) ||
-    Boolean(roleName.value) ||
-    Boolean(userTypeName.value) ||
-    Boolean(isActive.value) ||
-    Boolean(isFirstLogin.value);
+  const firstLoginOptions = useComputed$(() => {
+    const users = allUsers.value.filter((u) => {
+      if (roleName.value && u.roleName !== roleName.value) return false;
+      if (userTypeName.value && u.userTypeName !== userTypeName.value)
+        return false;
+      if (isActive.value !== '') {
+        const activeBool = isActive.value === 'true';
+        if (u.isActive !== activeBool) return false;
+      }
+      return true;
+    });
+    const uniqueFirst = Array.from(new Set(users.map((u) => u.firstLogin)));
+    return uniqueFirst.map((fl) => ({
+      value: String(fl),
+      label: fl
+        ? messages.users.search.firstLoginPending
+        : messages.users.search.firstLoginCompleted,
+    }));
+  });
 
   const saveWorkContext$ = $((row: UserRow) => {
     usersWorkflow.save(
@@ -106,26 +162,55 @@ export default component$(() => {
     );
   });
 
+  const updateRows$ = $(() => {
+    const start = (page.value - 1) * limit.value;
+    const end = start + limit.value;
+    rows.value = filteredList.value.slice(start, end).map(toRow);
+  });
+
   const searchUsers$ = $(async () => {
     loading.value = true;
     searched.value = true;
     error.value = '';
 
     try {
-      const response = await userService.findMany({
-        page: page.value,
-        limit: limit.value,
-        searchTerm: searchTerm.value || undefined,
-        fullName: fullName.value || undefined,
-        roleName: roleName.value || undefined,
-        userTypeName: userTypeName.value || undefined,
-        isActive: isActive.value === '' ? undefined : isActive.value === 'true',
-        isFirstLogin:
-          isFirstLogin.value === '' ? undefined : isFirstLogin.value === 'true',
+      const filtered = allUsers.value.filter((u) => {
+        if (searchTerm.value.trim()) {
+          const q = searchTerm.value.trim().toLowerCase();
+          const matchUsername = u.username.toLowerCase().includes(q);
+          const matchFullName = u.fullName.toLowerCase().includes(q);
+          if (!matchUsername && !matchFullName) return false;
+        }
+
+        if (fullName.value.trim()) {
+          const q = fullName.value.trim().toLowerCase();
+          if (!u.fullName.toLowerCase().includes(q)) return false;
+        }
+
+        if (roleName.value && u.roleName !== roleName.value) {
+          return false;
+        }
+
+        if (userTypeName.value && u.userTypeName !== userTypeName.value) {
+          return false;
+        }
+
+        if (isActive.value !== '') {
+          const activeBool = isActive.value === 'true';
+          if (u.isActive !== activeBool) return false;
+        }
+
+        if (isFirstLogin.value !== '') {
+          const firstLoginBool = isFirstLogin.value === 'true';
+          if (u.firstLogin !== firstLoginBool) return false;
+        }
+
+        return true;
       });
 
-      rows.value = response.data.map(toRow);
-      total.value = response.meta?.totalRecords ?? response.total ?? 0;
+      filteredList.value = filtered;
+      total.value = filtered.length;
+      updateRows$();
     } catch (err) {
       rows.value = [];
       total.value = 0;
@@ -151,16 +236,14 @@ export default component$(() => {
   });
 
   useVisibleTask$(async () => {
+    loadingAll.value = true;
     try {
-      const [rolesData, userTypesData] = await Promise.all([
-        catalogService.getRoles(),
-        catalogService.getUserTypes(),
-      ]);
-      roles.value = rolesData;
-      userTypes.value = userTypesData;
+      const response = await userService.findMany({ limit: 10000 });
+      allUsers.value = response.data;
     } catch {
-      roles.value = [];
-      userTypes.value = [];
+      allUsers.value = [];
+    } finally {
+      loadingAll.value = false;
     }
 
     const savedState = usersWorkflow.getState();
@@ -182,36 +265,18 @@ export default component$(() => {
       key: 'fullName',
       label: messages.users.search.columns.fullName,
       sortable: true,
-      filter: {
-        type: 'text',
-        placeholder: messages.users.search.columns.fullNamePlaceholder,
-      },
     },
     {
       key: 'username',
       label: messages.users.search.columns.username,
-      filter: {
-        type: 'text',
-        placeholder: messages.users.search.columns.usernamePlaceholder,
-      },
     },
     {
       key: 'roleName',
       label: messages.users.search.columns.role,
-      filter: {
-        type: 'select',
-        placeholder: messages.users.search.filterRolePlaceholder,
-        options: roleOptions,
-      },
     },
     {
       key: 'userTypeName',
       label: messages.users.search.columns.type,
-      filter: {
-        type: 'select',
-        placeholder: messages.users.search.filterTypePlaceholder,
-        options: userTypeOptions,
-      },
     },
     {
       key: 'activeLabel',
@@ -224,11 +289,6 @@ export default component$(() => {
           [messages.users.search.statusInactive]: 'danger',
         },
       },
-      filter: {
-        type: 'select',
-        placeholder: messages.users.search.filterStatusPlaceholder,
-        options: activeOptions,
-      },
     },
     {
       key: 'firstLoginLabel',
@@ -240,11 +300,6 @@ export default component$(() => {
           [messages.users.search.firstLoginPending]: 'warning',
           [messages.users.search.firstLoginCompleted]: 'success',
         },
-      },
-      filter: {
-        type: 'select',
-        placeholder: messages.users.search.filterFirstLoginPlaceholder,
-        options: firstLoginOptions,
       },
     },
   ];
@@ -371,7 +426,13 @@ export default component$(() => {
                 <Select
                   iconLeft="user-settings"
                   value={roleName.value}
-                  options={roleOptions}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterRolePlaceholder,
+                    },
+                    ...roleOptions.value,
+                  ]}
                   placeholder={messages.users.search.filterRolePlaceholder}
                   onChange$={(value) => {
                     roleName.value = value;
@@ -383,7 +444,13 @@ export default component$(() => {
                 <Select
                   iconLeft="person"
                   value={userTypeName.value}
-                  options={userTypeOptions}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterTypePlaceholder,
+                    },
+                    ...userTypeOptions.value,
+                  ]}
                   placeholder={messages.users.search.filterTypePlaceholder}
                   onChange$={(value) => {
                     userTypeName.value = value;
@@ -395,7 +462,13 @@ export default component$(() => {
                 <Select
                   iconLeft="toggle"
                   value={isActive.value}
-                  options={activeOptions}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterStatusPlaceholder,
+                    },
+                    ...activeOptions.value,
+                  ]}
                   placeholder={messages.users.search.filterStatusPlaceholder}
                   onChange$={(value) => {
                     isActive.value = value;
@@ -407,7 +480,13 @@ export default component$(() => {
                 <Select
                   iconLeft="lock"
                   value={isFirstLogin.value}
-                  options={firstLoginOptions}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterFirstLoginPlaceholder,
+                    },
+                    ...firstLoginOptions.value,
+                  ]}
                   placeholder={
                     messages.users.search.filterFirstLoginPlaceholder
                   }
@@ -456,32 +535,17 @@ export default component$(() => {
             }}
             loading={loading.value}
             searchable={false}
-            hasActiveFilters={hasActiveFilters}
             stickyHeader
             emptyTitle={messages.users.search.tableEmptyTitle}
             emptyDescription={messages.users.search.tableEmptyDescription}
-            onFilter$={$(async (change) => {
-              if (change.key === 'fullName') fullName.value = change.value;
-              if (change.key === 'username') searchTerm.value = change.value;
-              if (change.key === 'roleName') roleName.value = change.value;
-              if (change.key === 'userTypeName')
-                userTypeName.value = change.value;
-              if (change.key === 'activeLabel') isActive.value = change.value;
-              if (change.key === 'firstLoginLabel') {
-                isFirstLogin.value = change.value;
-              }
-              page.value = 1;
-              await searchUsers$();
-            })}
-            onClearFilters$={clearFilters$}
             onPage$={$(async (nextPage) => {
               page.value = nextPage;
-              await searchUsers$();
+              updateRows$();
             })}
             onLimit$={$(async (nextLimit) => {
               limit.value = nextLimit;
               page.value = 1;
-              await searchUsers$();
+              updateRows$();
             })}
           />
         )}
