@@ -123,7 +123,10 @@ export default component$(() => {
             <h2>{messages.users.hub.heroTitle}</h2>
             <p>{messages.users.hub.heroDescription}</p>
           </div>
-          <div class="users-hub__summary" aria-label="Resumen del modulo">
+          <div
+            class="users-hub__summary"
+            aria-label={messages.users.hub.summaryLabel}
+          >
             <span>
               <strong>7</strong>
               {messages.users.hub.summaryActions}

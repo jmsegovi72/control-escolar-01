@@ -23,6 +23,7 @@
   left: 0;
   display: grid;
   max-height: 16rem;
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
@@ -64,12 +65,18 @@
 
 .ui-search-select__option-main {
   font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ui-search-select__option-description {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   line-height: var(--line-height-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ui-search-select__state {

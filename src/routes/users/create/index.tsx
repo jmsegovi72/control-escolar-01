@@ -28,6 +28,7 @@ import {
   Toolbar,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
+import { messages } from '~/config/messages';
 import { normalizeError } from '~/utils/api-error';
 import './create.css';
 
@@ -74,7 +75,7 @@ export default component$(() => {
     } catch (err) {
       error.value = normalizeError(
         err,
-        'No se pudieron cargar catalogos',
+        messages.errors.loadCatalogsFailed,
       ).message;
     } finally {
       loadingCatalogs.value = false;
@@ -118,24 +119,24 @@ export default component$(() => {
     errorField.value = '';
 
     if (!selectedPerson.value) {
-      error.value = 'Selecciona una persona para crear el usuario.';
+      error.value = messages.users.create.validationPersonRequired;
       return;
     }
 
     if (!form.value.roleId) {
-      error.value = 'El rol es requerido.';
+      error.value = messages.users.create.validationRole;
       errorField.value = 'roleId';
       return;
     }
 
     if (!form.value.userTypeId) {
-      error.value = 'El tipo de usuario es requerido.';
+      error.value = messages.users.create.validationUserType;
       errorField.value = 'userTypeId';
       return;
     }
 
     if (!form.value.username.trim()) {
-      error.value = 'El usuario o correo es requerido.';
+      error.value = messages.users.create.validationUsername;
       errorField.value = 'username';
       return;
     }
@@ -157,7 +158,7 @@ export default component$(() => {
       success.value = true;
       await resetSelection$();
     } catch (err) {
-      const normalized = normalizeError(err, 'Error al crear el usuario');
+      const normalized = normalizeError(err, messages.errors.createUserFailed);
       error.value = normalized.message;
       errorField.value = normalized.invalidField ?? '';
     } finally {
@@ -177,12 +178,12 @@ export default component$(() => {
 
   return (
     <AuthenticatedShell
-      eyebrow="Administracion"
-      title="Crear usuario"
-      description="Asigna acceso al sistema a una persona registrada."
-      meta="Alta de acceso"
+      eyebrow={messages.users.create.eyebrow}
+      title={messages.users.create.title}
+      description={messages.users.create.description}
+      meta={messages.users.create.meta}
       allowedUserTypes={['SUPER']}
-      accessDeniedDescription="Crear usuarios esta reservado para cuentas SUPER."
+      accessDeniedDescription={messages.users.create.accessDenied}
     >
       <Toolbar q:slot="toolbar">
         <Button
@@ -191,40 +192,37 @@ export default component$(() => {
           iconLeft="back"
           onClick$={async () => await nav('/users')}
         >
-          Volver
+          {messages.users.create.toolbarBack}
         </Button>
-        <span q:slot="center">
-          El usuario se liga a una persona existente; si no existe, primero debe
-          capturarse en Personas.
-        </span>
+        <span q:slot="center">{messages.users.create.toolbarCenter}</span>
       </Toolbar>
 
       <div class="create-user-page">
         <PageReturn
-          eyebrow="Modulo de usuarios"
-          title="Crear usuario"
-          buttonLabel="Regresar"
+          eyebrow={messages.users.create.pageReturnEyebrow}
+          title={messages.users.create.title}
+          buttonLabel={messages.users.create.pageReturnLabel}
           onClick$={async () => await nav('/users')}
         />
 
         {error.value && (
-          <Toast tone="danger" title="Revision necesaria">
+          <Toast tone="danger" title={messages.users.common.errorToastTitle}>
             {error.value}
           </Toast>
         )}
 
         {success.value ? (
           <Panel
-            eyebrow="Usuario creado"
-            title="Entrega la contrasena temporal al usuario"
-            description="Esta contrasena es solo para el primer acceso. El usuario debera cambiarla al iniciar sesion."
+            eyebrow={messages.users.create.successEyebrow}
+            title={messages.users.create.successTitle}
+            description={messages.users.create.successDescription}
           >
             <div class="create-user-success">
               <div class="create-user-success__icon" aria-hidden="true">
                 <AppIcon intent="success" size="lg" />
               </div>
               <div>
-                <span>Contrasena temporal</span>
+                <span>{messages.users.create.successTempPasswordLabel}</span>
                 <strong>{tempPassword.value}</strong>
               </div>
               <div class="create-user-success__actions">
@@ -236,7 +234,7 @@ export default component$(() => {
                     await nav('/users');
                   }}
                 >
-                  Terminar
+                  {messages.users.create.successFinish}
                 </Button>
                 <Button
                   iconLeft="add"
@@ -245,7 +243,7 @@ export default component$(() => {
                     tempPassword.value = '';
                   }}
                 >
-                  Crear otro
+                  {messages.users.create.successCreateAnother}
                 </Button>
               </div>
             </div>
@@ -253,14 +251,14 @@ export default component$(() => {
         ) : (
           <div class="create-user-layout">
             <Panel
-              title="1. Persona"
-              description="Busca y selecciona la persona que recibira acceso."
+              title={messages.users.create.panelPersonTitle}
+              description={messages.users.create.panelPersonDescription}
             >
               {!selectedPerson.value ? (
                 <Field
-                  label="Buscar persona"
+                  label={messages.users.create.fieldPersonLabel}
                   required
-                  hint="Escribe al menos 3 caracteres del nombre."
+                  hint={messages.users.create.fieldPersonHint}
                 >
                   <SearchSelect
                     query={searchQuery.value}
@@ -270,11 +268,11 @@ export default component$(() => {
                       description: `${person.personalEmail} | ${person.curp}`,
                     }))}
                     loading={searching.value}
-                    placeholder="Nombre, correo o CURP"
+                    placeholder={messages.users.create.searchPlaceholder}
                     emptyMessage={
                       searchQuery.value.length < 3
-                        ? 'Escribe al menos 3 caracteres'
-                        : 'No se encontraron personas'
+                        ? messages.users.create.emptySearchShort
+                        : messages.users.create.emptySearchNotFound
                     }
                     onQueryChange$={(query) => {
                       searchQuery.value = query;
@@ -314,23 +312,23 @@ export default component$(() => {
                     iconLeft="close"
                     onClick$={resetSelection$}
                   >
-                    Cambiar
+                    {messages.users.create.personChange}
                   </Button>
                 </div>
               )}
             </Panel>
 
             <Panel
-              title="2. Acceso"
-              description="Define credenciales, rol y tipo de usuario."
+              title={messages.users.create.panelAccessTitle}
+              description={messages.users.create.panelAccessDescription}
             >
               <div class="create-user-form">
                 <Field
-                  label="Usuario o correo"
+                  label={messages.users.create.labelUsername}
                   required
                   error={
                     errorField.value === 'username'
-                      ? 'Usuario invalido o ya registrado.'
+                      ? messages.users.create.errorUsernameInvalid
                       : undefined
                   }
                 >
@@ -339,7 +337,7 @@ export default component$(() => {
                     value={form.value.username}
                     disabled={!selectedPerson.value || !customUsername.value}
                     invalid={errorField.value === 'username'}
-                    placeholder="correo@escuela.edu"
+                    placeholder={messages.users.create.placeholderUsername}
                     onInput$={(event) => {
                       form.value = {
                         ...form.value,
@@ -364,16 +362,16 @@ export default component$(() => {
                     }
                   }}
                 >
-                  Editar usuario manualmente
+                  {messages.users.create.editUsernameCheckbox}
                 </Checkbox>
 
                 <div class="create-user-grid">
                   <Field
-                    label="Rol"
+                    label={messages.users.create.labelRole}
                     required
                     error={
                       errorField.value === 'roleId'
-                        ? 'Rol requerido.'
+                        ? messages.users.create.errorRoleRequired
                         : undefined
                     }
                   >
@@ -382,7 +380,9 @@ export default component$(() => {
                       value={form.value.roleId ? String(form.value.roleId) : ''}
                       options={roleOptions}
                       placeholder={
-                        loadingCatalogs.value ? 'Cargando...' : 'Selecciona rol'
+                        loadingCatalogs.value
+                          ? messages.users.create.placeholderRoleLoading
+                          : messages.users.create.placeholderRole
                       }
                       disabled={!selectedPerson.value || loadingCatalogs.value}
                       invalid={errorField.value === 'roleId'}
@@ -393,11 +393,11 @@ export default component$(() => {
                   </Field>
 
                   <Field
-                    label="Tipo de usuario"
+                    label={messages.users.create.labelUserType}
                     required
                     error={
                       errorField.value === 'userTypeId'
-                        ? 'Tipo de usuario requerido.'
+                        ? messages.users.create.errorUserTypeRequired
                         : undefined
                     }
                   >
@@ -411,8 +411,8 @@ export default component$(() => {
                       options={userTypeOptions}
                       placeholder={
                         loadingCatalogs.value
-                          ? 'Cargando...'
-                          : 'Selecciona tipo'
+                          ? messages.users.create.placeholderUserTypeLoading
+                          : messages.users.create.placeholderUserType
                       }
                       disabled={!selectedPerson.value || loadingCatalogs.value}
                       invalid={errorField.value === 'userTypeId'}
@@ -440,17 +440,22 @@ export default component$(() => {
                       }
                     }}
                   >
-                    Asignar contrasena manual
+                    {messages.users.create.assignPasswordCheckbox}
                   </Checkbox>
 
                   {customPassword.value ? (
                     <div class="create-user-password__field">
-                      <Field label="Contrasena temporal" required>
+                      <Field
+                        label={messages.users.create.fieldPasswordLabel}
+                        required
+                      >
                         <Input
                           iconLeft="lock"
                           type={showPassword.value ? 'text' : 'password'}
                           value={form.value.password ?? ''}
-                          placeholder="Contrasena temporal"
+                          placeholder={
+                            messages.users.create.passwordPlaceholder
+                          }
                           onInput$={(event) => {
                             form.value = {
                               ...form.value,
@@ -468,14 +473,15 @@ export default component$(() => {
                           showPassword.value = !showPassword.value;
                         }}
                       >
-                        {showPassword.value ? 'Ocultar' : 'Ver'}
+                        {showPassword.value
+                          ? messages.users.create.passwordHide
+                          : messages.users.create.passwordShow}
                       </Button>
                     </div>
                   ) : (
                     <p>
                       <AppIcon intent="lock" size="sm" />
-                      El sistema generara una contrasena temporal
-                      automaticamente.
+                      {messages.users.create.autoPasswordHint}
                     </p>
                   )}
                 </div>
@@ -483,8 +489,8 @@ export default component$(() => {
             </Panel>
 
             <Panel
-              title="3. Foto"
-              description="Opcional. Si no se carga, se usara avatar por defecto."
+              title={messages.users.create.panelPhotoTitle}
+              description={messages.users.create.panelPhotoDescription}
               density="compact"
             >
               <div class="create-user-photo">
@@ -511,7 +517,9 @@ export default component$(() => {
                     }}
                   />
                   <label class="create-user-photo__button" for="user-photo">
-                    {photoFile.value ? 'Cambiar foto' : 'Seleccionar foto'}
+                    {photoFile.value
+                      ? messages.users.create.photoChange
+                      : messages.users.create.photoSelect}
                   </label>
                   {photoFile.value && (
                     <Button
@@ -522,7 +530,7 @@ export default component$(() => {
                         photoPreview.value = '';
                       }}
                     >
-                      Quitar
+                      {messages.users.create.photoRemove}
                     </Button>
                   )}
                 </div>
@@ -537,7 +545,7 @@ export default component$(() => {
               variant="secondary"
               onClick$={async () => await nav('/users')}
             >
-              Cancelar
+              {messages.users.create.actionCancel}
             </Button>
             <Button
               iconLeft="save"
@@ -545,7 +553,7 @@ export default component$(() => {
               disabled={!selectedPerson.value || saving.value}
               onClick$={createUser$}
             >
-              Crear usuario
+              {messages.users.create.actionCreate}
             </Button>
           </div>
         )}

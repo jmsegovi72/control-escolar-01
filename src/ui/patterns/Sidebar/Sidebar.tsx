@@ -1,17 +1,10 @@
 import { component$ } from '@builder.io/qwik';
 
+import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import { UserMenu } from '~/ui/composed/UserMenu/UserMenu';
 import { AppIcon } from '~/ui/icons';
 import type { SidebarItem, SidebarProps } from './sidebar.types';
 import './sidebar.css';
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
 
 type SidebarItemButtonProps = {
   item: SidebarItem;
@@ -127,7 +120,6 @@ export const Sidebar = component$<SidebarProps>(
     onPointerEnter$,
     onPointerLeave$,
   }) => {
-    const initials = user?.initials ?? (user ? getInitials(user.name) : '');
 
     return (
       <aside
@@ -177,13 +169,7 @@ export const Sidebar = component$<SidebarProps>(
                 class="ui-sidebar__user"
                 title={collapsed ? user.name : undefined}
               >
-                <div class="ui-sidebar__avatar" aria-hidden="true">
-                  {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" width={40} height={40} />
-                  ) : (
-                    <span>{initials}</span>
-                  )}
-                </div>
+                <Avatar src={user.avatarUrl} name={user.name} />
                 <div class="ui-sidebar__user-copy">
                   <strong>{user.name}</strong>
                   {user.role && <span>{user.role}</span>}

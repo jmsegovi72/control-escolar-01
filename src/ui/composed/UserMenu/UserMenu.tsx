@@ -1,16 +1,9 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
 
+import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import { AppIcon } from '~/ui/icons';
 import type { UserMenuProps } from './user-menu.types';
 import './user-menu.css';
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
 
 export const UserMenu = component$<UserMenuProps>(
   ({
@@ -24,7 +17,6 @@ export const UserMenu = component$<UserMenuProps>(
   }) => {
     const isOpen = useSignal(false);
     const menuRef = useSignal<HTMLElement>();
-    const initials = user.initials ?? getInitials(user.name);
 
     return (
       <div
@@ -59,13 +51,7 @@ export const UserMenu = component$<UserMenuProps>(
             isOpen.value = !isOpen.value;
           }}
         >
-          <span class="ui-user-menu__avatar" aria-hidden="true">
-            {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" width={40} height={40} />
-            ) : (
-              <span>{initials}</span>
-            )}
-          </span>
+          <Avatar src={user.avatarUrl} name={user.name} />
           <span class="ui-user-menu__identity">
             <strong>{user.name}</strong>
             {user.role && <small>{user.role}</small>}
@@ -78,13 +64,7 @@ export const UserMenu = component$<UserMenuProps>(
         {isOpen.value && (
           <div class="ui-user-menu__content" role="menu">
             <div class="ui-user-menu__summary">
-              <span class="ui-user-menu__avatar" aria-hidden="true">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="" width={44} height={44} />
-                ) : (
-                  <span>{initials}</span>
-                )}
-              </span>
+              <Avatar src={user.avatarUrl} name={user.name} size="lg" />
               <span class="ui-user-menu__summary-copy">
                 <strong>{user.name}</strong>
                 {user.role && <span>{user.role}</span>}

@@ -3,7 +3,6 @@ import {
   component$,
   Slot,
   useSignal,
-  useTask$,
   useVisibleTask$,
 } from '@builder.io/qwik';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
@@ -77,7 +76,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     const sidebarUser = useSignal<SidebarUser | undefined>();
     const sections = useSignal<SidebarSection[]>([]);
 
-    useTask$(async () => {
+    useVisibleTask$(async () => {
       if (authService.requiresPasswordChange()) {
         await nav(ROUTES.CHANGE_PASSWORD);
         return;
@@ -88,15 +87,13 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         return;
       }
 
-      if (typeof window !== 'undefined') {
-        const storedCollapsed = localStorage.getItem('sidebar-collapsed');
-        collapsed.value = storedCollapsed === 'true';
-        sidebarBehavior.value =
-          localStorage.getItem('sidebar-behavior') === 'hover'
-            ? 'hover'
-            : 'fixed';
-        sidebarHovering.value = false;
-      }
+      const storedCollapsed = localStorage.getItem('sidebar-collapsed');
+      collapsed.value = storedCollapsed === 'true';
+      sidebarBehavior.value =
+        localStorage.getItem('sidebar-behavior') === 'hover'
+          ? 'hover'
+          : 'fixed';
+      sidebarHovering.value = false;
 
       const user = sessionStore.getUser();
       const isSuper = user?.userTypeCode === 'SUPER';
@@ -119,9 +116,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         Boolean(isSuper),
         Boolean(hasControlAccess),
       );
-    });
 
-    useVisibleTask$(() => {
       const updateClock = () => {
         const now = new Date();
         const remaining = getTokenRemaining();
@@ -272,6 +267,14 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             },
           ]}
           onToggleCollapse$={$(() => {
+            const isMobile =
+              typeof window !== 'undefined' && window.innerWidth <= 900;
+
+            if (isMobile) {
+              sidebarOpen.value = false;
+              return;
+            }
+
             if (sidebarBehavior.value === 'hover') {
               sidebarBehavior.value = 'fixed';
               collapsed.value = false;
@@ -285,7 +288,11 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             localStorage.setItem('sidebar-collapsed', String(collapsed.value));
           })}
           onPointerEnter$={$(() => {
-            if (sidebarBehavior.value === 'hover') {
+            if (
+              sidebarBehavior.value === 'hover' &&
+              typeof window !== 'undefined' &&
+              window.innerWidth > 900
+            ) {
               sidebarHovering.value = true;
             }
           })}

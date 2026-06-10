@@ -14,9 +14,26 @@ export interface CreatedUser {
 }
 
 export interface ResetLoginResult {
-  success?: boolean;
+  id: number;
+  isFirstLogin: boolean;
+  updatedBy: number;
+  tempPassword: string;
   message?: string;
-  tempPassword?: string;
+}
+
+export interface ToggleUserResult {
+  id: number;
+  isActive: boolean;
+  updatedBy: number;
+  message?: string;
+}
+
+export interface UnlockUserResult {
+  id: number;
+  loginAttempts: number;
+  lockedUntil: string | null;
+  updatedBy: number;
+  message?: string;
 }
 
 export interface UserListItem {
@@ -36,6 +53,9 @@ export interface UserListItem {
   userTypeDescription: string;
   isActive: boolean;
   firstLogin: boolean;
+  isLocked?: boolean;
+  loginAttempts?: number;
+  lockedUntil?: string | null;
 }
 
 export interface FindUsersParams {
@@ -47,4 +67,5 @@ export interface FindUsersParams {
   userTypeName?: string;
   isActive?: boolean;
   isFirstLogin?: boolean;
+  isLocked?: boolean;
 }

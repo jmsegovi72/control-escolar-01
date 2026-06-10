@@ -15,6 +15,7 @@ import {
   IconDashboard,
   IconDownload,
   IconEye,
+  IconEyeOff,
   IconFilter,
   IconGraduationCap,
   IconHome,
@@ -124,6 +125,7 @@ export const iconMap: Record<IconIntent, IconDefinition> = {
   upload: { default: IconUpload },
   'user-settings': { default: IconUserCog },
   view: { default: IconEye },
+  'view-off': { default: IconEyeOff },
   warning: { default: IconAlertTriangle },
 };
 

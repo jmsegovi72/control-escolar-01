@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
@@ -33,7 +33,7 @@ export default component$(() => {
   const showDisabledAccountDialog = useSignal(false);
   const expiredReason = useSignal<'session' | 'temporary' | null>(null);
 
-  useTask$(async () => {
+  useVisibleTask$(async () => {
     const params = new URLSearchParams(window.location.search);
     const expiredParam = params.get('expired');
     expiredReason.value =
@@ -130,7 +130,7 @@ export default component$(() => {
                   return;
                 }
 
-                if (normalized.status === 403) {
+                if (normalized.statusCode === 403) {
                   isLocked.value = true;
                   showLockoutDialog.value = true;
                   lockoutRemaining.value =
@@ -140,7 +140,7 @@ export default component$(() => {
                 }
 
                 error.value =
-                  normalized.status === undefined
+                  normalized.statusCode === 0
                     ? messages.auth.login.connectionError.replace(
                         '{message}',
                         normalized.message,

@@ -3,40 +3,23 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
+import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
-import { ENV } from '~/config/env';
+import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import { Badge, Button, Field, Input, PageReturn, Panel, Toolbar } from '~/ui';
+import {
+  Avatar,
+  Badge,
+  Button,
+  PageReturn,
+  Panel,
+  Toolbar,
+} from '~/ui';
 import { normalizeError } from '~/utils/api-error';
+import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
 import './detail.css';
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
-
-const getPhotoUrl = (user: UserListItem) => {
-  if (!user.photoUrl) {
-    return user.userTypeCode === 'SUPER'
-      ? '/avatars/admin-default.svg'
-      : '/avatars/user-default.svg';
-  }
-
-  if (
-    user.photoUrl.startsWith('http') ||
-    user.photoUrl.startsWith('/avatars/')
-  ) {
-    return user.photoUrl;
-  }
-
-  const apiBase = ENV.API_URL.replace(/\/sices\/v\d+$/, '');
-  return `${apiBase}/${user.photoUrl.replace(/^\/+/, '')}`;
-};
 
 export default component$(() => {
   const nav = useNavigate();
@@ -45,15 +28,12 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal('');
   const loadedFromContext = useSignal(false);
-  const originLabel = useSignal('Acceso directo');
-  const originDescription = useSignal(
-    'El detalle se abrio con un identificador en la URL.',
+  const originLabel = useSignal<string>(messages.users.detail.originDirect);
+  const originDescription = useSignal<string>(
+    messages.users.detail.originDirectDescription,
   );
-  const returnLabel = useSignal('Regresar');
+  const returnLabel = useSignal<string>(messages.users.detail.pageReturnLabel);
   const returnPath = useSignal('/users');
-  const searchTerm = useSignal('');
-  const searchResults = useSignal<UserListItem[]>([]);
-  const searching = useSignal(false);
   const selectionMode = useSignal(false);
 
   useVisibleTask$(async ({ track }) => {
@@ -62,10 +42,9 @@ export default component$(() => {
 
     loading.value = true;
     error.value = '';
-    originLabel.value = 'Acceso directo';
-    originDescription.value =
-      'El detalle se abrio con un identificador en la URL.';
-    returnLabel.value = 'Regresar';
+    originLabel.value = messages.users.detail.originDirect;
+    originDescription.value = messages.users.detail.originDirectDescription;
+    returnLabel.value = messages.users.detail.pageReturnLabel;
     returnPath.value = '/users';
     selectionMode.value = false;
 
@@ -80,10 +59,9 @@ export default component$(() => {
     ) {
       user.value = selectedUser;
       loadedFromContext.value = true;
-      originLabel.value = 'Busqueda avanzada';
-      originDescription.value =
-        'Llegaste desde una fila del DataTable; se conserva la busqueda para regresar.';
-      returnLabel.value = 'Regresar';
+      originLabel.value = messages.users.detail.originTable;
+      originDescription.value = messages.users.detail.originTableDescription;
+      returnLabel.value = messages.users.detail.pageReturnLabel;
       returnPath.value = usersWorkflow.getReturnPath();
       loading.value = false;
       return;
@@ -93,10 +71,9 @@ export default component$(() => {
       user.value = null;
       loadedFromContext.value = false;
       selectionMode.value = true;
-      originLabel.value = 'Seleccion manual';
-      originDescription.value =
-        'Busca y selecciona el usuario que quieres consultar.';
-      returnLabel.value = 'Regresar';
+      originLabel.value = messages.users.detail.originManual;
+      originDescription.value = messages.users.detail.originManualDescription;
+      returnLabel.value = messages.users.detail.pageReturnLabel;
       returnPath.value = '/users';
       loading.value = false;
       return;
@@ -105,45 +82,18 @@ export default component$(() => {
     try {
       user.value = await userService.findById(id);
       loadedFromContext.value = false;
-      originLabel.value = 'Acceso directo';
-      originDescription.value =
-        'Llegaste por URL directa; no hay una tabla previa para restaurar.';
-      returnLabel.value = 'Regresar';
+      originLabel.value = messages.users.detail.originUrl;
+      originDescription.value = messages.users.detail.originUrlDescription;
+      returnLabel.value = messages.users.detail.pageReturnLabel;
       returnPath.value = '/users';
     } catch (err) {
       user.value = null;
       error.value = normalizeError(
         err,
-        'No se pudo cargar el detalle del usuario',
+        messages.errors.loadUserDetailFailed,
       ).message;
     } finally {
       loading.value = false;
-    }
-  });
-
-  useVisibleTask$(async ({ track }) => {
-    const query = track(() => searchTerm.value.trim());
-    const shouldSearch = track(() => selectionMode.value);
-
-    if (!shouldSearch || query.length < 3) {
-      searchResults.value = [];
-      searching.value = false;
-      return;
-    }
-
-    searching.value = true;
-
-    try {
-      const response = await userService.findMany({
-        limit: 8,
-        page: 1,
-        searchTerm: query,
-      });
-      searchResults.value = response.data;
-    } catch {
-      searchResults.value = [];
-    } finally {
-      searching.value = false;
     }
   });
 
@@ -160,12 +110,12 @@ export default component$(() => {
 
   return (
     <AuthenticatedShell
-      eyebrow="Administracion"
-      title="Detalle de usuario"
-      description="Consulta datos generales, permisos y estado de acceso."
-      meta="Usuarios"
+      eyebrow={messages.users.detail.eyebrow}
+      title={messages.users.detail.title}
+      description={messages.users.detail.description}
+      meta={messages.users.detail.meta}
       allowedUserTypes={['SUPER']}
-      accessDeniedDescription="El detalle de usuarios esta reservado para cuentas SUPER."
+      accessDeniedDescription={messages.users.detail.accessDenied}
     >
       <Toolbar q:slot="toolbar">
         <Button
@@ -182,151 +132,110 @@ export default component$(() => {
           iconLeft="search"
           onClick$={async () => await nav('/users/search')}
         >
-          Buscar usuarios
+          {messages.users.common.searchUsersAction}
         </Button>
       </Toolbar>
 
       <div class="user-detail">
         <PageReturn
-          eyebrow="Modulo de usuarios"
-          title="Detalle de usuario"
+          eyebrow={messages.users.detail.pageReturnEyebrow}
+          title={messages.users.detail.title}
           buttonLabel={returnLabel.value}
           onClick$={goBack$}
         />
 
         {loading.value && (
-          <Panel title="Cargando usuario" description="Consultando datos...">
+          <Panel
+            title={messages.users.common.loadingPanelTitle}
+            description={messages.users.common.loadingPanelDescription}
+          >
             <div class="user-detail__loading" />
           </Panel>
         )}
 
         {!loading.value && error.value && (
           <Panel
-            eyebrow="Revision necesaria"
-            title="No se puede mostrar el usuario"
+            eyebrow={messages.users.common.errorToastTitle}
+            title={messages.users.detail.errorTitle}
             description={error.value}
           >
             <div class="user-detail__actions">
               <Button variant="secondary" iconLeft="back" onClick$={goBack$}>
-                Volver
+                {messages.users.common.backLabel}
               </Button>
               <Button
                 iconLeft="search"
                 onClick$={async () => await nav('/users/search')}
               >
-                Ir a busqueda
+                {messages.users.common.goToSearchAction}
               </Button>
             </div>
           </Panel>
         )}
 
         {!loading.value && selectionMode.value && !currentUser && (
-          <Panel
-            title="Seleccionar usuario"
-            description="Busca por nombre o usuario para abrir su detalle."
-          >
-            <div class="user-detail__selector">
-              <Field
-                label="Usuario"
-                hint="Escribe al menos 3 caracteres para buscar."
-              >
-                <Input
-                  iconLeft="search"
-                  placeholder="Nombre o usuario"
-                  value={searchTerm.value}
-                  onInput$={(event) => {
-                    searchTerm.value = (event.target as HTMLInputElement).value;
-                  }}
-                />
-              </Field>
-
-              {searching.value && (
-                <div class="user-detail__loading" aria-label="Buscando" />
-              )}
-
-              {searchTerm.value.trim().length >= 3 &&
-                !searching.value &&
-                searchResults.value.length === 0 && (
-                  <p class="user-detail__empty">
-                    No se encontraron usuarios con ese criterio.
-                  </p>
-                )}
-
-              {searchResults.value.length > 0 && (
-                <div class="user-detail__results">
-                  {searchResults.value.map((result) => (
-                    <button
-                      type="button"
-                      class="user-detail__result-card"
-                      key={result.id}
-                      onClick$={async () => await openManualDetail$(result.id)}
-                    >
-                      <div class="user-detail__result-info">
-                        <strong>{result.fullName}</strong>
-                        <span>{result.username}</span>
-                      </div>
-                      <Badge tone={result.isActive ? 'success' : 'danger'}>
-                        {result.isActive ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </Panel>
+          <UserSearchPanel
+            title={messages.users.common.searchUserTitle}
+            description={messages.users.detail.selectionDescription}
+            fieldHint={messages.users.common.fieldUserHint}
+            noResultsMessage={messages.users.detail.noResultsCriteria}
+            badgeField="isActive"
+            badgeTrueLabel={messages.users.detail.resultActive}
+            badgeFalseLabel={messages.users.detail.resultInactive}
+            badgeTrueTone="success"
+            badgeFalseTone="danger"
+            onSelect$={openManualDetail$}
+          />
         )}
 
         {!loading.value && currentUser && (
           <div class="user-detail__layout">
             <div class="user-detail__profile-card">
-              <div class="user-detail__avatar-wrapper">
-                {currentUser.photoUrl ? (
-                  <img
-                    src={getPhotoUrl(currentUser)}
-                    alt={currentUser.fullName}
-                  />
-                ) : (
-                  <span>{getInitials(currentUser.fullName)}</span>
-                )}
-              </div>
+              <Avatar
+                src={resolvePhotoUrl(currentUser)}
+                name={currentUser.fullName}
+                size="xl"
+              />
               <div class="user-detail__profile-info">
                 <h2>{currentUser.fullName}</h2>
                 <p>{currentUser.username}</p>
               </div>
               <div class="user-detail__profile-badges">
                 <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
-                  {currentUser.isActive ? 'Activo' : 'Inactivo'}
+                  {currentUser.isActive
+                    ? messages.users.detail.resultActive
+                    : messages.users.detail.resultInactive}
                 </Badge>
                 <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
                   {currentUser.firstLogin
-                    ? 'Primer acceso pendiente'
-                    : 'Acceso completado'}
+                    ? messages.users.detail.firstLoginPending
+                    : messages.users.detail.firstLoginCompleted}
                 </Badge>
               </div>
             </div>
 
             <Panel
-              title="Información de Cuenta"
-              description="Datos de acceso y registro"
+              title={messages.users.detail.panelAccountTitle}
+              description={messages.users.detail.panelAccountDescription}
             >
               <dl class="user-detail__info-grid">
                 <div>
-                  <dt>ID de registro</dt>
+                  <dt>{messages.users.detail.fieldId}</dt>
                   <dd>{currentUser.id}</dd>
                 </div>
                 <div>
-                  <dt>Usuario / Correo</dt>
+                  <dt>{messages.users.detail.fieldUsername}</dt>
                   <dd>{currentUser.username}</dd>
                 </div>
                 <div>
-                  <dt>Nombre Completo</dt>
+                  <dt>{messages.users.detail.fieldFullName}</dt>
                   <dd>{currentUser.fullName}</dd>
                 </div>
               </dl>
             </Panel>
 
             <div class="user-detail__actions-card">
-              <h3>Acciones de cuenta</h3>
+              <h3>{messages.users.detail.accountActionsTitle}</h3>
               <div class="user-detail__action-list">
                 <Button
                   variant="primary"
@@ -336,7 +245,7 @@ export default component$(() => {
                     await nav(`/users/edit?id=${currentUser.id}`)
                   }
                 >
-                  Editar datos
+                  {messages.users.detail.actionEdit}
                 </Button>
                 <Button
                   variant="secondary"
@@ -347,8 +256,8 @@ export default component$(() => {
                   }
                 >
                   {currentUser.isActive
-                    ? 'Desactivar cuenta'
-                    : 'Activar cuenta'}
+                    ? messages.users.detail.actionDeactivate
+                    : messages.users.detail.actionActivate}
                 </Button>
                 <Button
                   variant="secondary"
@@ -358,7 +267,7 @@ export default component$(() => {
                     await nav(`/users/unlock?id=${currentUser.id}`)
                   }
                 >
-                  Desbloquear cuenta
+                  {messages.users.detail.actionUnlock}
                 </Button>
                 <Button
                   variant="secondary"
@@ -368,39 +277,50 @@ export default component$(() => {
                     await nav(`/users/reset-login?id=${currentUser.id}`)
                   }
                 >
-                  Restablecer acceso
+                  {messages.users.detail.actionResetAccess}
                 </Button>
               </div>
             </div>
 
             <Panel
-              title="Rol y Permisos asignados"
-              description="Nivel de acceso en la plataforma de control escolar"
+              title={messages.users.detail.panelRolesTitle}
+              description={messages.users.detail.panelRolesDescription}
             >
               <dl class="user-detail__info-grid">
                 <div>
-                  <dt>Rol Principal</dt>
+                  <dt>{messages.users.detail.rolePrincipal}</dt>
                   <dd>{currentUser.roleName}</dd>
                 </div>
                 <div>
-                  <dt>Descripción del Rol</dt>
+                  <dt>{messages.users.detail.roleDescription}</dt>
                   <dd>
-                    {currentUser.roleDescription || 'Sin descripción asignada.'}
+                    {currentUser.roleDescription ||
+                      messages.users.detail.roleNoDescription}
                   </dd>
                 </div>
                 <div>
-                  <dt>Tipo de Usuario</dt>
+                  <dt>{messages.users.detail.userType}</dt>
                   <dd>{currentUser.userTypeName}</dd>
                 </div>
                 <div>
-                  <dt>Alcance del Tipo</dt>
+                  <dt>{messages.users.detail.userTypeScope}</dt>
                   <dd>
                     {currentUser.userTypeDescription ||
-                      'Sin descripción de alcance.'}
+                      messages.users.detail.userTypeNoDescription}
                   </dd>
                 </div>
               </dl>
             </Panel>
+
+            <div class="user-detail__footer-actions">
+              <Button
+                variant="secondary"
+                iconLeft="search"
+                onClick$={async () => await nav('/users/detail')}
+              >
+                {messages.users.common.searchOtherAction}
+              </Button>
+            </div>
           </div>
         )}
       </div>

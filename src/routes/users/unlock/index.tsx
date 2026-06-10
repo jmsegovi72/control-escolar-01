@@ -7,7 +7,7 @@ import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
-import type { ResetLoginResult, UserListItem } from '~/types/user.types';
+import type { UnlockUserResult, UserListItem } from '~/types/user.types';
 import {
   Avatar,
   Badge,
@@ -21,7 +21,7 @@ import {
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
-import './reset-login.css';
+import './unlock.css';
 
 export default component$(() => {
   const nav = useNavigate();
@@ -31,7 +31,7 @@ export default component$(() => {
   const saving = useSignal(false);
   const confirmOpen = useSignal(false);
   const error = useSignal('');
-  const resetResult = useSignal<ResetLoginResult | null>(null);
+  const unlockResult = useSignal<UnlockUserResult | null>(null);
   const actionError = useSignal('');
   const selectionMode = useSignal(false);
   const returnPath = useSignal('/users');
@@ -43,7 +43,7 @@ export default component$(() => {
 
     loading.value = true;
     error.value = '';
-    resetResult.value = null;
+    unlockResult.value = null;
     actionError.value = '';
     confirmOpen.value = false;
     selectionMode.value = false;
@@ -84,32 +84,31 @@ export default component$(() => {
 
   const openManualUser$ = $(async (userId: number) => {
     usersWorkflow.clear();
-    await nav(`/users/reset-login?id=${userId}`);
+    await nav(`/users/unlock?id=${userId}`);
   });
 
-  const resetLogin$ = $(async () => {
+  const unlockUser$ = $(async () => {
     if (!user.value) return;
 
     saving.value = true;
     actionError.value = '';
 
     try {
-      const response = await userService.resetLogin(user.value.id);
-      resetResult.value = response;
+      const response = await userService.unlockUser(user.value.id);
+      unlockResult.value = response;
       confirmOpen.value = false;
-      user.value = { ...user.value, firstLogin: true };
     } catch (err) {
       confirmOpen.value = false;
       actionError.value = normalizeError(
         err,
-        messages.errors.resetLoginFailed,
+        messages.errors.unlockFailed,
       ).message;
     } finally {
       saving.value = false;
     }
   });
 
-  const m = messages.users.resetLogin;
+  const m = messages.users.unlock;
   const currentUser = user.value;
 
   return (
@@ -140,7 +139,7 @@ export default component$(() => {
         </Button>
       </Toolbar>
 
-      <div class="reset-login-page">
+      <div class="unlock-page">
         <PageReturn
           eyebrow={m.pageReturnEyebrow}
           title={m.title}
@@ -150,7 +149,7 @@ export default component$(() => {
 
         {loading.value && (
           <Panel title={m.loadingTitle} description={m.loadingDescription}>
-            <div class="reset-login__loading" />
+            <div class="unlock__loading" />
           </Panel>
         )}
 
@@ -166,12 +165,7 @@ export default component$(() => {
             description={m.selectionDescription}
             fieldHint={m.fieldUserHint}
             noResultsMessage={m.noResultsCriteria}
-            filters={{ isActive: true, isFirstLogin: false }}
-            badgeField="firstLogin"
-            badgeTrueLabel={m.firstLoginPending}
-            badgeFalseLabel={m.firstLoginCompleted}
-            badgeTrueTone="warning"
-            badgeFalseTone="success"
+            filters={{ isActive: true, isLocked: true }}
             onSelect$={openManualUser$}
           />
         )}
@@ -189,7 +183,7 @@ export default component$(() => {
                 name={currentUser.fullName}
                 size="xl"
               />
-              <div class="reset-login__summary">
+              <div class="unlock__summary">
                 <dl>
                   <div>
                     <dt>{m.fieldId}</dt>
@@ -204,14 +198,12 @@ export default component$(() => {
                     <dd>{currentUser.roleName}</dd>
                   </div>
                   <div>
-                    <dt>{m.fieldFirstLogin}</dt>
+                    <dt>{messages.users.detail.resultActive}</dt>
                     <dd>
-                      <Badge
-                        tone={currentUser.firstLogin ? 'warning' : 'success'}
-                      >
-                        {currentUser.firstLogin
-                          ? m.badgePending
-                          : m.badgeCompleted}
+                      <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
+                        {currentUser.isActive
+                          ? messages.users.detail.resultActive
+                          : messages.users.detail.resultInactive}
                       </Badge>
                     </dd>
                   </div>
@@ -219,37 +211,37 @@ export default component$(() => {
               </div>
             </Panel>
 
-            {!resetResult.value && !actionError.value && (
+            {!unlockResult.value && !actionError.value && (
               <>
                 <Panel
                   title={m.confirmTitle}
                   description={m.confirmDescription}
                 >
-                  <div class="reset-login__actions">
+                  <div class="unlock__actions">
                     <Button
                       variant="secondary"
                       iconLeft="search"
-                      onClick$={async () => await nav('/users/reset-login')}
+                      onClick$={async () => await nav('/users/unlock')}
                     >
                       {m.changeUser}
                     </Button>
                     <Button
-                      variant="danger"
-                      iconLeft="login-reset"
+                      variant="primary"
+                      iconLeft="unlock"
                       disabled={saving.value}
                       onClick$={() => {
                         confirmOpen.value = true;
                       }}
                     >
-                      {m.resetButton}
+                      {m.unlockButton}
                     </Button>
                   </div>
                 </Panel>
 
                 <ConfirmAction
                   open={confirmOpen.value}
-                  tone="danger"
-                  icon="login-reset"
+                  tone="default"
+                  icon="unlock"
                   title={m.confirmDialogTitle}
                   description={m.confirmDialogDescription.replace(
                     '{fullName}',
@@ -261,33 +253,43 @@ export default component$(() => {
                   onCancel$={() => {
                     confirmOpen.value = false;
                   }}
-                  onConfirm$={resetLogin$}
+                  onConfirm$={unlockUser$}
                 />
               </>
             )}
 
-            {resetResult.value && (
+            {unlockResult.value && (
               <Panel
                 eyebrow={m.resultEyebrow}
-                title={
-                  resetResult.value.message || messages.users.resetLoginSuccess
-                }
-                description={messages.users.resetLoginResultDescription.replace(
+                title={unlockResult.value.message || m.resultTitle}
+                description={m.resultDescription.replace(
                   '{fullName}',
                   currentUser.fullName,
                 )}
               >
-                <div class="reset-login__success">
-                  <span>{m.resultTempPasswordLabel}</span>
-                  <strong>{resetResult.value.tempPassword}</strong>
+                <div class="unlock__result-data">
+                  <dl>
+                    <div>
+                      <dt>{m.resultAttemptsLabel}</dt>
+                      <dd>{unlockResult.value.loginAttempts}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.resultLockedUntilLabel}</dt>
+                      <dd>
+                        {unlockResult.value.lockedUntil
+                          ? unlockResult.value.lockedUntil
+                          : m.resultLockedUntilNone}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
-                <div class="reset-login__actions">
+                <div class="unlock__actions">
                   <Button
                     variant="secondary"
                     iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
+                    onClick$={async () => await nav('/users/unlock')}
                   >
-                    {m.resetOther}
+                    {m.unlockOther}
                   </Button>
                 </div>
               </Panel>
@@ -299,13 +301,13 @@ export default component$(() => {
                 title={m.errorTitle}
                 description={actionError.value}
               >
-                <div class="reset-login__actions">
+                <div class="unlock__actions">
                   <Button
                     variant="secondary"
                     iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
+                    onClick$={async () => await nav('/users/unlock')}
                   >
-                    {m.resetOther}
+                    {m.unlockOther}
                   </Button>
                 </div>
               </Panel>
@@ -318,5 +320,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: `${appConfig.name} | Resetear login`,
+  title: `${appConfig.name} | Desbloquear usuario`,
 };

@@ -2,7 +2,7 @@ import {
   component$,
   useComputed$,
   useSignal,
-  useTask$,
+  useVisibleTask$,
 } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
@@ -43,7 +43,7 @@ export default component$(() => {
       form.value.newPassword === form.value.confirmPassword,
   );
 
-  useTask$(async () => {
+  useVisibleTask$(async () => {
     if (authService.isAuthenticated()) {
       await nav(ROUTES.DASHBOARD);
       return;
@@ -319,11 +319,11 @@ export const PasswordRule = component$<PasswordRuleProps>(
 );
 
 export const head: DocumentHead = {
-  title: `${appConfig.name} | Cambiar contrasena`,
+  title: `${appConfig.name} | Cambiar contraseña`,
   meta: [
     {
       name: 'description',
-      content: `Cambio obligatorio de contrasena en ${appConfig.name}`,
+      content: `Cambio obligatorio de contraseña en ${appConfig.name}`,
     },
   ],
 };

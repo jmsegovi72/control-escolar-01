@@ -5,6 +5,8 @@ import type {
   CreateUserDto,
   FindUsersParams,
   ResetLoginResult,
+  ToggleUserResult,
+  UnlockUserResult,
   UserListItem,
 } from '~/types/user.types';
 import { apiClient } from '../api.client';
@@ -66,9 +68,34 @@ export const userService = {
   async resetLogin(id: number): Promise<ResetLoginResult> {
     const response = await apiClient.patch<
       ApiResponse<ResetLoginResult> | ResetLoginResult
-    >(`/users/reset-login/${id}`);
+    >(`/users/set-first-login-true/${id}`);
 
-    return 'data' in response.data ? response.data.data : response.data;
+    if ('data' in response.data) {
+      return { ...response.data.data, message: response.data.message };
+    }
+    return response.data;
+  },
+
+  async toggleUser(id: number): Promise<ToggleUserResult> {
+    const response = await apiClient.patch<
+      ApiResponse<ToggleUserResult> | ToggleUserResult
+    >(`/users/toggle-active/${id}`);
+
+    if ('data' in response.data) {
+      return { ...response.data.data, message: response.data.message };
+    }
+    return response.data;
+  },
+
+  async unlockUser(id: number): Promise<UnlockUserResult> {
+    const response = await apiClient.patch<
+      ApiResponse<UnlockUserResult> | UnlockUserResult
+    >(`/users/unlock/${id}`);
+
+    if ('data' in response.data) {
+      return { ...response.data.data, message: response.data.message };
+    }
+    return response.data;
   },
 
   async updateUser(

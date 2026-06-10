@@ -7,7 +7,7 @@ import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
-import type { ResetLoginResult, UserListItem } from '~/types/user.types';
+import type { ToggleUserResult, UserListItem } from '~/types/user.types';
 import {
   Avatar,
   Badge,
@@ -21,7 +21,7 @@ import {
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
-import './reset-login.css';
+import './toggle.css';
 
 export default component$(() => {
   const nav = useNavigate();
@@ -31,7 +31,7 @@ export default component$(() => {
   const saving = useSignal(false);
   const confirmOpen = useSignal(false);
   const error = useSignal('');
-  const resetResult = useSignal<ResetLoginResult | null>(null);
+  const toggleResult = useSignal<ToggleUserResult | null>(null);
   const actionError = useSignal('');
   const selectionMode = useSignal(false);
   const returnPath = useSignal('/users');
@@ -43,7 +43,7 @@ export default component$(() => {
 
     loading.value = true;
     error.value = '';
-    resetResult.value = null;
+    toggleResult.value = null;
     actionError.value = '';
     confirmOpen.value = false;
     selectionMode.value = false;
@@ -84,33 +84,34 @@ export default component$(() => {
 
   const openManualUser$ = $(async (userId: number) => {
     usersWorkflow.clear();
-    await nav(`/users/reset-login?id=${userId}`);
+    await nav(`/users/toggle?id=${userId}`);
   });
 
-  const resetLogin$ = $(async () => {
+  const toggleUser$ = $(async () => {
     if (!user.value) return;
 
     saving.value = true;
     actionError.value = '';
 
     try {
-      const response = await userService.resetLogin(user.value.id);
-      resetResult.value = response;
+      const response = await userService.toggleUser(user.value.id);
+      toggleResult.value = response;
       confirmOpen.value = false;
-      user.value = { ...user.value, firstLogin: true };
+      user.value = { ...user.value, isActive: response.isActive };
     } catch (err) {
       confirmOpen.value = false;
       actionError.value = normalizeError(
         err,
-        messages.errors.resetLoginFailed,
+        messages.errors.toggleFailed,
       ).message;
     } finally {
       saving.value = false;
     }
   });
 
-  const m = messages.users.resetLogin;
+  const m = messages.users.toggle;
   const currentUser = user.value;
+  const willDeactivate = currentUser?.isActive ?? false;
 
   return (
     <AuthenticatedShell
@@ -140,7 +141,7 @@ export default component$(() => {
         </Button>
       </Toolbar>
 
-      <div class="reset-login-page">
+      <div class="toggle-page">
         <PageReturn
           eyebrow={m.pageReturnEyebrow}
           title={m.title}
@@ -150,7 +151,7 @@ export default component$(() => {
 
         {loading.value && (
           <Panel title={m.loadingTitle} description={m.loadingDescription}>
-            <div class="reset-login__loading" />
+            <div class="toggle__loading" />
           </Panel>
         )}
 
@@ -166,12 +167,11 @@ export default component$(() => {
             description={m.selectionDescription}
             fieldHint={m.fieldUserHint}
             noResultsMessage={m.noResultsCriteria}
-            filters={{ isActive: true, isFirstLogin: false }}
-            badgeField="firstLogin"
-            badgeTrueLabel={m.firstLoginPending}
-            badgeFalseLabel={m.firstLoginCompleted}
-            badgeTrueTone="warning"
-            badgeFalseTone="success"
+            badgeField="isActive"
+            badgeTrueLabel={m.badgeActive}
+            badgeFalseLabel={m.badgeInactive}
+            badgeTrueTone="success"
+            badgeFalseTone="danger"
             onSelect$={openManualUser$}
           />
         )}
@@ -189,7 +189,7 @@ export default component$(() => {
                 name={currentUser.fullName}
                 size="xl"
               />
-              <div class="reset-login__summary">
+              <div class="toggle__summary">
                 <dl>
                   <div>
                     <dt>{m.fieldId}</dt>
@@ -204,14 +204,10 @@ export default component$(() => {
                     <dd>{currentUser.roleName}</dd>
                   </div>
                   <div>
-                    <dt>{m.fieldFirstLogin}</dt>
+                    <dt>{m.fieldStatus}</dt>
                     <dd>
-                      <Badge
-                        tone={currentUser.firstLogin ? 'warning' : 'success'}
-                      >
-                        {currentUser.firstLogin
-                          ? m.badgePending
-                          : m.badgeCompleted}
+                      <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
+                        {currentUser.isActive ? m.badgeActive : m.badgeInactive}
                       </Badge>
                     </dd>
                   </div>
@@ -219,75 +215,99 @@ export default component$(() => {
               </div>
             </Panel>
 
-            {!resetResult.value && !actionError.value && (
+            {!toggleResult.value && !actionError.value && (
               <>
                 <Panel
-                  title={m.confirmTitle}
-                  description={m.confirmDescription}
+                  title={
+                    willDeactivate
+                      ? m.confirmTitleDeactivate
+                      : m.confirmTitleActivate
+                  }
+                  description={
+                    willDeactivate
+                      ? m.confirmDescriptionDeactivate
+                      : m.confirmDescriptionActivate
+                  }
                 >
-                  <div class="reset-login__actions">
+                  <div class="toggle__actions">
                     <Button
                       variant="secondary"
                       iconLeft="search"
-                      onClick$={async () => await nav('/users/reset-login')}
+                      onClick$={async () => await nav('/users/toggle')}
                     >
                       {m.changeUser}
                     </Button>
                     <Button
-                      variant="danger"
-                      iconLeft="login-reset"
+                      variant={willDeactivate ? 'danger' : 'primary'}
+                      iconLeft="toggle"
                       disabled={saving.value}
                       onClick$={() => {
                         confirmOpen.value = true;
                       }}
                     >
-                      {m.resetButton}
+                      {willDeactivate ? m.deactivateButton : m.activateButton}
                     </Button>
                   </div>
                 </Panel>
 
                 <ConfirmAction
                   open={confirmOpen.value}
-                  tone="danger"
-                  icon="login-reset"
-                  title={m.confirmDialogTitle}
-                  description={m.confirmDialogDescription.replace(
-                    '{fullName}',
-                    currentUser.fullName,
-                  )}
+                  tone={willDeactivate ? 'danger' : 'default'}
+                  icon="toggle"
+                  title={
+                    willDeactivate
+                      ? m.confirmDialogTitleDeactivate
+                      : m.confirmDialogTitleActivate
+                  }
+                  description={(willDeactivate
+                    ? m.confirmDialogDescriptionDeactivate
+                    : m.confirmDialogDescriptionActivate
+                  ).replace('{fullName}', currentUser.fullName)}
                   details={m.confirmDialogDetails}
-                  confirmLabel={m.confirmDialogLabel}
+                  confirmLabel={
+                    willDeactivate
+                      ? m.confirmDialogLabelDeactivate
+                      : m.confirmDialogLabelActivate
+                  }
                   loading={saving.value}
                   onCancel$={() => {
                     confirmOpen.value = false;
                   }}
-                  onConfirm$={resetLogin$}
+                  onConfirm$={toggleUser$}
                 />
               </>
             )}
 
-            {resetResult.value && (
+            {toggleResult.value && (
               <Panel
                 eyebrow={m.resultEyebrow}
                 title={
-                  resetResult.value.message || messages.users.resetLoginSuccess
+                  toggleResult.value.message ||
+                  (toggleResult.value.isActive
+                    ? m.resultTitleActivated
+                    : m.resultTitleDeactivated)
                 }
-                description={messages.users.resetLoginResultDescription.replace(
-                  '{fullName}',
-                  currentUser.fullName,
-                )}
+                description={(toggleResult.value.isActive
+                  ? m.resultDescriptionActivated
+                  : m.resultDescriptionDeactivated
+                ).replace('{fullName}', currentUser.fullName)}
               >
-                <div class="reset-login__success">
-                  <span>{m.resultTempPasswordLabel}</span>
-                  <strong>{resetResult.value.tempPassword}</strong>
+                <div class="toggle__result-summary">
+                  <Badge
+                    tone={toggleResult.value.isActive ? 'success' : 'danger'}
+                  >
+                    {toggleResult.value.isActive
+                      ? m.badgeActive
+                      : m.badgeInactive}
+                  </Badge>
                 </div>
-                <div class="reset-login__actions">
+                <div class="toggle__actions">
                   <Button
                     variant="secondary"
                     iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
+                    onClick$={async () => await nav('/users/toggle')}
                   >
-                    {m.resetOther}
+                    {m.toggleOther}
                   </Button>
                 </div>
               </Panel>
@@ -299,13 +319,13 @@ export default component$(() => {
                 title={m.errorTitle}
                 description={actionError.value}
               >
-                <div class="reset-login__actions">
+                <div class="toggle__actions">
                   <Button
                     variant="secondary"
                     iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
+                    onClick$={async () => await nav('/users/toggle')}
                   >
-                    {m.resetOther}
+                    {m.toggleOther}
                   </Button>
                 </div>
               </Panel>
@@ -318,5 +338,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: `${appConfig.name} | Resetear login`,
+  title: `${appConfig.name} | Activar / Desactivar usuario`,
 };

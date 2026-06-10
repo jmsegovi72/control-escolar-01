@@ -26,6 +26,7 @@ export { Sidebar } from './patterns/Sidebar/Sidebar';
 export { StatCard } from './patterns/StatCard/StatCard';
 export { Stepper } from './patterns/Stepper/Stepper';
 export { Toolbar } from './patterns/Toolbar/Toolbar';
+export { Avatar } from './primitives/Avatar/Avatar';
 export { Badge } from './primitives/Badge/Badge';
 export { Button } from './primitives/Button/Button';
 export { Checkbox } from './primitives/Checkbox/Checkbox';

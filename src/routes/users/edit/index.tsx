@@ -3,8 +3,10 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
+import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
 import { ENV } from '~/config/env';
+import { messages } from '~/config/messages';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
@@ -15,7 +17,6 @@ import {
   Input,
   PageReturn,
   Panel,
-  SearchSelect,
   Select,
   Toast,
   Toolbar,
@@ -51,21 +52,14 @@ export default component$(() => {
   const success = useSignal(false);
   const roles = useSignal<Role[]>([]);
   const userTypes = useSignal<UserType[]>([]);
+  const selectionMode = useSignal(false);
+  const returnPath = useSignal('/users');
 
-  // Form Fields Signals
   const username = useSignal('');
   const roleId = useSignal(0);
   const userTypeId = useSignal(0);
   const photoFile = useSignal<File | null>(null);
   const photoPreview = useSignal('');
-
-  // Selector Mode Signals (when id is missing)
-  const selectionMode = useSignal(false);
-  const searchTerm = useSignal('');
-  const searchResults = useSignal<UserListItem[]>([]);
-  const searching = useSignal(false);
-
-  const returnPath = useSignal('/users');
 
   useVisibleTask$(async ({ track }) => {
     const idParam = track(() => location.url.searchParams.get('id'));
@@ -80,7 +74,6 @@ export default component$(() => {
       returnPath.value = usersWorkflow.getReturnPath();
     }
 
-    // Load Catalogs
     try {
       const [rolesData, userTypesData] = await Promise.all([
         catalogService.getRoles(),
@@ -91,7 +84,7 @@ export default component$(() => {
     } catch (err) {
       error.value = normalizeError(
         err,
-        'No se pudieron cargar los catálogos escolares',
+        messages.errors.loadCatalogsFailed,
       ).message;
       loading.value = false;
       return;
@@ -107,7 +100,6 @@ export default component$(() => {
     }
 
     try {
-      // Try to load from workflow first to conserve network requests
       const selectedUser = usersWorkflow.getSelectedUser();
       if (sourceParam === 'table' && selectedUser && selectedUser.id === id) {
         user.value = selectedUser;
@@ -127,36 +119,10 @@ export default component$(() => {
       user.value = null;
       error.value = normalizeError(
         err,
-        'No se pudo cargar el detalle del usuario para edición',
+        messages.errors.loadUserDetailFailed,
       ).message;
     } finally {
       loading.value = false;
-    }
-  });
-
-  useVisibleTask$(async ({ track }) => {
-    const query = track(() => searchTerm.value.trim());
-    const shouldSearch = track(() => selectionMode.value);
-
-    if (!shouldSearch || query.length < 3) {
-      searchResults.value = [];
-      searching.value = false;
-      return;
-    }
-
-    searching.value = true;
-
-    try {
-      const response = await userService.findMany({
-        limit: 8,
-        page: 1,
-        searchTerm: query,
-      });
-      searchResults.value = response.data;
-    } catch {
-      searchResults.value = [];
-    } finally {
-      searching.value = false;
     }
   });
 
@@ -176,19 +142,19 @@ export default component$(() => {
     errorField.value = '';
 
     if (!username.value.trim()) {
-      error.value = 'El usuario o correo es requerido.';
+      error.value = messages.users.edit.validationUsername;
       errorField.value = 'username';
       return;
     }
 
     if (!roleId.value) {
-      error.value = 'El rol es requerido.';
+      error.value = messages.users.edit.validationRole;
       errorField.value = 'roleId';
       return;
     }
 
     if (!userTypeId.value) {
-      error.value = 'El tipo de usuario es requerido.';
+      error.value = messages.users.edit.validationUserType;
       errorField.value = 'userTypeId';
       return;
     }
@@ -207,12 +173,11 @@ export default component$(() => {
       }
 
       success.value = true;
-      // Wait a brief moment to show success state before returning
       setTimeout(async () => {
         await nav(returnPath.value);
       }, 1500);
     } catch (err) {
-      const normalized = normalizeError(err, 'Error al guardar cambios');
+      const normalized = normalizeError(err, messages.errors.saveChangesFailed);
       error.value = normalized.message;
       errorField.value = normalized.invalidField ?? '';
     } finally {
@@ -234,12 +199,12 @@ export default component$(() => {
 
   return (
     <AuthenticatedShell
-      eyebrow="Administracion"
-      title="Editar usuario"
-      description="Modifica credenciales, rol y estado de foto de un usuario existente."
-      meta="Edicion de cuenta"
+      eyebrow={messages.users.edit.eyebrow}
+      title={messages.users.edit.title}
+      description={messages.users.edit.description}
+      meta={messages.users.edit.meta}
       allowedUserTypes={['SUPER']}
-      accessDeniedDescription="Editar usuarios esta reservado para cuentas SUPER."
+      accessDeniedDescription={messages.users.edit.accessDenied}
     >
       <Toolbar q:slot="toolbar">
         <Button
@@ -248,88 +213,60 @@ export default component$(() => {
           iconLeft="back"
           onClick$={goBack$}
         >
-          Regresar
+          {messages.users.common.backLabel}
         </Button>
-        <span q:slot="center">
-          Guarda cambios para actualizar los permisos de acceso inmediatamente.
-        </span>
+        <span q:slot="center">{messages.users.edit.toolbarCenter}</span>
       </Toolbar>
 
       <div class="edit-user-page">
         <PageReturn
-          eyebrow="Modulo de usuarios"
-          title="Editar usuario"
-          buttonLabel="Regresar"
+          eyebrow={messages.users.edit.pageReturnEyebrow}
+          title={messages.users.edit.title}
+          buttonLabel={messages.users.edit.pageReturnLabel}
           onClick$={goBack$}
         />
 
         {error.value && (
-          <Toast tone="danger" title="Revision necesaria">
+          <Toast tone="danger" title={messages.users.common.errorToastTitle}>
             {error.value}
           </Toast>
         )}
 
         {success.value && (
-          <Toast tone="success" title="Cambios guardados">
-            Los cambios del usuario se guardaron con éxito. Redirigiendo...
+          <Toast tone="success" title={messages.users.edit.successToastTitle}>
+            {messages.users.edit.successToastDescription}
           </Toast>
         )}
 
         {loading.value && (
           <Panel
-            title="Cargando datos"
-            description="Buscando usuario en el sistema..."
+            title={messages.users.common.loadingTitle}
+            description={messages.users.common.loadingDescription}
           >
             <div class="edit-user__loading" />
           </Panel>
         )}
 
         {!loading.value && selectionMode.value && !currentUser && (
-          <Panel
-            title="Seleccionar usuario"
-            description="Busca por nombre o usuario para editar su informacion."
-          >
-            <div class="edit-user-layout">
-              <Field
-                label="Usuario"
-                hint="Escribe al menos 3 caracteres para buscar."
-              >
-                <SearchSelect
-                  query={searchTerm.value}
-                  options={searchResults.value.map((result) => ({
-                    value: String(result.id),
-                    label: result.fullName,
-                    description: result.username,
-                  }))}
-                  loading={searching.value}
-                  placeholder="Nombre o usuario"
-                  emptyMessage={
-                    searchTerm.value.length < 3
-                      ? 'Escribe al menos 3 caracteres'
-                      : 'No se encontraron usuarios'
-                  }
-                  onQueryChange$={(query) => {
-                    searchTerm.value = query;
-                    error.value = '';
-                  }}
-                  onSelect$={async (option) => {
-                    await openManualEdit$(Number(option.value));
-                  }}
-                  onClear$={$(() => {
-                    searchTerm.value = '';
-                    searchResults.value = [];
-                  })}
-                />
-              </Field>
-            </div>
-          </Panel>
+          <UserSearchPanel
+            title={messages.users.edit.selectionTitle}
+            description={messages.users.edit.selectionDescription}
+            fieldHint={messages.users.common.fieldUserHint}
+            noResultsMessage={messages.users.common.noResultsCriteria}
+            badgeField="isActive"
+            badgeTrueLabel={messages.users.detail.resultActive}
+            badgeFalseLabel={messages.users.detail.resultInactive}
+            badgeTrueTone="success"
+            badgeFalseTone="danger"
+            onSelect$={openManualEdit$}
+          />
         )}
 
         {!loading.value && currentUser && (
           <div class="edit-user-layout">
             <Panel
-              title="1. Persona asociada"
-              description="Datos personales ligados a la cuenta de usuario (Modo lectura)."
+              title={messages.users.edit.panelPersonTitle}
+              description={messages.users.edit.panelPersonDescription}
             >
               <div class="edit-user-person">
                 <div class="edit-user-person__avatar" aria-hidden="true">
@@ -344,16 +281,16 @@ export default component$(() => {
             </Panel>
 
             <Panel
-              title="2. Acceso y Permisos"
-              description="Configura los accesos y el rol que tendrá el usuario."
+              title={messages.users.edit.panelAccessTitle}
+              description={messages.users.edit.panelAccessDescription}
             >
               <div class="edit-user-form">
                 <Field
-                  label="Usuario o correo"
+                  label={messages.users.edit.labelUsername}
                   required
                   error={
                     errorField.value === 'username'
-                      ? 'Usuario no válido o ya en uso.'
+                      ? messages.users.edit.errorUsernameInvalid
                       : undefined
                   }
                 >
@@ -361,7 +298,7 @@ export default component$(() => {
                     iconLeft="mail"
                     value={username.value}
                     invalid={errorField.value === 'username'}
-                    placeholder="correo@escuela.edu"
+                    placeholder={messages.users.edit.placeholderUsername}
                     onInput$={(event) => {
                       username.value = (event.target as HTMLInputElement).value;
                     }}
@@ -370,11 +307,11 @@ export default component$(() => {
 
                 <div class="edit-user-grid">
                   <Field
-                    label="Rol asignado"
+                    label={messages.users.edit.labelRole}
                     required
                     error={
                       errorField.value === 'roleId'
-                        ? 'El rol es requerido.'
+                        ? messages.users.edit.errorRoleRequired
                         : undefined
                     }
                   >
@@ -382,7 +319,7 @@ export default component$(() => {
                       iconLeft="user-settings"
                       value={roleId.value ? String(roleId.value) : ''}
                       options={roleOptions}
-                      placeholder="Selecciona rol"
+                      placeholder={messages.users.edit.placeholderRole}
                       invalid={errorField.value === 'roleId'}
                       onChange$={(value) => {
                         roleId.value = Number(value);
@@ -391,11 +328,11 @@ export default component$(() => {
                   </Field>
 
                   <Field
-                    label="Tipo de usuario"
+                    label={messages.users.edit.labelUserType}
                     required
                     error={
                       errorField.value === 'userTypeId'
-                        ? 'El tipo es requerido.'
+                        ? messages.users.edit.errorUserTypeRequired
                         : undefined
                     }
                   >
@@ -403,7 +340,7 @@ export default component$(() => {
                       iconLeft="person"
                       value={userTypeId.value ? String(userTypeId.value) : ''}
                       options={userTypeOptions}
-                      placeholder="Selecciona tipo"
+                      placeholder={messages.users.edit.placeholderUserType}
                       invalid={errorField.value === 'userTypeId'}
                       onChange$={(value) => {
                         userTypeId.value = Number(value);
@@ -415,8 +352,8 @@ export default component$(() => {
             </Panel>
 
             <Panel
-              title="3. Fotografía de perfil"
-              description="Sube una nueva foto para actualizar la imagen de perfil."
+              title={messages.users.edit.panelPhotoTitle}
+              description={messages.users.edit.panelPhotoDescription}
             >
               <div class="edit-user-photo">
                 <div class="edit-user-photo__preview">
@@ -441,7 +378,9 @@ export default component$(() => {
                     }}
                   />
                   <label class="edit-user-photo__button" for="user-photo">
-                    {photoPreview.value ? 'Cambiar foto' : 'Subir foto'}
+                    {photoPreview.value
+                      ? messages.users.edit.photoChange
+                      : messages.users.edit.photoUpload}
                   </label>
                   {photoFile.value && (
                     <Button
@@ -457,7 +396,7 @@ export default component$(() => {
                           : '';
                       }}
                     >
-                      Restablecer original
+                      {messages.users.edit.photoRestore}
                     </Button>
                   )}
                 </div>
@@ -466,14 +405,14 @@ export default component$(() => {
 
             <div class="edit-user-actions">
               <Button variant="secondary" onClick$={goBack$}>
-                Cancelar
+                {messages.users.edit.actionCancel}
               </Button>
               <Button
                 iconLeft="save"
                 loading={saving.value}
                 onClick$={saveChanges$}
               >
-                Guardar cambios
+                {messages.users.edit.actionSave}
               </Button>
             </div>
           </div>

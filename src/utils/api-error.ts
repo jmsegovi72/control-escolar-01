@@ -1,8 +1,12 @@
+import { messages } from '~/config/messages';
+
 type ApiErrorData = {
   message?: string | string[];
   statusCode?: number;
   error?: {
     code?: string;
+    details?: string | string[];
+    invalidField?: string;
   };
   invalidField?: string;
   field?: string;
@@ -33,8 +37,7 @@ type ApiErrorShape = {
 
 export type NormalizedApiError = {
   message: string;
-  status?: number;
-  statusCode?: number;
+  statusCode: number;
   code?: string;
   invalidField?: string;
   lockout?: {
@@ -42,25 +45,56 @@ export type NormalizedApiError = {
   };
 };
 
+const STATUS_MESSAGES: Record<number, string> = {
+  403: messages.errors.forbidden,
+  404: messages.errors.notFound,
+  500: messages.errors.internalError,
+};
+
 export function normalizeError(
   error: unknown,
   fallback: string,
 ): NormalizedApiError {
+  // 1. Sin respuesta del servidor (error de red/conexión)
+  if (!error || typeof error !== 'object' || !('response' in error)) {
+    const errorObj = error as { message?: string } | null;
+    const isNetworkError =
+      errorObj?.message &&
+      String(errorObj.message).toLowerCase().includes('network');
+
+    return {
+      message: isNetworkError
+        ? messages.errors.networkError
+        : (errorObj?.message ?? messages.errors.networkError),
+      statusCode: 0,
+    };
+  }
+
   const apiError = error as ApiErrorShape;
   const data = apiError.response?.data;
-  const message = data?.message;
-  const resolvedMessage = Array.isArray(message)
-    ? message[0]
-    : (message ?? apiError.message ?? fallback);
+  const statusCode = apiError.response?.status ?? 500;
+  const rawMessage = data?.message;
+  const errorCode = data?.error?.code;
+  const invalidField = data?.invalidField ?? data?.field ?? data?.error?.invalidField;
 
+  // 2. Array de errores (ValidationPipe de NestJS)
+  if (Array.isArray(rawMessage)) {
+    return {
+      message: rawMessage[0] ?? STATUS_MESSAGES[statusCode] ?? fallback,
+      statusCode,
+      code: errorCode,
+      invalidField,
+    };
+  }
+
+  // 3. Mensaje único del backend o fallback por código HTTP
   return {
-    message: resolvedMessage,
-    status: apiError.response?.status,
-    statusCode: data?.statusCode,
-    code: data?.error?.code,
-    invalidField: data?.invalidField ?? data?.field,
+    message: rawMessage ?? STATUS_MESSAGES[statusCode] ?? apiError.message ?? fallback,
+    statusCode,
+    code: errorCode,
+    invalidField,
     lockout: {
-      remainingText: getLockoutRemainingText(data, resolvedMessage),
+      remainingText: getLockoutRemainingText(data, rawMessage),
     },
   };
 }

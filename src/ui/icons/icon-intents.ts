@@ -40,6 +40,7 @@ export type IconIntent =
   | 'upload'
   | 'user-settings'
   | 'view'
+  | 'view-off'
   | 'warning';
 
 export type IconContext =

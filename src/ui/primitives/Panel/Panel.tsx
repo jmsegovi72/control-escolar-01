@@ -15,6 +15,7 @@ export const Panel = component$<PanelProps>(
       <section class="ui-panel" data-variant={variant} data-density={density}>
         {(eyebrow || title || description) && (
           <header class="ui-panel__header">
+            <Slot name="leading" />
             <div class="ui-panel__heading">
               {eyebrow && <span class="ui-panel__eyebrow">{eyebrow}</span>}
               {title && <h2 class="ui-panel__title">{title}</h2>}
