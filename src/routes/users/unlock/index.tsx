@@ -240,7 +240,7 @@ export default component$(() => {
 
                 <ConfirmAction
                   open={confirmOpen.value}
-                  tone="default"
+                  tone="neutral"
                   icon="unlock"
                   title={m.confirmDialogTitle}
                   description={m.confirmDialogDescription.replace(

@@ -458,7 +458,6 @@ export default component$(() => {
             searchable={false}
             hasActiveFilters={hasActiveFilters}
             stickyHeader
-            maxHeight="calc(100vh - 32rem)"
             emptyTitle={messages.users.search.tableEmptyTitle}
             emptyDescription={messages.users.search.tableEmptyDescription}
             onFilter$={$(async (change) => {

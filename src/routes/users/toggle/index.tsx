@@ -252,7 +252,7 @@ export default component$(() => {
 
                 <ConfirmAction
                   open={confirmOpen.value}
-                  tone={willDeactivate ? 'danger' : 'default'}
+                  tone={willDeactivate ? 'danger' : 'neutral'}
                   icon="toggle"
                   title={
                     willDeactivate
