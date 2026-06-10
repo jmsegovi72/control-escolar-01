@@ -30,12 +30,12 @@ const getCellValue = <T extends Record<string, unknown>>(
 export const DataTable = component$(
   <T extends Record<string, unknown>>(props: DataTableProps<T>) => {
     const openActionIndex = useSignal<number | null>(null);
-    const columnFilters = useSignal<Record<string, string>>({});
+    const filterResetKey = useSignal(0);
 
     useTask$(({ track }) => {
       const active = track(() => props.hasActiveFilters);
       if (!active) {
-        columnFilters.value = {};
+        filterResetKey.value += 1;
       }
     });
 
@@ -159,29 +159,29 @@ export const DataTable = component$(
                     <th key={`${String(column.key)}-filter`}>
                       {column.filter?.type === 'text' && (
                         <Input
+                          key={`${String(column.key)}-${filterResetKey.value}`}
                           variant="quiet"
                           size="sm"
                           placeholder={column.filter.placeholder ?? 'Filtrar'}
-                          value={columnFilters.value[String(column.key)] ?? ''}
                           onInput$={(event) => {
-                            const value = (event.target as HTMLInputElement).value;
-                            columnFilters.value = { ...columnFilters.value, [String(column.key)]: value };
-                            props.onFilter$?.({ key: String(column.key), value });
+                            props.onFilter$?.({
+                              key: String(column.key),
+                              value: (event.target as HTMLInputElement).value,
+                            });
                           }}
                         />
                       )}
                       {column.filter?.type === 'select' && (
                         <Select
+                          key={`${String(column.key)}-${filterResetKey.value}`}
                           variant="quiet"
                           size="sm"
-                          value={columnFilters.value[String(column.key)] ?? ''}
                           placeholder={column.filter.placeholder ?? 'Todos'}
                           options={[
                             { value: '', label: column.filter.placeholder ?? 'Todos' },
                             ...column.filter.options,
                           ]}
                           onChange$={(value) => {
-                            columnFilters.value = { ...columnFilters.value, [String(column.key)]: value };
                             props.onFilter$?.({ key: String(column.key), value });
                           }}
                         />
