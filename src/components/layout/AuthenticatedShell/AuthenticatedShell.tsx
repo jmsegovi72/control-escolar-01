@@ -39,6 +39,7 @@ type AuthenticatedShellProps = {
   allowedRoles?: string[];
   accessDeniedTitle?: string;
   accessDeniedDescription?: string;
+  fullWidth?: boolean;
 };
 
 export const AuthenticatedShell = component$<AuthenticatedShellProps>(
@@ -51,6 +52,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     allowedRoles,
     accessDeniedTitle = messages.layout.shell.accessDeniedTitle,
     accessDeniedDescription = messages.layout.shell.accessDeniedDescription,
+    fullWidth = false,
   }) => {
     const nav = useNavigate();
     const location = useLocation();
@@ -340,7 +342,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         </Button>
 
         {authorizationReady.value && authorized.value && (
-          <div class="authenticated-shell__container">
+          <div class={`authenticated-shell__container${fullWidth ? ' authenticated-shell__container--full-width' : ''}`}>
             <Slot />
           </div>
         )}

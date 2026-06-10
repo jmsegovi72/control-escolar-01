@@ -302,6 +302,7 @@ export default component$(() => {
       meta={messages.users.search.meta}
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={messages.users.search.accessDenied}
+      fullWidth
     >
       <Toolbar q:slot="toolbar">
         <Button

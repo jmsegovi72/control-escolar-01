@@ -5,7 +5,11 @@
 @import "./ui/styles/index.css";
 
 .authenticated-shell__container {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
+}
+
+.authenticated-shell__container--full-width {
+  max-width: 100%;
 }
