@@ -72,33 +72,6 @@ const operationalActions: PersonAction[] = [
     tone: 'warning',
     badge: m.operationalActions.emergency.badge,
   },
-  {
-    id: 'fake1',
-    title: 'Acción de prueba 1',
-    description: 'Descripción de prueba para verificar el scroll de la página.',
-    href: '#',
-    icon: 'settings',
-    tone: 'primary',
-    badge: 'Prueba',
-  },
-  {
-    id: 'fake2',
-    title: 'Acción de prueba 2',
-    description: 'Otra descripción de prueba para empujar el contenido.',
-    href: '#',
-    icon: 'user-settings',
-    tone: 'info',
-    badge: 'Prueba',
-  },
-  {
-    id: 'fake3',
-    title: 'Acción de prueba 3',
-    description: 'Tercera descripción de prueba para probar el scroll de la página.',
-    href: '#',
-    icon: 'unlock',
-    tone: 'danger',
-    badge: 'Prueba',
-  },
 ];
 
 export default component$(() => {
