@@ -13,8 +13,12 @@ export const ROUTES = {
   USERS_RESET_LOGIN: '/users/reset-login',
 
   PERSONS: '/persons',
-  PERSONS_ADDRESSES: '/addresses',
-  PERSONS_DEMOGRAPHICS: '/demographics',
+  PERSONS_SEARCH: '/persons/search',
+  PERSONS_CREATE: '/persons/create',
+  PERSONS_DETAIL: '/persons/detail',
+  PERSONS_EDIT: '/persons/edit',
+  PERSONS_ADDRESSES: '/persons/addresses',
+  PERSONS_DEMOGRAPHICS: '/persons/demographics',
   PERSONS_EMERGENCY: '/persons/emergency-contacts',
 
   STUDENTS_ADMISSION: '/students/admission',

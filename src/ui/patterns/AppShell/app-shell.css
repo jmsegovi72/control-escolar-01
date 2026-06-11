@@ -142,8 +142,7 @@
 }
 
 .ui-app-shell__content {
-  display: flex;
-  flex-direction: column;
+  display: block;
   min-width: 0;
   min-height: 0;
   overflow: auto;

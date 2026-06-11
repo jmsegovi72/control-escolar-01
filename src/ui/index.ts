@@ -1,5 +1,6 @@
 export { Accordion } from './composed/Accordion/Accordion';
 export { DateRangeInput } from './composed/DateRangeInput/DateRangeInput';
+export { DerivedField } from './composed/DerivedField/DerivedField';
 export { DetailDrawer } from './composed/DetailDrawer/DetailDrawer';
 export { Dialog } from './composed/Dialog/Dialog';
 export { DropdownMenu } from './composed/DropdownMenu/DropdownMenu';

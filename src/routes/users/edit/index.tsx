@@ -287,7 +287,6 @@ export default component$(() => {
               <div class="edit-user-form">
                 <Field
                   label={messages.users.edit.labelUsername}
-                  required
                   error={
                     errorField.value === 'username'
                       ? messages.users.edit.errorUsernameInvalid
@@ -308,7 +307,6 @@ export default component$(() => {
                 <div class="edit-user-grid">
                   <Field
                     label={messages.users.edit.labelRole}
-                    required
                     error={
                       errorField.value === 'roleId'
                         ? messages.users.edit.errorRoleRequired
@@ -329,7 +327,6 @@ export default component$(() => {
 
                   <Field
                     label={messages.users.edit.labelUserType}
-                    required
                     error={
                       errorField.value === 'userTypeId'
                         ? messages.users.edit.errorUserTypeRequired

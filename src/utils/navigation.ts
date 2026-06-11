@@ -1,7 +1,8 @@
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
-import type { User } from '~/types/auth.types';
+import type { PermissionsMap, User } from '~/types/auth.types';
 import type { SidebarSection } from '~/ui/patterns/Sidebar/sidebar.types';
+import { hasPermission } from './permissions';
 
 const normalizeAccessValue = (value?: string) =>
   value?.trim().toUpperCase() ?? '';
@@ -34,7 +35,12 @@ export const canAccessRoute = (
 export const createNavigation = (
   isSuper: boolean,
   hasControlAccess: boolean,
+  permissions: PermissionsMap | null,
 ): SidebarSection[] => {
+  // SUPER always has full access; other users are filtered by permissions or user type.
+  const canRead = (module: string): boolean =>
+    isSuper || (permissions ? hasPermission(permissions, module, 'read') : hasControlAccess);
+
   const sections: SidebarSection[] = [
     {
       id: 'main',
@@ -51,14 +57,13 @@ export const createNavigation = (
           id: 'persons',
           label: messages.layout.shell.nav.persons,
           icon: 'person',
-          disabled: !hasControlAccess,
+          disabled: !canRead('persons'),
           children: [
             {
               id: 'persons-management',
               label: messages.layout.shell.nav.personsManagement,
               icon: 'person',
               href: ROUTES.PERSONS,
-              disabled: true,
             },
             {
               id: 'persons-addresses',
@@ -87,7 +92,7 @@ export const createNavigation = (
           id: 'students',
           label: messages.layout.shell.nav.students,
           icon: 'student',
-          disabled: !hasControlAccess,
+          disabled: !canRead('students'),
           children: [
             {
               id: 'students-admission',
@@ -128,7 +133,7 @@ export const createNavigation = (
           id: 'catalogs',
           label: messages.layout.shell.nav.catalogs,
           icon: 'settings',
-          disabled: !hasControlAccess,
+          disabled: !canRead('classes'),
           children: [
             {
               id: 'catalogs-zip-codes',
@@ -150,7 +155,7 @@ export const createNavigation = (
     },
   ];
 
-  if (isSuper) {
+  if (isSuper || canRead('users')) {
     sections.push({
       id: 'admin',
       label: messages.layout.shell.menuAdmin,

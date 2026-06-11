@@ -20,6 +20,7 @@ import type {
   SidebarStatusTone,
   SidebarUser,
 } from '~/ui/patterns/Sidebar/sidebar.types';
+import { canAccessRoute, createNavigation } from '~/utils/navigation';
 import { sessionStore } from '~/utils/session';
 import {
   formatDate,
@@ -28,7 +29,6 @@ import {
   getInitials,
   getTokenRemaining,
 } from '~/utils/session-utils';
-import { canAccessRoute, createNavigation } from '~/utils/navigation';
 
 type AuthenticatedShellProps = {
   eyebrow?: string;
@@ -117,6 +117,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
       sections.value = createNavigation(
         Boolean(isSuper),
         Boolean(hasControlAccess),
+        sessionStore.getPermissions(),
       );
 
       const updateClock = () => {
@@ -196,7 +197,11 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           }}
           sections={sections.value}
           activeItem={
-            location.url.pathname.startsWith('/users') ? 'users' : 'dashboard'
+            location.url.pathname.startsWith('/users')
+              ? 'users'
+              : location.url.pathname.startsWith('/persons')
+                ? 'persons-management'
+                : 'dashboard'
           }
           openItems={openItems.value}
           collapsed={sidebarCollapsed}

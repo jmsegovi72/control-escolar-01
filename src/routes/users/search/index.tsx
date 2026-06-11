@@ -29,6 +29,8 @@ import type {
   DataTableColumn,
 } from '~/ui/patterns/DataTable/data-table.types';
 import { normalizeError } from '~/utils/api-error';
+import { hasPermission } from '~/utils/permissions';
+import { sessionStore } from '~/utils/session';
 import { usersWorkflow } from '~/utils/users-workflow';
 import './search.css';
 
@@ -66,6 +68,7 @@ export default component$(() => {
   const userTypeName = useSignal('');
   const isActive = useSignal('');
   const isFirstLogin = useSignal('');
+  const canWriteUsers = useSignal(false);
 
   const roleOptions = useComputed$(() => {
     const users = allUsers.value.filter((u) => {
@@ -236,6 +239,12 @@ export default component$(() => {
   });
 
   useVisibleTask$(async () => {
+    canWriteUsers.value = hasPermission(
+      sessionStore.getPermissions(),
+      'users',
+      'write',
+    );
+
     loadingAll.value = true;
     try {
       const response = await userService.findMany({ limit: 10000 });
@@ -313,40 +322,44 @@ export default component$(() => {
         await nav(`${ROUTES.USERS_DETAIL}?id=${row.id}&source=table`);
       }),
     },
-    {
-      label: messages.users.search.actions.edit,
-      icon: 'edit',
-      onClick$: $(async (row) => {
-        await saveWorkContext$(row);
-        await nav(`${ROUTES.USERS_EDIT}?id=${row.id}`);
-      }),
-    },
-    {
-      label: messages.users.search.actions.toggle,
-      icon: 'toggle',
-      tone: 'primary',
-      onClick$: $(async (row) => {
-        await saveWorkContext$(row);
-        await nav(`${ROUTES.USERS_TOGGLE}?id=${row.id}`);
-      }),
-    },
-    {
-      label: messages.users.search.actions.unlock,
-      icon: 'unlock',
-      onClick$: $(async (row) => {
-        await saveWorkContext$(row);
-        await nav(`${ROUTES.USERS_UNLOCK}?id=${row.id}`);
-      }),
-    },
-    {
-      label: messages.users.search.actions.resetLogin,
-      icon: 'login-reset',
-      tone: 'danger',
-      onClick$: $(async (row) => {
-        await saveWorkContext$(row);
-        await nav(`${ROUTES.USERS_RESET_LOGIN}?id=${row.id}&source=table`);
-      }),
-    },
+    ...(canWriteUsers.value
+      ? ([
+          {
+            label: messages.users.search.actions.edit,
+            icon: 'edit',
+            onClick$: $(async (row) => {
+              await saveWorkContext$(row);
+              await nav(`${ROUTES.USERS_EDIT}?id=${row.id}`);
+            }),
+          },
+          {
+            label: messages.users.search.actions.toggle,
+            icon: 'toggle',
+            tone: 'primary',
+            onClick$: $(async (row) => {
+              await saveWorkContext$(row);
+              await nav(`${ROUTES.USERS_TOGGLE}?id=${row.id}`);
+            }),
+          },
+          {
+            label: messages.users.search.actions.unlock,
+            icon: 'unlock',
+            onClick$: $(async (row) => {
+              await saveWorkContext$(row);
+              await nav(`${ROUTES.USERS_UNLOCK}?id=${row.id}`);
+            }),
+          },
+          {
+            label: messages.users.search.actions.resetLogin,
+            icon: 'login-reset',
+            tone: 'danger',
+            onClick$: $(async (row) => {
+              await saveWorkContext$(row);
+              await nav(`${ROUTES.USERS_RESET_LOGIN}?id=${row.id}&source=table`);
+            }),
+          },
+        ] as DataTableAction<UserRow>[])
+      : []),
   ];
 
   return (
@@ -369,13 +382,15 @@ export default component$(() => {
           {messages.users.search.toolbarBack}
         </Button>
         <span q:slot="center">{messages.users.search.toolbarCenter}</span>
-        <Button
-          q:slot="actions"
-          iconLeft="add"
-          onClick$={async () => await nav(ROUTES.USERS_CREATE)}
-        >
-          {messages.users.search.newUser}
-        </Button>
+        {canWriteUsers.value && (
+          <Button
+            q:slot="actions"
+            iconLeft="add"
+            onClick$={async () => await nav(ROUTES.USERS_CREATE)}
+          >
+            {messages.users.search.newUser}
+          </Button>
+        )}
       </Toolbar>
 
       <div class="users-search">

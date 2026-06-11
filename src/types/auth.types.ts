@@ -22,9 +22,12 @@ export interface User {
   firstLogin: boolean;
 }
 
+export type PermissionsMap = Record<string, ('read' | 'write')[]>;
+
 export interface AuthResponse {
   user: User;
   token: string;
+  permissions?: PermissionsMap;
 }
 
 export interface FirstLoginResponse {

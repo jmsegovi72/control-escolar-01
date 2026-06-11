@@ -1,4 +1,4 @@
-import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
+import { $, component$, useSignal } from '@builder.io/qwik';
 
 import { AppIcon } from '~/ui/icons';
 import { Badge } from '~/ui/primitives/Badge/Badge';
@@ -30,14 +30,6 @@ const getCellValue = <T extends Record<string, unknown>>(
 export const DataTable = component$(
   <T extends Record<string, unknown>>(props: DataTableProps<T>) => {
     const openActionIndex = useSignal<number | null>(null);
-    const filterResetKey = useSignal(0);
-
-    useTask$(({ track }) => {
-      const active = track(() => props.hasActiveFilters);
-      if (!active) {
-        filterResetKey.value += 1;
-      }
-    });
 
     const hasActions = !!props.actions?.length;
     const actionMode = props.actionMode ?? 'auto';
@@ -159,7 +151,6 @@ export const DataTable = component$(
                     <th key={`${String(column.key)}-filter`}>
                       {column.filter?.type === 'text' && (
                         <Input
-                          key={`${String(column.key)}-${filterResetKey.value}`}
                           variant="quiet"
                           size="sm"
                           placeholder={column.filter.placeholder ?? 'Filtrar'}
@@ -173,14 +164,10 @@ export const DataTable = component$(
                       )}
                       {column.filter?.type === 'select' && (
                         <Select
-                          key={`${String(column.key)}-${filterResetKey.value}`}
                           variant="quiet"
                           size="sm"
                           placeholder={column.filter.placeholder ?? 'Todos'}
-                          options={[
-                            { value: '', label: column.filter.placeholder ?? 'Todos' },
-                            ...column.filter.options,
-                          ]}
+                          options={column.filter.options}
                           onChange$={(value) => {
                             props.onFilter$?.({ key: String(column.key), value });
                           }}

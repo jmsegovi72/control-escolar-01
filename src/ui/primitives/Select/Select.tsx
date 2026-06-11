@@ -1,5 +1,14 @@
-import { $, component$, useSignal } from '@builder.io/qwik';
+import {
+  $,
+  component$,
+  type Signal,
+  useContext,
+  useSignal,
+  useTask$,
+  useVisibleTask$,
+} from '@builder.io/qwik';
 
+import { DerivedFieldEnabledCtx } from '~/ui/composed/DerivedField/derived-field.context';
 import { AppIcon } from '~/ui/icons';
 import type { SelectProps } from './select.types';
 import './select.css';
@@ -21,6 +30,52 @@ export const Select = component$<SelectProps>(
   }) => {
     const open = useSignal(false);
     const selectedValue = useSignal(value ?? '');
+    const rootRef = useSignal<Element>();
+
+    // Consume DerivedField context when present (null when used standalone)
+    const fieldEnabled = useContext(DerivedFieldEnabledCtx, null);
+
+    // Sync external value prop
+    useTask$(({ track }) => {
+      const v = track(() => value);
+      if (v !== undefined) selectedValue.value = v;
+    });
+
+    // Close when parent DerivedField disables this field
+    useTask$(({ track }) => {
+      const ctx = fieldEnabled as Signal<boolean> | null;
+      if (!ctx) return;
+      const isEnabled = track(() => ctx.value);
+      if (!isEnabled) open.value = false;
+    });
+
+    // ESC key + click-outside — only active while dropdown is open
+    useVisibleTask$(({ track, cleanup }) => {
+      const isOpen = track(() => open.value);
+      if (!isOpen) return;
+
+      const onKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          open.value = false;
+        }
+      };
+
+      const onMousedown = (e: MouseEvent) => {
+        if (rootRef.value && !rootRef.value.contains(e.target as Node)) {
+          open.value = false;
+        }
+      };
+
+      document.addEventListener('keydown', onKeydown);
+      document.addEventListener('mousedown', onMousedown);
+
+      cleanup(() => {
+        document.removeEventListener('keydown', onKeydown);
+        document.removeEventListener('mousedown', onMousedown);
+      });
+    });
+
     const selectedOption = options.find(
       (option) => option.value === selectedValue.value,
     );
@@ -33,6 +88,7 @@ export const Select = component$<SelectProps>(
 
     return (
       <span
+        ref={rootRef}
         class="ui-select-shell"
         data-variant={variant}
         data-size={size}
@@ -62,9 +118,7 @@ export const Select = component$<SelectProps>(
           aria-expanded={open.value ? 'true' : 'false'}
           aria-haspopup="listbox"
           onClick$={() => {
-            if (!disabled) {
-              open.value = !open.value;
-            }
+            if (!disabled) open.value = !open.value;
           }}
         >
           <span

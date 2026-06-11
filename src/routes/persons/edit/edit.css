@@ -1,0 +1,121 @@
+.edit-person-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-person-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-person-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-person-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.edit-person-grid--curp {
+  grid-template-columns: minmax(0, 380px) minmax(0, 160px) 1fr;
+}
+
+.edit-person-grid--thirds {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.edit-person-derived-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.edit-person-derived {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.edit-person-derived__title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.edit-person-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface-subtle);
+  padding: var(--space-3);
+}
+
+.edit-person-summary__icon {
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.edit-person-summary strong,
+.edit-person-summary span,
+.edit-person-summary small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edit-person-summary span,
+.edit-person-summary small {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.edit-person-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.edit-person__loading {
+  height: 0.75rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-subtle),
+    var(--color-border),
+    var(--color-surface-subtle)
+  );
+}
+
+@media (max-width: 760px) {
+  .edit-person-grid,
+  .edit-person-grid--thirds,
+  .edit-person-grid--curp,
+  .edit-person-derived-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1024px) {
+  .edit-person-derived-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,6 +1,7 @@
 import type {
   AuthResponse,
   FirstLoginResponse,
+  PermissionsMap,
   SessionKind,
   User,
 } from '~/types/auth.types';
@@ -8,6 +9,7 @@ import type {
 const TOKEN_KEY = 'token';
 const USER_KEY = 'user';
 const SESSION_KIND_KEY = 'sessionKind';
+const PERMISSIONS_KEY = 'permissions';
 
 const canUseStorage = () => typeof window !== 'undefined';
 
@@ -24,6 +26,11 @@ export const sessionStore = {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));
     localStorage.setItem(SESSION_KIND_KEY, 'authenticated');
+    if (response.permissions) {
+      localStorage.setItem(PERMISSIONS_KEY, JSON.stringify(response.permissions));
+    } else {
+      localStorage.removeItem(PERMISSIONS_KEY);
+    }
   },
 
   clear(): void {
@@ -31,6 +38,13 @@ export const sessionStore = {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(SESSION_KIND_KEY);
+    localStorage.removeItem(PERMISSIONS_KEY);
+  },
+
+  getPermissions(): PermissionsMap | null {
+    if (!canUseStorage()) return null;
+    const raw = localStorage.getItem(PERMISSIONS_KEY);
+    return raw ? (JSON.parse(raw) as PermissionsMap) : null;
   },
 
   getToken(): string | null {
