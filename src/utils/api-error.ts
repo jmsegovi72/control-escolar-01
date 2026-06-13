@@ -75,7 +75,8 @@ export function normalizeError(
   const statusCode = apiError.response?.status ?? 500;
   const rawMessage = data?.message;
   const errorCode = data?.error?.code;
-  const invalidField = data?.invalidField ?? data?.field ?? data?.error?.invalidField;
+  const invalidField =
+    data?.invalidField ?? data?.field ?? data?.error?.invalidField;
 
   // 2. Array de errores (ValidationPipe de NestJS)
   if (Array.isArray(rawMessage)) {
@@ -89,7 +90,8 @@ export function normalizeError(
 
   // 3. Mensaje único del backend o fallback por código HTTP
   return {
-    message: rawMessage ?? STATUS_MESSAGES[statusCode] ?? apiError.message ?? fallback,
+    message:
+      rawMessage ?? STATUS_MESSAGES[statusCode] ?? apiError.message ?? fallback,
     statusCode,
     code: errorCode,
     invalidField,

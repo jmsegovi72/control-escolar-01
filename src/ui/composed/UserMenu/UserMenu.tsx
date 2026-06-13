@@ -1,7 +1,6 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
-
-import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import { AppIcon } from '~/ui/icons';
+import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import type { UserMenuProps } from './user-menu.types';
 import './user-menu.css';
 

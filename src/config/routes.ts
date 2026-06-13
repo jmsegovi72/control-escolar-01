@@ -20,6 +20,7 @@ export const ROUTES = {
   PERSONS_ADDRESSES: '/persons/addresses',
   PERSONS_DEMOGRAPHICS: '/persons/demographics',
   PERSONS_EMERGENCY: '/persons/emergency-contacts',
+  PERSONS_BULK_LOAD: '/persons/bulk-load',
 
   STUDENTS_ADMISSION: '/students/admission',
   STUDENTS_ENROLLMENT: '/students/enrollment',

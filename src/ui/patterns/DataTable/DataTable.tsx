@@ -30,6 +30,8 @@ const getCellValue = <T extends Record<string, unknown>>(
 export const DataTable = component$(
   <T extends Record<string, unknown>>(props: DataTableProps<T>) => {
     const openActionIndex = useSignal<number | null>(null);
+    const menuTop = useSignal(0);
+    const menuRight = useSignal(0);
 
     const hasActions = !!props.actions?.length;
     const actionMode = props.actionMode ?? 'auto';
@@ -116,6 +118,15 @@ export const DataTable = component$(
                     <Checkbox
                       aria-label="Seleccionar todos"
                       size="sm"
+                      checked={
+                        props.rows.length > 0 &&
+                        props.rows.every(
+                          (r) =>
+                            (r as any).selected === true ||
+                            (r as any).importStatus === 'invalid' ||
+                            (r as any).importStatus === 'imported',
+                        )
+                      }
                       onChange$={(event) => {
                         props.onSelectAll$?.(
                           (event.target as HTMLInputElement).checked,
@@ -169,7 +180,10 @@ export const DataTable = component$(
                           placeholder={column.filter.placeholder ?? 'Todos'}
                           options={column.filter.options}
                           onChange$={(value) => {
-                            props.onFilter$?.({ key: String(column.key), value });
+                            props.onFilter$?.({
+                              key: String(column.key),
+                              value,
+                            });
                           }}
                         />
                       )}
@@ -221,6 +235,11 @@ export const DataTable = component$(
                         <Checkbox
                           aria-label={`Seleccionar fila ${rowIndex + 1}`}
                           size="sm"
+                          checked={(row as any).selected === true}
+                          disabled={
+                            (row as any).importStatus === 'invalid' ||
+                            (row as any).importStatus === 'imported'
+                          }
                           onChange$={(event) => {
                             props.onRowSelect$?.(
                               row,
@@ -286,10 +305,21 @@ export const DataTable = component$(
                               }
                               onClick$={$((event) => {
                                 event.stopPropagation();
-                                openActionIndex.value =
-                                  openActionIndex.value === rowIndex
-                                    ? null
-                                    : rowIndex;
+                                if (openActionIndex.value === rowIndex) {
+                                  openActionIndex.value = null;
+                                  return;
+                                }
+                                const btn = (
+                                  event.target as HTMLElement
+                                ).closest('button');
+                                if (btn) {
+                                  const rect = btn.getBoundingClientRect();
+                                  menuTop.value = rect.bottom + 4;
+                                  menuRight.value =
+                                    document.documentElement.clientWidth -
+                                    rect.right;
+                                }
+                                openActionIndex.value = rowIndex;
                               })}
                             >
                               <span />
@@ -298,7 +328,10 @@ export const DataTable = component$(
                             </button>
 
                             {openActionIndex.value === rowIndex && (
-                              <div class="ui-data-table__action-dropdown">
+                              <div
+                                class="ui-data-table__action-dropdown"
+                                style={`top:${menuTop.value}px;right:${menuRight.value}px`}
+                              >
                                 {props.actions?.map((action) => (
                                   <button
                                     key={action.label}

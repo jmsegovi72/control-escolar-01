@@ -1,7 +1,7 @@
 import { ENV } from '~/config/env';
 import type { User } from '~/types/auth.types';
-import { sessionStore } from '~/utils/session';
 import type { SidebarStatusTone } from '~/ui/patterns/Sidebar/sidebar.types';
+import { sessionStore } from '~/utils/session';
 
 export const getInitials = (name: string) =>
   name

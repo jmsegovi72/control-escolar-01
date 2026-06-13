@@ -1,5 +1,10 @@
 import type { ApiResponse } from '~/types/api.types';
-import type { Role, UserType } from '~/types/catalog.types';
+import type {
+  Municipality,
+  QueryMunicipalityDto,
+  Role,
+  UserType,
+} from '~/types/catalog.types';
 import { apiClient } from '../api.client';
 
 export const catalogService = {
@@ -11,6 +16,20 @@ export const catalogService = {
   async getUserTypes(): Promise<UserType[]> {
     const response =
       await apiClient.get<ApiResponse<UserType[]>>('/user-types');
+    return response.data.data;
+  },
+
+  async getMunicipalities(
+    filters: QueryMunicipalityDto = {},
+  ): Promise<Municipality[]> {
+    const query = new URLSearchParams();
+    if (filters.stateId) query.set('stateId', String(filters.stateId));
+    if (filters.stateCode) query.set('stateCode', filters.stateCode);
+    if (filters.searchTerm) query.set('searchTerm', filters.searchTerm);
+
+    const response = await apiClient.get<ApiResponse<Municipality[]>>(
+      `/municipalities?${query.toString()}`,
+    );
     return response.data.data;
   },
 };

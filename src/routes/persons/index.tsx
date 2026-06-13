@@ -64,13 +64,43 @@ const operationalActions: PersonAction[] = [
     badge: m.operationalActions.edit.badge,
   },
   {
+    id: 'bulkLoad',
+    title: m.operationalActions.bulkLoad.title,
+    description: m.operationalActions.bulkLoad.description,
+    href: ROUTES.PERSONS_BULK_LOAD,
+    icon: 'upload',
+    tone: 'info',
+    badge: m.operationalActions.bulkLoad.badge,
+  },
+];
+
+const relatedModules: PersonAction[] = [
+  {
     id: 'emergency',
-    title: m.operationalActions.emergency.title,
-    description: m.operationalActions.emergency.description,
+    title: m.relatedModules.emergency.title,
+    description: m.relatedModules.emergency.description,
     href: ROUTES.PERSONS_EMERGENCY,
     icon: 'phone',
     tone: 'warning',
-    badge: m.operationalActions.emergency.badge,
+    badge: m.relatedModules.emergency.badge,
+  },
+  {
+    id: 'addresses',
+    title: m.relatedModules.addresses.title,
+    description: m.relatedModules.addresses.description,
+    href: ROUTES.PERSONS_ADDRESSES,
+    icon: 'pin',
+    tone: 'neutral',
+    badge: m.relatedModules.addresses.badge,
+  },
+  {
+    id: 'demographics',
+    title: m.relatedModules.demographics.title,
+    description: m.relatedModules.demographics.description,
+    href: ROUTES.PERSONS_DEMOGRAPHICS,
+    icon: 'group',
+    tone: 'neutral',
+    badge: m.relatedModules.demographics.badge,
   },
 ];
 
@@ -107,7 +137,7 @@ export default component$(() => {
           </div>
           <div class="persons-hub__summary" aria-label={m.summaryLabel}>
             <span>
-              <strong>5</strong>
+              <strong>8</strong>
               {m.summaryActions}
             </span>
             <span>
@@ -174,6 +204,43 @@ export default component$(() => {
                   size="sm"
                   iconRight="chevron-right"
                   onClick$={async () => await nav(action.href)}
+                >
+                  {m.goButton}
+                </Button>
+              </article>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel
+          title={m.relatedPanelTitle}
+          description={m.relatedPanelDescription}
+          density="compact"
+        >
+          <div class="persons-hub__grid">
+            {relatedModules.map((module) => (
+              <article
+                class="persons-action-card persons-action-card--compact"
+                data-tone={module.tone}
+                key={module.id}
+              >
+                <div class="persons-action-card__icon" aria-hidden="true">
+                  <AppIcon intent={module.icon} size="sm" />
+                </div>
+                <div class="persons-action-card__copy">
+                  <div class="persons-action-card__title-row">
+                    <h3>{module.title}</h3>
+                    {module.badge && (
+                      <Badge tone="neutral">{module.badge}</Badge>
+                    )}
+                  </div>
+                  <p>{module.description}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  iconRight="chevron-right"
+                  onClick$={async () => await nav(module.href)}
                 >
                   {m.goButton}
                 </Button>

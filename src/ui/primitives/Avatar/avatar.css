@@ -11,26 +11,26 @@
 }
 
 .ui-avatar[data-size="sm"] {
-  width: 2rem;
-  height: 2rem;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   font-size: var(--font-size-xs);
 }
 
 .ui-avatar[data-size="md"] {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   font-size: var(--font-size-sm);
 }
 
 .ui-avatar[data-size="lg"] {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   font-size: var(--font-size-lg);
 }
 
 .ui-avatar[data-size="xl"] {
-  width: 6.5rem;
-  height: 6.5rem;
+  width: var(--avatar-size-xl);
+  height: var(--avatar-size-xl);
   font-size: var(--font-size-3xl);
 }
 

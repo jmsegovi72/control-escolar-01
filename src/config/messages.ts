@@ -518,20 +518,24 @@ export const messages = {
     toggle: {
       eyebrow: 'Administración',
       title: 'Activar / Desactivar usuario',
-      description: 'Cambia el estado de acceso al sistema sin eliminar la cuenta.',
+      description:
+        'Cambia el estado de acceso al sistema sin eliminar la cuenta.',
       meta: 'Usuarios',
-      accessDenied: 'Activar o desactivar usuarios está reservado para cuentas SUPER.',
+      accessDenied:
+        'Activar o desactivar usuarios está reservado para cuentas SUPER.',
       pageReturnEyebrow: 'Módulo de usuarios',
       pageReturnLabel: 'Regresar',
       loadingTitle: 'Cargando usuario',
       loadingDescription: 'Consultando datos...',
       errorToastTitle: 'Revisión necesaria',
       selectionTitle: 'Seleccionar usuario',
-      selectionDescription: 'Busca por nombre o usuario para cambiar su estado.',
+      selectionDescription:
+        'Busca por nombre o usuario para cambiar su estado.',
       fieldUserHint: 'Escribe al menos 3 caracteres para buscar.',
       noResultsCriteria: 'No se encontraron usuarios con ese criterio.',
       selectedEyebrow: 'Usuario seleccionado',
-      selectedDescription: 'Confirma que este es el usuario correcto antes de cambiar el estado.',
+      selectedDescription:
+        'Confirma que este es el usuario correcto antes de cambiar el estado.',
       fieldId: 'ID',
       fieldUser: 'Usuario',
       fieldRole: 'Rol',
@@ -540,22 +544,27 @@ export const messages = {
       badgeInactive: 'Inactivo',
       confirmTitleDeactivate: 'Desactivar cuenta',
       confirmTitleActivate: 'Activar cuenta',
-      confirmDescriptionDeactivate: 'Esta acción suspenderá el acceso al sistema de forma inmediata.',
-      confirmDescriptionActivate: 'Esta acción habilitará el acceso al sistema de forma inmediata.',
+      confirmDescriptionDeactivate:
+        'Esta acción suspenderá el acceso al sistema de forma inmediata.',
+      confirmDescriptionActivate:
+        'Esta acción habilitará el acceso al sistema de forma inmediata.',
       changeUser: 'Cambiar usuario',
       deactivateButton: 'Desactivar',
       activateButton: 'Activar',
       confirmDialogTitleDeactivate: 'Desactivar usuario',
       confirmDialogTitleActivate: 'Activar usuario',
-      confirmDialogDescriptionDeactivate: 'Se desactivará el acceso de {fullName}.',
+      confirmDialogDescriptionDeactivate:
+        'Se desactivará el acceso de {fullName}.',
       confirmDialogDescriptionActivate: 'Se activará el acceso de {fullName}.',
-      confirmDialogDetails: 'Este cambio es inmediato y reversible en cualquier momento.',
+      confirmDialogDetails:
+        'Este cambio es inmediato y reversible en cualquier momento.',
       confirmDialogLabelDeactivate: 'Desactivar',
       confirmDialogLabelActivate: 'Activar',
       resultEyebrow: 'Resultado',
       resultTitleDeactivated: 'Usuario desactivado',
       resultTitleActivated: 'Usuario activado',
-      resultDescriptionDeactivated: 'El acceso de {fullName} ha sido suspendido.',
+      resultDescriptionDeactivated:
+        'El acceso de {fullName} ha sido suspendido.',
       resultDescriptionActivated: 'El acceso de {fullName} ha sido habilitado.',
       toggleOther: 'Cambiar otro usuario',
       errorEyebrow: 'Error',
@@ -574,11 +583,14 @@ export const messages = {
       loadingDescription: 'Consultando datos...',
       errorToastTitle: 'Revisión necesaria',
       selectionTitle: 'Seleccionar usuario',
-      selectionDescription: 'Busca por nombre o usuario para desbloquear su cuenta.',
+      selectionDescription:
+        'Busca por nombre o usuario para desbloquear su cuenta.',
       fieldUserHint: 'Solo muestra usuarios activos con la cuenta bloqueada.',
-      noResultsCriteria: 'No se encontraron usuarios bloqueados con ese criterio.',
+      noResultsCriteria:
+        'No se encontraron usuarios bloqueados con ese criterio.',
       selectedEyebrow: 'Usuario seleccionado',
-      selectedDescription: 'Confirma que este es el usuario correcto antes de desbloquear.',
+      selectedDescription:
+        'Confirma que este es el usuario correcto antes de desbloquear.',
       fieldId: 'ID',
       fieldUser: 'Usuario',
       fieldRole: 'Rol',
@@ -586,12 +598,14 @@ export const messages = {
       fieldLockedUntil: 'Bloqueado hasta',
       lockedUntilNone: 'Sin bloqueo activo',
       confirmTitle: 'Confirmación',
-      confirmDescription: 'Esta acción liberará la cuenta del bloqueo de acceso.',
+      confirmDescription:
+        'Esta acción liberará la cuenta del bloqueo de acceso.',
       changeUser: 'Cambiar usuario',
       unlockButton: 'Desbloquear',
       confirmDialogTitle: 'Desbloquear usuario',
       confirmDialogDescription: 'Se desbloqueará la cuenta de {fullName}.',
-      confirmDialogDetails: 'El contador de intentos fallidos se restablecerá a cero.',
+      confirmDialogDetails:
+        'El contador de intentos fallidos se restablecerá a cero.',
       confirmDialogLabel: 'Desbloquear',
       resultEyebrow: 'Resultado',
       resultTitle: 'Usuario desbloqueado',
@@ -618,7 +632,8 @@ export const messages = {
       pageReturnLabel: 'Volver a personas',
 
       curpStepTitle: 'Verifica la CURP',
-      curpStepDescription: 'Ingresa la CURP de la persona. El sistema verifica que no esté duplicada antes de continuar.',
+      curpStepDescription:
+        'Ingresa la CURP de la persona. El sistema verifica que no esté duplicada antes de continuar.',
       curpValidatingMsg: 'Verificando CURP...',
       curpAvailable: 'CURP válida y disponible para registro',
       curpErrorLength: 'La CURP debe tener exactamente 18 caracteres.',
@@ -628,7 +643,8 @@ export const messages = {
       curpErrorCheck: 'No se pudo verificar la CURP. Intenta de nuevo.',
 
       panelNameTitle: 'Nombre completo',
-      panelNameDescription: 'Datos de identificación nominal. El segundo apellido es opcional.',
+      panelNameDescription:
+        'Datos de identificación nominal. El segundo apellido es opcional.',
       labelFirstName: 'Nombre(s)',
       placeholderFirstName: 'Ej. Juan Carlos',
       labelFirstLastName: 'Primer apellido',
@@ -638,15 +654,16 @@ export const messages = {
       hintSecondLastName: 'Opcional.',
 
       panelIdTitle: 'Identificación',
-      panelIdDescription: 'La CURP está validada. Activa el checkbox de cada campo derivado si necesitas editarlo.',
+      panelIdDescription:
+        'La CURP está validada. Activa el checkbox de cada campo derivado si necesitas editarlo.',
       labelCurp: 'CURP',
       placeholderCurp: 'Ej. GAGL900101HMCLRN09',
       hintCurp: '18 caracteres en mayúsculas.',
       actionChangeCurp: 'Cambiar CURP',
       derivedSectionTitle: 'Datos derivados de CURP',
       labelGender: 'Género',
-      optionMale: 'Hombre',
-      optionFemale: 'Mujer',
+      optionMale: 'Masculino',
+      optionFemale: 'Femenino',
       labelBirthDate: 'Fecha de nacimiento',
       hintBirthDate: 'Derivada de la CURP.',
       labelNationality: 'Nacionalidad',
@@ -658,7 +675,8 @@ export const messages = {
       hintHomoclave: 'Opcional. 3 caracteres alfanuméricos.',
 
       panelContactTitle: 'Contacto',
-      panelContactDescription: 'Teléfono y correo electrónico de contacto directo.',
+      panelContactDescription:
+        'Teléfono y correo electrónico de contacto directo.',
       labelPhone: 'Teléfono',
       placeholderPhone: 'Ej. 5512345678',
       hintPhone: '10 dígitos, formato México.',
@@ -666,13 +684,22 @@ export const messages = {
       placeholderEmail: 'Ej. juan@correo.com',
 
       errorFirstNameRequired: 'El nombre es requerido (2–45 caracteres).',
-      errorFirstLastNameRequired: 'El primer apellido es requerido (2–25 caracteres).',
-      errorSecondLastNameLength: 'El segundo apellido no puede superar 25 caracteres.',
+      errorFirstLastNameRequired:
+        'El primer apellido es requerido (2–25 caracteres).',
+      errorSecondLastNameLength:
+        'El segundo apellido no puede superar 25 caracteres.',
       errorGenderRequired: 'Selecciona el género.',
       errorPhoneRequired: 'El teléfono es requerido.',
       errorPhoneInvalid: 'Ingresa un número de 10 dígitos.',
       errorEmailRequired: 'El correo electrónico es requerido.',
       errorEmailInvalid: 'Ingresa un correo electrónico válido.',
+
+      panelPhotoTitle: 'Fotografía de perfil',
+      panelPhotoDescription:
+        'Opcional. Si no se carga, se usará avatar por defecto.',
+      photoChange: 'Cambiar foto',
+      photoSelect: 'Seleccionar foto',
+      photoRemove: 'Quitar',
 
       actionCancel: 'Cancelar',
       actionRegister: 'Registrar persona',
@@ -681,16 +708,19 @@ export const messages = {
 
       successEyebrow: 'Registro exitoso',
       successTitle: 'Persona creada correctamente',
-      successDescription: 'La persona ha sido registrada en el sistema y está disponible.',
+      successDescription:
+        'La persona ha sido registrada en el sistema y está disponible.',
       successCreateAnother: 'Registrar otra persona',
       successFinish: 'Ir a personas',
     },
     hub: {
       eyebrow: 'Gestión',
       title: 'Personas',
-      description: 'Registro, consulta y actualización de personas del sistema.',
+      description:
+        'Registro, consulta y actualización de personas del sistema.',
       meta: 'Módulo Personas',
-      accessDenied: 'Solo usuarios con acceso al sistema de control escolar pueden gestionar personas.',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden gestionar personas.',
       toolbarLeading: 'Gestión de personas',
       toolbarCenter: 'Centro de personas',
       newPerson: 'Nueva persona',
@@ -698,16 +728,22 @@ export const messages = {
       goButton: 'Ir',
       heroKicker: 'GESTIÓN DE PERSONAS',
       heroTitle: 'Registra, consulta y actualiza datos de personas',
-      heroDescription: 'Registra, consulta, edita datos personales y gestiona contactos de emergencia desde un solo módulo.',
+      heroDescription:
+        'Registra, consulta, edita datos personales y gestiona contactos de emergencia desde un solo módulo.',
       summaryLabel: 'Resumen del módulo',
       summaryActions: 'acciones',
       summaryAccess: 'acceso',
       panelTitle: 'Acciones operativas',
-      panelDescription: 'Flujos administrativos para consulta, mantenimiento y vinculación de personas.',
+      panelDescription:
+        'Flujos administrativos para consulta, mantenimiento y carga de personas.',
+      relatedPanelTitle: 'Módulos relacionados',
+      relatedPanelDescription:
+        'Gestión de información vinculada al registro de cada persona.',
       primaryActions: {
         search: {
           title: 'Búsqueda avanzada',
-          description: 'Consulta personas con filtros, estados y acciones por fila.',
+          description:
+            'Consulta personas con filtros, estados y acciones por fila.',
           badge: 'Principal',
         },
         create: {
@@ -727,13 +763,86 @@ export const messages = {
           description: 'Modifica datos de identificación y contacto.',
           badge: 'Selección',
         },
+        bulkLoad: {
+          title: 'Carga masiva',
+          description: 'Importa múltiples personas desde un archivo.',
+          badge: 'Importar',
+        },
+      },
+      relatedModules: {
         emergency: {
-          title: 'Contactos emergencia',
-          description: 'Gestiona los contactos de emergencia asociados a la persona.',
-          badge: 'Vinculación',
+          title: 'Agregar contacto de emergencia',
+          description:
+            'Registra un nuevo contacto de emergencia para la persona seleccionada.',
+          badge: 'Módulo',
+        },
+        addresses: {
+          title: 'Agregar dirección',
+          description: 'Registra el domicilio de la persona seleccionada.',
+          badge: 'Módulo',
+        },
+        demographics: {
+          title: 'Agregar datos demográficos',
+          description:
+            'Captura la información demográfica de la persona seleccionada.',
+          badge: 'Módulo',
         },
       },
     },
+    search: {
+      eyebrow: 'Personas',
+      title: 'Búsqueda avanzada',
+      description: 'Consulta personas por filtros y ejecuta acciones.',
+      meta: 'Personas',
+      accessDenied:
+        'La búsqueda avanzada de personas está reservada para usuarios con acceso al módulo.',
+      toolbarBack: 'Personas',
+      toolbarCenter: 'Filtra y localiza personas del sistema.',
+      newPerson: 'Nueva persona',
+      pageReturnEyebrow: 'Módulo de personas',
+      pageReturnLabel: 'Regresar',
+      filterPanelTitle: 'Filtros',
+      filterPanelDescription:
+        'Combina criterios para localizar personas registradas.',
+      filterGlobalLabel: 'Búsqueda global',
+      filterGlobalPlaceholder: 'Nombre completo o CURP',
+      filterNameLabel: 'Nombre completo',
+      filterNamePlaceholder: 'Ej. Pérez Gómez',
+      filterCurpLabel: 'CURP',
+      filterCurpPlaceholder: 'Ej. PEGJ850101...',
+      filterGenderLabel: 'Género',
+      filterGenderPlaceholder: 'Todos',
+      filterNationalityLabel: 'Nacionalidad',
+      filterNationalityPlaceholder: 'Todos',
+      filterBirthStateLabel: 'Estado de nacimiento',
+      filterBirthStatePlaceholder: 'Ej. Yucatán',
+      filterBirthMunicipalityLabel: 'Municipio de nacimiento',
+      filterBirthMunicipalityPlaceholder: 'Ej. Mérida',
+      clearButton: 'Limpiar',
+      searchButton: 'Buscar',
+      genderMale: 'Masculino',
+      genderFemale: 'Femenino',
+      nationalityMexican: 'Mexicano',
+      nationalityForeigner: 'Extranjero',
+      tableEmptyTitle: 'Sin resultados',
+      tableEmptyDescription:
+        'No se encontraron personas con los criterios seleccionados.',
+      errorPanelTitle: 'No se pudo buscar',
+      columns: {
+        fullName: 'Nombre completo',
+        curp: 'CURP',
+        gender: 'Género',
+        email: 'Correo',
+        phone: 'Teléfono',
+        birthState: 'Estado',
+        birthMunicipality: 'Municipio',
+      },
+      actions: {
+        viewDetail: 'Ver detalle',
+        edit: 'Editar',
+      },
+    },
+
     edit: {
       eyebrow: 'Personas',
       title: 'Editar persona',
@@ -747,19 +856,141 @@ export const messages = {
       loadingTitle: 'Cargando persona...',
       loadingDescription: 'Obteniendo datos del registro.',
       selectionTitle: 'Seleccionar persona',
-      selectionDescription: 'Busca por nombre, apellido o CURP para editar su información.',
+      selectionDescription:
+        'Busca por nombre, apellido o CURP para editar su información.',
       fieldPersonLabel: 'Persona',
       fieldPersonHint: 'Escribe al menos 3 caracteres para buscar.',
       searchPlaceholder: 'Nombre, apellido o CURP',
       noResultsCriteria: 'No se encontraron personas con ese criterio.',
       panelSummaryTitle: 'Resumen del registro',
       panelIdTitle: 'Identificación',
-      panelIdDescription: 'CURP registrada. Puedes actualizar la homoclave y los datos derivados si es necesario.',
+      panelIdDescription:
+        'CURP registrada. Puedes actualizar la homoclave y los datos derivados si es necesario.',
       hintStateReadonly: 'El estado se deriva de la CURP.',
+      panelPhotoTitle: 'Fotografía de perfil',
+      panelPhotoDescription:
+        'Sube una nueva foto para actualizar la imagen de perfil.',
+      photoChange: 'Cambiar foto',
+      photoUpload: 'Subir foto',
+      photoRestore: 'Restablecer original',
+
       actionCancel: 'Cancelar',
       actionSave: 'Guardar cambios',
       successToastTitle: 'Cambios guardados',
       successToastDescription: 'Los datos de la persona han sido actualizados.',
+    },
+
+    common: {
+      eyebrow: 'Gestión de personas',
+      backLabel: 'Regresar',
+      cancelLabel: 'Cancelar',
+      errorToastTitle: 'Revisión necesaria',
+      loadingPanelTitle: 'Cargando persona',
+      loadingPanelDescription: 'Consultando datos...',
+      searchPersonTitle: 'Seleccionar persona',
+      fieldPersonHint: 'Escribe al menos 3 caracteres para buscar.',
+      noResultsCriteria: 'No se encontraron personas con ese criterio.',
+      searchPersonsAction: 'Buscar personas',
+      goToSearchAction: 'Ir a búsqueda',
+      searchOtherAction: 'Buscar otra persona',
+    },
+
+    detail: {
+      eyebrow: 'Personas',
+      title: 'Detalle de persona',
+      description: 'Consulta datos personales, contacto y ubicación.',
+      meta: 'Personas',
+      accessDenied:
+        'Solo usuarios con acceso al módulo pueden consultar personas.',
+      pageReturnEyebrow: 'Módulo de personas',
+      pageReturnLabel: 'Regresar',
+      originDirect: 'Acceso directo',
+      originDirectDescription:
+        'El detalle se abrió con un identificador en la URL.',
+      originTable: 'Búsqueda avanzada',
+      originTableDescription:
+        'Llegaste desde una fila del DataTable; se conserva la búsqueda para regresar.',
+      originManual: 'Selección manual',
+      originManualDescription:
+        'Busca y selecciona la persona que quieres consultar.',
+      originUrl: 'Acceso directo',
+      originUrlDescription:
+        'Llegaste por URL directa; no hay una tabla previa para restaurar.',
+      selectionDescription: 'Busca por nombre o CURP para abrir su detalle.',
+      errorTitle: 'No se puede mostrar la persona',
+      noResultsCriteria: 'No se encontraron personas con ese criterio.',
+      resultActive: 'Activo',
+      resultInactive: 'Inactivo',
+      panelPersonalTitle: 'Identificación',
+      panelPersonalDescription: 'Datos de identificación oficial',
+      fieldId: 'ID de registro',
+      fieldCurp: 'CURP',
+      fieldFullName: 'Nombre completo',
+      fieldGender: 'Sexo',
+      fieldBirthDate: 'Fecha de nacimiento',
+      fieldNationality: 'Nacionalidad',
+      fieldRfc: 'RFC',
+      genderMale: 'Masculino',
+      genderFemale: 'Femenino',
+      nationalityMexican: 'Mexicano',
+      nationalityForeigner: 'Extranjero',
+      panelContactTitle: 'Contacto',
+      panelContactDescription: 'Datos de contacto personal',
+      fieldPhone: 'Teléfono',
+      fieldEmail: 'Correo electrónico',
+      panelLocationTitle: 'Ubicación',
+      panelLocationDescription: 'Municipio y estado de residencia',
+      fieldMunicipality: 'Municipio',
+      fieldState: 'Estado',
+      noData: 'No disponible',
+      actionsTitle: 'Acciones',
+      actionEdit: 'Editar persona',
+    },
+    bulkLoad: {
+      eyebrow: 'Personas',
+      title: 'Creación por lotes',
+      description:
+        'Carga y registra personas de forma masiva desde un archivo CSV',
+      meta: 'Personas',
+      accessDenied:
+        'No tienes permisos para realizar cargas masivas de personas.',
+      toolbarBack: 'Personas',
+      toolbarCenter: 'Importación por lotes',
+      pageReturnEyebrow: 'Personas',
+      pageReturnLabel: 'Volver a personas',
+      successEyebrow: 'Importación exitosa',
+      successTitle: '¡Lote importado con éxito!',
+      successDescription:
+        'Se han registrado exitosamente las personas en el padrón del sistema.',
+      successFinish: 'Ir a personas',
+      successUploadAnother: 'Cargar otro archivo',
+      errorTitle: 'Error al procesar la importación',
+      errorDetails: 'El servidor rechazó los datos del lote. Detalles:',
+      errorBack: 'Volver a la tabla',
+      errorCancel: 'Cancelar',
+      uploadPanelTitle: 'Cargar Archivo CSV',
+      uploadPanelSubtitle: 'Cargar Archivo CSV de Personas',
+      uploadZoneTitle: 'Seleccionar archivo CSV',
+      uploadZoneSubtitle: 'Haz clic aquí o arrastra un archivo CSV para cargar',
+      errorCSVRequired:
+        'El archivo CSV está vacío o no contiene filas de datos.',
+      errorCSVFormat:
+        'El archivo CSV no tiene el formato correcto de Personas. Asegúrate de incluir las columnas obligatorias.',
+      statsValid: 'Válidos (Verde)',
+      statsWarning: 'Advertencias (Amarillo)',
+      statsError: 'Con Error (Rojo)',
+      statsReady: 'Listos para Registrar',
+      actionCancel: 'Cancelar',
+      actionImport: 'Registrar personas',
+      actionImporting: 'Registrando...',
+      tableEmpty: 'No se encontraron registros en el lote.',
+      columns: {
+        curp: 'CURP',
+        fullName: 'Nombre completo',
+        phone: 'Teléfono',
+        email: 'Correo',
+        observations: 'Observaciones',
+      },
     },
   },
 
@@ -777,6 +1008,7 @@ export const messages = {
     createPersonFailed: 'Error al registrar la persona.',
     updatePersonFailed: 'Error al actualizar la persona.',
     loadPersonDetailFailed: 'No se pudo cargar el detalle de la persona.',
+    uploadPersonPhotoFailed: 'No se pudo subir la fotografía.',
     networkError:
       'No se pudo establecer conexión con el servidor. Verifique su conexión o que el servidor esté activo.',
     forbidden: 'No tienes permisos para realizar esta acción.',

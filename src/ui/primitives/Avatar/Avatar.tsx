@@ -16,11 +16,7 @@ export const Avatar = component$<AvatarProps>(({ src, name, size = 'md' }) => {
 
   return (
     <span class="ui-avatar" data-size={size} aria-hidden="true">
-      {src ? (
-        <img src={src} alt="" />
-      ) : (
-        <span>{initials}</span>
-      )}
+      {src ? <img src={src} alt="" /> : <span>{initials}</span>}
     </span>
   );
 });

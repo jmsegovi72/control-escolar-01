@@ -1,8 +1,7 @@
 import { component$ } from '@builder.io/qwik';
-
-import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import { UserMenu } from '~/ui/composed/UserMenu/UserMenu';
 import { AppIcon } from '~/ui/icons';
+import { Avatar } from '~/ui/primitives/Avatar/Avatar';
 import type { SidebarItem, SidebarProps } from './sidebar.types';
 import './sidebar.css';
 
@@ -120,7 +119,6 @@ export const Sidebar = component$<SidebarProps>(
     onPointerEnter$,
     onPointerLeave$,
   }) => {
-
     return (
       <aside
         class="ui-sidebar"

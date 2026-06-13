@@ -347,7 +347,9 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         </Button>
 
         {authorizationReady.value && authorized.value && (
-          <div class={`authenticated-shell__container${fullWidth ? ' authenticated-shell__container--full-width' : ''}`}>
+          <div
+            class={`authenticated-shell__container${fullWidth ? ' authenticated-shell__container--full-width' : ''}`}
+          >
             <Slot />
           </div>
         )}

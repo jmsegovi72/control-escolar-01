@@ -1,7 +1,11 @@
-import { component$, Slot, useContextProvider, useSignal } from '@builder.io/qwik';
-
-import type { DerivedFieldProps } from './derived-field.types';
+import {
+  component$,
+  Slot,
+  useContextProvider,
+  useSignal,
+} from '@builder.io/qwik';
 import { DerivedFieldEnabledCtx } from './derived-field.context';
+import type { DerivedFieldProps } from './derived-field.types';
 import './derived-field.css';
 
 export const DerivedField = component$<DerivedFieldProps>(

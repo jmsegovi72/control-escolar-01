@@ -27,7 +27,10 @@ export const sessionStore = {
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));
     localStorage.setItem(SESSION_KIND_KEY, 'authenticated');
     if (response.permissions) {
-      localStorage.setItem(PERMISSIONS_KEY, JSON.stringify(response.permissions));
+      localStorage.setItem(
+        PERMISSIONS_KEY,
+        JSON.stringify(response.permissions),
+      );
     } else {
       localStorage.removeItem(PERMISSIONS_KEY);
     }

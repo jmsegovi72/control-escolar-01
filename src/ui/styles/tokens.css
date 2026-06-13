@@ -4,6 +4,7 @@
     "Segoe UI", sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 
+  --font-size-2xs: 0.625rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -37,6 +38,16 @@
   --radius-2: 6px;
   --radius-3: 8px;
   --radius-round: 999px;
+  --radius-pill: var(--radius-round);
+
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-3: 3px;
+
+  --avatar-size-sm: 2rem;
+  --avatar-size-md: 2.5rem;
+  --avatar-size-lg: 3.5rem;
+  --avatar-size-xl: 6.5rem;
 
   --field-height-sm: 2.25rem;
   --field-height-md: 2.75rem;
@@ -54,9 +65,14 @@
   --shadow-2: 0 10px 24px rgb(18 23 34 / 10%);
   --shadow-3: 0 18px 44px rgb(18 23 34 / 14%);
 
+  --shadow-sm: var(--shadow-1);
+  --shadow-md: var(--shadow-2);
+  --shadow-lg: var(--shadow-3);
+
   --duration-fast: 120ms;
   --duration-base: 180ms;
   --duration-slow: 260ms;
+  --duration-normal: var(--duration-base);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

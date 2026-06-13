@@ -5,10 +5,11 @@ import { useLocation, useNavigate } from '@builder.io/qwik-city';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { PersonSearchPanel } from '~/components/persons';
 import { appConfig } from '~/config/app.config';
+import { ENV } from '~/config/env';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
-import type { PersonListItem } from '~/types/person.types';
+import type { PersonDetail } from '~/types/person.types';
 import {
   Button,
   DerivedField,
@@ -23,6 +24,15 @@ import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import './edit.css';
 
+const DEFAULT_PERSON_AVATAR = '/avatars/user-default.svg';
+
+const getPhotoUrl = (photoUrl: string | null | undefined): string => {
+  if (!photoUrl) return DEFAULT_PERSON_AVATAR;
+  if (photoUrl.startsWith('http')) return photoUrl;
+  const apiBase = ENV.API_URL.replace(/\/sices\/v\d+$/, '');
+  return `${apiBase}/${photoUrl.replace(/^\/+/, '')}`;
+};
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\d{10}$/;
 
@@ -30,25 +40,51 @@ const m = messages.persons.edit;
 const mc = messages.persons.create;
 
 const CURP_STATE_MAP: Record<string, string> = {
-  AS: 'Aguascalientes', BC: 'Baja California', BS: 'Baja California Sur',
-  CC: 'Campeche', CS: 'Chiapas', CH: 'Chihuahua', CL: 'Coahuila de Zaragoza',
-  CM: 'Colima', DF: 'Ciudad de México', DG: 'Durango', GT: 'Guanajuato',
-  GR: 'Guerrero', HG: 'Hidalgo', JC: 'Jalisco', MC: 'Estado de México',
-  MN: 'Michoacán', MS: 'Morelos', NT: 'Nayarit', NL: 'Nuevo León',
-  OC: 'Oaxaca', PL: 'Puebla', QT: 'Querétaro', QR: 'Quintana Roo',
-  SP: 'San Luis Potosí', SL: 'Sinaloa', SR: 'Sonora', TC: 'Tabasco',
-  TS: 'Tamaulipas', TL: 'Tlaxcala', VZ: 'Veracruz', YN: 'Yucatán',
-  ZS: 'Zacatecas', NE: 'Extranjero',
+  AS: 'Aguascalientes',
+  BC: 'Baja California',
+  BS: 'Baja California Sur',
+  CC: 'Campeche',
+  CS: 'Chiapas',
+  CH: 'Chihuahua',
+  CL: 'Coahuila de Zaragoza',
+  CM: 'Colima',
+  DF: 'Ciudad de México',
+  DG: 'Durango',
+  GT: 'Guanajuato',
+  GR: 'Guerrero',
+  HG: 'Hidalgo',
+  JC: 'Jalisco',
+  MC: 'Estado de México',
+  MN: 'Michoacán',
+  MS: 'Morelos',
+  NT: 'Nayarit',
+  NL: 'Nuevo León',
+  OC: 'Oaxaca',
+  PL: 'Puebla',
+  QT: 'Querétaro',
+  QR: 'Quintana Roo',
+  SP: 'San Luis Potosí',
+  SL: 'Sinaloa',
+  SR: 'Sonora',
+  TC: 'Tabasco',
+  TS: 'Tamaulipas',
+  TL: 'Tlaxcala',
+  VZ: 'Veracruz',
+  YN: 'Yucatán',
+  ZS: 'Zacatecas',
+  NE: 'Extranjero',
 };
 
 const deriveCurpDisplay = (curp: string) => {
-  if (!curp || curp.length < 13) return { gender: '', birthDate: '', nationality: '', stateName: '' };
+  if (!curp || curp.length < 13)
+    return { gender: '', birthDate: '', nationality: '', stateName: '' };
   const g = curp.charAt(10);
   const yr = curp.substring(4, 6);
   const mo = curp.substring(6, 8);
   const dy = curp.substring(8, 10);
   const sc = curp.substring(11, 13);
-  const fy = Number(yr) <= new Date().getFullYear() % 100 ? `20${yr}` : `19${yr}`;
+  const fy =
+    Number(yr) <= new Date().getFullYear() % 100 ? `20${yr}` : `19${yr}`;
   return {
     gender: g === 'H' ? mc.optionMale : g === 'M' ? mc.optionFemale : '',
     birthDate: `${dy}/${mo}/${fy}`,
@@ -61,7 +97,7 @@ export default component$(() => {
   const nav = useNavigate();
   const location = useLocation();
 
-  const person = useSignal<PersonListItem | null>(null);
+  const person = useSignal<PersonDetail | null>(null);
   const loading = useSignal(true);
   const noSelection = useSignal(false);
   const saving = useSignal(false);
@@ -77,6 +113,8 @@ export default component$(() => {
   const homoclave = useSignal('');
   const phone = useSignal('');
   const email = useSignal('');
+  const photoFile = useSignal<File | null>(null);
+  const photoPreview = useSignal('');
 
   useVisibleTask$(async ({ track }) => {
     const idParam = track(() => location.url.searchParams.get('id'));
@@ -104,7 +142,7 @@ export default component$(() => {
       curpEditable.value = false;
       homoclave.value =
         data.rfc && data.rfc.length === 13 ? data.rfc.substring(10) : '';
-      phone.value = data.personalPhone ?? '';
+      phone.value = data.phone ?? '';
       email.value = data.personalEmail ?? '';
     } catch (err) {
       error.value = normalizeError(
@@ -166,6 +204,13 @@ export default component$(() => {
           homoclave: homoclave.value.trim().toUpperCase(),
         }),
       });
+      if (photoFile.value) {
+        try {
+          await personService.uploadPhoto(person.value.id, photoFile.value);
+        } catch {
+          // photo upload failure is non-blocking
+        }
+      }
       success.value = true;
       setTimeout(async () => {
         await nav(ROUTES.PERSONS);
@@ -214,9 +259,11 @@ export default component$(() => {
         />
 
         {error.value && (
-          <Toast tone="danger" title={messages.users.common.errorToastTitle}>
-            {error.value}
-          </Toast>
+          <Toast
+            tone="danger"
+            title={messages.persons.common.errorToastTitle}
+            description={error.value}
+          />
         )}
 
         {success.value && (
@@ -268,14 +315,18 @@ export default component$(() => {
                     label={mc.labelCurp}
                     optional
                     initialEnabled={false}
-                    onChange$={(v) => { curpEditable.value = v; }}
+                    onChange$={(v) => {
+                      curpEditable.value = v;
+                    }}
                   >
                     <Input
                       value={curpValue.value}
                       maxLength={18}
                       disabled={!curpEditable.value}
                       onInput$={(e) => {
-                        curpValue.value = (e.target as HTMLInputElement).value.toUpperCase();
+                        curpValue.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
                       }}
                     />
                   </DerivedField>
@@ -318,7 +369,10 @@ export default component$(() => {
                             <Input value={d.nationality} disabled />
                           </Field>
 
-                          <Field label={mc.labelState} hint={m.hintStateReadonly}>
+                          <Field
+                            label={mc.labelState}
+                            hint={m.hintStateReadonly}
+                          >
                             <Input value={d.stateName} disabled />
                           </Field>
                         </>
@@ -350,7 +404,9 @@ export default component$(() => {
                       placeholder={mc.placeholderFirstName}
                       invalid={errorField.value === 'firstName'}
                       onInput$={(e) => {
-                        firstName.value = (e.target as HTMLInputElement).value.toUpperCase();
+                        firstName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
                       }}
                     />
                   </Field>
@@ -454,6 +510,61 @@ export default component$(() => {
                       }}
                     />
                   </Field>
+                </div>
+              </div>
+            </Panel>
+
+            {/* Panel: Foto */}
+            <Panel
+              title={m.panelPhotoTitle}
+              description={m.panelPhotoDescription}
+              density="compact"
+            >
+              <div class="edit-person-photo">
+                <div class="edit-person-photo__preview">
+                  <img
+                    src={
+                      photoPreview.value || getPhotoUrl(currentPerson.photoUrl)
+                    }
+                    alt={currentPerson.fullName}
+                  />
+                </div>
+                <div class="edit-person-photo__controls">
+                  <input
+                    id="person-photo-edit"
+                    class="edit-person-photo__input"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange$={(event) => {
+                      const file = (event.target as HTMLInputElement)
+                        .files?.[0];
+                      if (!file) return;
+                      photoFile.value = file;
+                      photoPreview.value = URL.createObjectURL(file);
+                    }}
+                  />
+                  <label
+                    class="edit-person-photo__button"
+                    for="person-photo-edit"
+                  >
+                    {photoFile.value
+                      ? m.photoChange
+                      : currentPerson.photoUrl
+                        ? m.photoChange
+                        : m.photoUpload}
+                  </label>
+                  {photoFile.value && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick$={() => {
+                        photoFile.value = null;
+                        photoPreview.value = '';
+                      }}
+                    >
+                      {m.photoRestore}
+                    </Button>
+                  )}
                 </div>
               </div>
             </Panel>

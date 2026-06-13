@@ -45,8 +45,8 @@
 
   --color-success: var(--raw-green-700);
   --color-success-soft: var(--raw-green-50);
-  --color-warning: var(--raw-amber-600);
-  --color-warning-soft: var(--raw-amber-50);
+  --color-warning: #ca8a04;
+  --color-warning-soft: #fef9c3;
   --color-danger: var(--raw-red-600);
   --color-danger-soft: var(--raw-red-50);
   --color-info: var(--raw-blue-700);
@@ -70,4 +70,9 @@
   --field-error: var(--color-danger);
 
   --focus-ring: 0 0 0 3px rgb(35 100 90 / 18%);
+
+  --color-surface-subtle: var(--color-muted);
+  --color-border-subtle: var(--color-border);
+  --color-text-secondary: var(--color-text-soft);
+  --color-text-subtle: var(--color-text-muted);
 }

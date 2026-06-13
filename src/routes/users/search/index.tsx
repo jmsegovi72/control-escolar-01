@@ -355,7 +355,9 @@ export default component$(() => {
             tone: 'danger',
             onClick$: $(async (row) => {
               await saveWorkContext$(row);
-              await nav(`${ROUTES.USERS_RESET_LOGIN}?id=${row.id}&source=table`);
+              await nav(
+                `${ROUTES.USERS_RESET_LOGIN}?id=${row.id}&source=table`,
+              );
             }),
           },
         ] as DataTableAction<UserRow>[])

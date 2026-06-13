@@ -1,9 +1,4 @@
-import {
-  $,
-  component$,
-  useSignal,
-  useTask$,
-} from '@builder.io/qwik';
+import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 
@@ -128,6 +123,8 @@ export default component$(() => {
   const error = useSignal('');
   const errorField = useSignal('');
   const success = useSignal(false);
+  const photoFile = useSignal<File | null>(null);
+  const photoPreview = useSignal('');
 
   // Validación automática de CURP — mismo patrón que el buscador de personas en users/create
   useTask$(async ({ track }) => {
@@ -166,7 +163,7 @@ export default component$(() => {
     } catch (err) {
       const normalized = normalizeError(err, '');
       if (normalized.statusCode === 404) {
-        gender.value = extracted.gender === 'H' ? 'M' : 'F';
+        gender.value = extracted.gender;
         birthDate.value = extracted.birthDate.toISOString().split('T')[0];
         nationality.value = extracted.nationality;
         stateCode.value = extracted.stateCode;
@@ -233,12 +230,12 @@ export default component$(() => {
 
     saving.value = true;
     try {
-      await personService.create({
+      const created = await personService.create({
         firstName: fn,
         firstLastName: fln,
         ...(sln && { secondLastName: sln }),
         curp: c,
-        gender: gender.value as 'M' | 'F',
+        gender: gender.value as 'H' | 'M',
         phone: p,
         email: em,
         ...(birthDate.value && { birthDate: birthDate.value }),
@@ -247,9 +244,19 @@ export default component$(() => {
           homoclave: homoclave.value.trim().toUpperCase(),
         }),
       });
+      if (photoFile.value && created.id) {
+        try {
+          await personService.uploadPhoto(created.id, photoFile.value);
+        } catch {
+          // photo upload failure is non-blocking
+        }
+      }
       success.value = true;
     } catch (err) {
-      const normalized = normalizeError(err, messages.errors.createPersonFailed);
+      const normalized = normalizeError(
+        err,
+        messages.errors.createPersonFailed,
+      );
       error.value = normalized.message;
       errorField.value = normalized.invalidField ?? '';
     } finally {
@@ -258,8 +265,8 @@ export default component$(() => {
   });
 
   const genderOptions = [
-    { value: 'M', label: m.optionMale },
-    { value: 'F', label: m.optionFemale },
+    { value: 'H', label: m.optionMale },
+    { value: 'M', label: m.optionFemale },
   ];
 
   const nationalityOptions = [
@@ -297,9 +304,11 @@ export default component$(() => {
         />
 
         {error.value && (
-          <Toast tone="danger" title={messages.users.common.errorToastTitle}>
-            {error.value}
-          </Toast>
+          <Toast
+            tone="danger"
+            title={messages.persons.common.errorToastTitle}
+            description={error.value}
+          />
         )}
 
         {/* ── Estado de éxito ── */}
@@ -340,6 +349,8 @@ export default component$(() => {
                     error.value = '';
                     errorField.value = '';
                     success.value = false;
+                    photoFile.value = null;
+                    photoPreview.value = '';
                   }}
                 >
                   {m.successCreateAnother}
@@ -347,7 +358,6 @@ export default component$(() => {
               </div>
             </div>
           </Panel>
-
         ) : !showForm.value ? (
           /* ── Paso 1: Verificar CURP ── */
           <Panel title={m.curpStepTitle} description={m.curpStepDescription}>
@@ -356,9 +366,13 @@ export default component$(() => {
                 <Field
                   label={m.labelCurp}
                   required
-                  hint={!curpError.value && !curpValid.value && !curpValidating.value
-                    ? m.hintCurp
-                    : undefined}
+                  hint={
+                    !curpError.value &&
+                    !curpValid.value &&
+                    !curpValidating.value
+                      ? m.hintCurp
+                      : undefined
+                  }
                   error={curpError.value || undefined}
                 >
                   <Input
@@ -367,7 +381,9 @@ export default component$(() => {
                     maxLength={18}
                     invalid={!!curpError.value}
                     onInput$={(e) => {
-                      curp.value = (e.target as HTMLInputElement).value.toUpperCase();
+                      curp.value = (
+                        e.target as HTMLInputElement
+                      ).value.toUpperCase();
                     }}
                   />
                 </Field>
@@ -387,15 +403,12 @@ export default component$(() => {
               )}
             </div>
           </Panel>
-
         ) : (
           /* ── Paso 2: Formulario completo ── */
           <div class="create-person-layout">
-
             {/* Panel: Identificación */}
             <Panel title={m.panelIdTitle} description={m.panelIdDescription}>
               <div class="create-person-form">
-
                 {/* CURP (readonly) + Homoclave */}
                 <div class="create-person-grid create-person-grid--curp">
                   <Field label={m.labelCurp}>
@@ -429,7 +442,9 @@ export default component$(() => {
                         value={gender.value}
                         options={genderOptions}
                         invalid={errorField.value === 'gender'}
-                        onChange$={(v) => { gender.value = v; }}
+                        onChange$={(v) => {
+                          gender.value = v;
+                        }}
                       />
                     </DerivedField>
 
@@ -437,7 +452,9 @@ export default component$(() => {
                       <DateInput
                         value={birthDate.value}
                         onInput$={(e) => {
-                          birthDate.value = (e.target as HTMLInputElement).value;
+                          birthDate.value = (
+                            e.target as HTMLInputElement
+                          ).value;
                         }}
                       />
                     </DerivedField>
@@ -446,7 +463,9 @@ export default component$(() => {
                       <Select
                         value={nationality.value}
                         options={nationalityOptions}
-                        onChange$={(v) => { nationality.value = v; }}
+                        onChange$={(v) => {
+                          nationality.value = v;
+                        }}
                       />
                     </DerivedField>
 
@@ -454,7 +473,9 @@ export default component$(() => {
                       <Select
                         value={stateCode.value}
                         options={stateOptions}
-                        onChange$={(v) => { stateCode.value = v; }}
+                        onChange$={(v) => {
+                          stateCode.value = v;
+                        }}
                       />
                     </DerivedField>
                   </div>
@@ -463,13 +484,20 @@ export default component$(() => {
             </Panel>
 
             {/* Panel: Nombre */}
-            <Panel title={m.panelNameTitle} description={m.panelNameDescription}>
+            <Panel
+              title={m.panelNameTitle}
+              description={m.panelNameDescription}
+            >
               <div class="create-person-form">
                 <div class="create-person-grid create-person-grid--thirds">
                   <Field
                     label={m.labelFirstName}
                     required
-                    error={errorField.value === 'firstName' ? m.errorFirstNameRequired : undefined}
+                    error={
+                      errorField.value === 'firstName'
+                        ? m.errorFirstNameRequired
+                        : undefined
+                    }
                   >
                     <Input
                       iconLeft="person"
@@ -477,7 +505,9 @@ export default component$(() => {
                       placeholder={m.placeholderFirstName}
                       invalid={errorField.value === 'firstName'}
                       onInput$={(e) => {
-                        firstName.value = (e.target as HTMLInputElement).value.toUpperCase();
+                        firstName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
                       }}
                     />
                   </Field>
@@ -485,7 +515,11 @@ export default component$(() => {
                   <Field
                     label={m.labelFirstLastName}
                     required
-                    error={errorField.value === 'firstLastName' ? m.errorFirstLastNameRequired : undefined}
+                    error={
+                      errorField.value === 'firstLastName'
+                        ? m.errorFirstLastNameRequired
+                        : undefined
+                    }
                   >
                     <Input
                       iconLeft="person"
@@ -493,7 +527,9 @@ export default component$(() => {
                       placeholder={m.placeholderFirstLastName}
                       invalid={errorField.value === 'firstLastName'}
                       onInput$={(e) => {
-                        firstLastName.value = (e.target as HTMLInputElement).value.toUpperCase();
+                        firstLastName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
                       }}
                     />
                   </Field>
@@ -501,7 +537,11 @@ export default component$(() => {
                   <Field
                     label={m.labelSecondLastName}
                     hint={m.hintSecondLastName}
-                    error={errorField.value === 'secondLastName' ? m.errorSecondLastNameLength : undefined}
+                    error={
+                      errorField.value === 'secondLastName'
+                        ? m.errorSecondLastNameLength
+                        : undefined
+                    }
                   >
                     <Input
                       iconLeft="person"
@@ -509,7 +549,9 @@ export default component$(() => {
                       placeholder={m.placeholderSecondLastName}
                       invalid={errorField.value === 'secondLastName'}
                       onInput$={(e) => {
-                        secondLastName.value = (e.target as HTMLInputElement).value.toUpperCase();
+                        secondLastName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
                       }}
                     />
                   </Field>
@@ -518,16 +560,23 @@ export default component$(() => {
             </Panel>
 
             {/* Panel: Contacto */}
-            <Panel title={m.panelContactTitle} description={m.panelContactDescription}>
+            <Panel
+              title={m.panelContactTitle}
+              description={m.panelContactDescription}
+            >
               <div class="create-person-form">
                 <div class="create-person-grid">
                   <Field
                     label={m.labelPhone}
                     required
                     hint={m.hintPhone}
-                    error={errorField.value === 'phone'
-                      ? (phone.value ? m.errorPhoneInvalid : m.errorPhoneRequired)
-                      : undefined}
+                    error={
+                      errorField.value === 'phone'
+                        ? phone.value
+                          ? m.errorPhoneInvalid
+                          : m.errorPhoneRequired
+                        : undefined
+                    }
                   >
                     <Input
                       iconLeft="phone"
@@ -546,9 +595,13 @@ export default component$(() => {
                   <Field
                     label={m.labelEmail}
                     required
-                    error={errorField.value === 'email'
-                      ? (email.value ? m.errorEmailInvalid : m.errorEmailRequired)
-                      : undefined}
+                    error={
+                      errorField.value === 'email'
+                        ? email.value
+                          ? m.errorEmailInvalid
+                          : m.errorEmailRequired
+                        : undefined
+                    }
                   >
                     <Input
                       iconLeft="mail"
@@ -565,6 +618,52 @@ export default component$(() => {
               </div>
             </Panel>
 
+            {/* Panel: Foto */}
+            <Panel
+              title={m.panelPhotoTitle}
+              description={m.panelPhotoDescription}
+              density="compact"
+            >
+              <div class="create-person-photo">
+                <div class="create-person-photo__preview">
+                  {photoPreview.value ? (
+                    <img src={photoPreview.value} alt="Vista previa" />
+                  ) : (
+                    <AppIcon intent="person" size="lg" />
+                  )}
+                </div>
+                <div class="create-person-photo__controls">
+                  <input
+                    id="person-photo"
+                    class="create-person-photo__input"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange$={(event) => {
+                      const file = (event.target as HTMLInputElement)
+                        .files?.[0];
+                      if (!file) return;
+                      photoFile.value = file;
+                      photoPreview.value = URL.createObjectURL(file);
+                    }}
+                  />
+                  <label class="create-person-photo__button" for="person-photo">
+                    {photoFile.value ? m.photoChange : m.photoSelect}
+                  </label>
+                  {photoFile.value && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick$={() => {
+                        photoFile.value = null;
+                        photoPreview.value = '';
+                      }}
+                    >
+                      {m.photoRemove}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Panel>
           </div>
         )}
 

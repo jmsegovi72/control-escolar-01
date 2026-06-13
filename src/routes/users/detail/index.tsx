@@ -8,14 +8,7 @@ import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import {
-  Avatar,
-  Badge,
-  Button,
-  PageReturn,
-  Panel,
-  Toolbar,
-} from '~/ui';
+import { Avatar, Badge, Button, PageReturn, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';

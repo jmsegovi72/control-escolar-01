@@ -1,0 +1,41 @@
+.persons-search {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+.persons-search .ui-data-table {
+  flex: 1;
+  min-height: 0;
+}
+
+.persons-search__filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.persons-search__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 1100px) {
+  .persons-search__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .persons-search__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .persons-search__actions {
+    justify-content: flex-start;
+  }
+}

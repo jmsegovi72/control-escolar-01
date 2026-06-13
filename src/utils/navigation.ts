@@ -39,7 +39,10 @@ export const createNavigation = (
 ): SidebarSection[] => {
   // SUPER always has full access; other users are filtered by permissions or user type.
   const canRead = (module: string): boolean =>
-    isSuper || (permissions ? hasPermission(permissions, module, 'read') : hasControlAccess);
+    isSuper ||
+    (permissions
+      ? hasPermission(permissions, module, 'read')
+      : hasControlAccess);
 
   const sections: SidebarSection[] = [
     {

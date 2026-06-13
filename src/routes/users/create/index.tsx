@@ -10,6 +10,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
+import { messages } from '~/config/messages';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
@@ -28,7 +29,6 @@ import {
   Toolbar,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
-import { messages } from '~/config/messages';
 import { normalizeError } from '~/utils/api-error';
 import './create.css';
 

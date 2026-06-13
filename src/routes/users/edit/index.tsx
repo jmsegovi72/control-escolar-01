@@ -5,13 +5,13 @@ import { useLocation, useNavigate } from '@builder.io/qwik-city';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
-import { ENV } from '~/config/env';
 import { messages } from '~/config/messages';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
 import type { UserListItem } from '~/types/user.types';
 import {
+  Avatar,
   Button,
   Field,
   Input,
@@ -21,25 +21,10 @@ import {
   Toast,
   Toolbar,
 } from '~/ui';
-import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
+import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
 import './edit.css';
-
-const getPhotoUrl = (photoUrl: string | null, userTypeCode: string) => {
-  if (!photoUrl) {
-    return userTypeCode === 'SUPER'
-      ? '/avatars/admin-default.svg'
-      : '/avatars/user-default.svg';
-  }
-
-  if (photoUrl.startsWith('http') || photoUrl.startsWith('/avatars/')) {
-    return photoUrl;
-  }
-
-  const apiBase = ENV.API_URL.replace(/\/sices\/v\d+$/, '');
-  return `${apiBase}/${photoUrl.replace(/^\/+/, '')}`;
-};
 
 export default component$(() => {
   const nav = useNavigate();
@@ -111,9 +96,7 @@ export default component$(() => {
         username.value = user.value.username;
         roleId.value = user.value.roleId;
         userTypeId.value = user.value.userTypeId;
-        photoPreview.value = user.value.photoUrl
-          ? getPhotoUrl(user.value.photoUrl, user.value.userTypeCode)
-          : '';
+        photoPreview.value = resolvePhotoUrl(user.value);
       }
     } catch (err) {
       user.value = null;
@@ -269,9 +252,11 @@ export default component$(() => {
               description={messages.users.edit.panelPersonDescription}
             >
               <div class="edit-user-person">
-                <div class="edit-user-person__avatar" aria-hidden="true">
-                  <AppIcon intent="person" size="md" />
-                </div>
+                <Avatar
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="sm"
+                />
                 <div>
                   <strong>{currentUser.fullName}</strong>
                   <span>{currentUser.username}</span>
@@ -354,11 +339,7 @@ export default component$(() => {
             >
               <div class="edit-user-photo">
                 <div class="edit-user-photo__preview">
-                  {photoPreview.value ? (
-                    <img src={photoPreview.value} alt="Vista previa" />
-                  ) : (
-                    <AppIcon intent="person" size="lg" />
-                  )}
+                  <img src={photoPreview.value} alt="Vista previa" />
                 </div>
                 <div>
                   <input
@@ -385,12 +366,7 @@ export default component$(() => {
                       size="sm"
                       onClick$={() => {
                         photoFile.value = null;
-                        photoPreview.value = currentUser.photoUrl
-                          ? getPhotoUrl(
-                              currentUser.photoUrl,
-                              currentUser.userTypeCode,
-                            )
-                          : '';
+                        photoPreview.value = resolvePhotoUrl(currentUser);
                       }}
                     >
                       {messages.users.edit.photoRestore}

@@ -31,6 +31,9 @@ export const Select = component$<SelectProps>(
     const open = useSignal(false);
     const selectedValue = useSignal(value ?? '');
     const rootRef = useSignal<Element>();
+    const menuTop = useSignal(0);
+    const menuLeft = useSignal(0);
+    const menuWidth = useSignal(0);
 
     // Consume DerivedField context when present (null when used standalone)
     const fieldEnabled = useContext(DerivedFieldEnabledCtx, null);
@@ -86,6 +89,17 @@ export const Select = component$<SelectProps>(
       await onChange$?.(nextValue);
     });
 
+    const toggleOpen$ = $(() => {
+      if (disabled) return;
+      if (!open.value && rootRef.value) {
+        const rect = (rootRef.value as HTMLElement).getBoundingClientRect();
+        menuTop.value = rect.bottom + 4;
+        menuLeft.value = rect.left;
+        menuWidth.value = rect.width;
+      }
+      open.value = !open.value;
+    });
+
     return (
       <span
         ref={rootRef}
@@ -117,9 +131,7 @@ export const Select = component$<SelectProps>(
           aria-invalid={invalid ? 'true' : undefined}
           aria-expanded={open.value ? 'true' : 'false'}
           aria-haspopup="listbox"
-          onClick$={() => {
-            if (!disabled) open.value = !open.value;
-          }}
+          onClick$={toggleOpen$}
         >
           <span
             class={[
@@ -134,7 +146,11 @@ export const Select = component$<SelectProps>(
           <AppIcon intent="chevron-down" size="xs" />
         </span>
         {open.value && (
-          <span class="ui-select-menu" role="listbox">
+          <span
+            class="ui-select-menu"
+            role="listbox"
+            style={`top:${menuTop.value}px;left:${menuLeft.value}px;width:${menuWidth.value}px`}
+          >
             {options.map((option) => (
               <button
                 key={option.value}
