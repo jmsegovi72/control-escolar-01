@@ -1,0 +1,176 @@
+.edit-address-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-address-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* ── Persona titular ── */
+
+.edit-address-person {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.edit-address-person__icon {
+  display: inline-grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.edit-address-person__info {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.edit-address-person__info strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-address-person__info span,
+.edit-address-person__info small {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Tarjeta de asentamiento ── */
+
+.edit-address-settlement-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface-subtle);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.edit-address-settlement-card.is-changed {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.edit-address-settlement-card__icon {
+  display: inline-grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+}
+
+.edit-address-settlement-card.is-changed .edit-address-settlement-card__icon {
+  background: color-mix(in srgb, var(--color-success) 20%, transparent);
+  color: var(--color-success);
+}
+
+.edit-address-settlement-card__info {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.edit-address-settlement-card__info strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-address-settlement-card__info span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+/* ── Cambio de asentamiento ── */
+
+.edit-address-settlement-change {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.edit-address-settlement-change__cancel {
+  display: flex;
+}
+
+/* ── Formulario ── */
+
+.edit-address-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-address-grid {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.edit-address-grid--street {
+  grid-template-columns: 14rem minmax(0, 1fr);
+}
+
+.edit-address-grid--numbers {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* ── Botonera ── */
+
+.edit-address-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+/* ── Skeleton de carga ── */
+
+.edit-address__loading {
+  height: 0.75rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-subtle),
+    var(--color-border),
+    var(--color-surface-subtle)
+  );
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 760px) {
+  .edit-address-grid--street {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-address-grid--numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-address-grid--numbers {
+    grid-template-columns: 1fr;
+  }
+}

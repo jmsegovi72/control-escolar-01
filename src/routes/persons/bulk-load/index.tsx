@@ -8,7 +8,7 @@ import { ROUTES } from '~/config/routes';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { personService } from '~/services/person/person.service';
 import type { CreatePersonDto } from '~/types/person.types';
-import { Button, DataTable, PageReturn, Panel, Toolbar } from '~/ui';
+import { Button, DataTable, ModuleHeader, Panel, Toolbar } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import {
@@ -598,11 +598,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="import-container">
-        <PageReturn
-          eyebrow={m.pageReturnEyebrow}
-          title={m.title}
-          buttonLabel={m.pageReturnLabel}
-          onClick$={async () => await nav(ROUTES.PERSONS)}
+        <ModuleHeader
+          tituloModulo={m.tituloModulo}
+          accionActual={m.title}
+          onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
         {/* loader */}

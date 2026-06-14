@@ -1,5 +1,6 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
 
+import { useFloatingMenu } from '~/ui/hooks/useFloatingMenu';
 import { AppIcon } from '~/ui/icons';
 import { Input } from '~/ui/primitives/Input/Input';
 import type { SearchSelectProps } from './search-select.types';
@@ -19,33 +20,29 @@ export const SearchSelect = component$<SearchSelectProps>(
     variant = 'line',
     size = 'md',
     iconLeft = 'search',
+    filterMode = 'client',
     onQueryChange$,
     onSelect$,
     onClear$,
   }) => {
-    const open = useSignal(false);
+    const { open, anchorRef, openFromRef$, leftStyle } = useFloatingMenu();
     const currentQuery = useSignal(query);
     const selectedValue = useSignal(value ?? '');
 
-    const filteredOptions = options.filter((option) => {
-      const normalizedQuery = currentQuery.value.trim().toLowerCase();
-
-      if (!normalizedQuery) {
-        return true;
-      }
-
-      return `${option.label} ${option.description ?? ''}`
-        .toLowerCase()
-        .includes(normalizedQuery);
-    });
+    const filteredOptions =
+      filterMode === 'external'
+        ? options
+        : options.filter((option) => {
+            const normalizedQuery = currentQuery.value.trim().toLowerCase();
+            if (!normalizedQuery) return true;
+            return `${option.label} ${option.description ?? ''}`
+              .toLowerCase()
+              .includes(normalizedQuery);
+          });
 
     const selectOption$ = $(async (optionValue: string) => {
       const option = options.find((item) => item.value === optionValue);
-
-      if (!option || option.disabled) {
-        return;
-      }
-
+      if (!option || option.disabled) return;
       selectedValue.value = option.value;
       currentQuery.value = option.label;
       open.value = false;
@@ -67,11 +64,7 @@ export const SearchSelect = component$<SearchSelectProps>(
         data-disabled={disabled ? 'true' : undefined}
         document:onClick$={$((event) => {
           const target = event.target as HTMLElement;
-
-          if (target.closest('.ui-search-select')) {
-            return;
-          }
-
+          if (target.closest('.ui-search-select')) return;
           open.value = false;
         })}
         document:onKeydown$={$((event) => {
@@ -87,7 +80,8 @@ export const SearchSelect = component$<SearchSelectProps>(
             required={required}
           />
         )}
-        <div class="ui-search-select__control">
+
+        <div class="ui-search-select__control" ref={anchorRef}>
           <Input
             variant={variant}
             size={size}
@@ -97,16 +91,12 @@ export const SearchSelect = component$<SearchSelectProps>(
             value={currentQuery.value}
             disabled={disabled}
             invalid={invalid || (required && !selectedValue.value)}
-            onFocus$={() => {
-              if (!disabled) {
-                open.value = true;
-              }
-            }}
+            onFocus$={openFromRef$}
             onInput$={async (event) => {
               const nextQuery = (event.target as HTMLInputElement).value;
               currentQuery.value = nextQuery;
               selectedValue.value = '';
-              open.value = true;
+              await openFromRef$();
               await onQueryChange$?.(nextQuery);
             }}
           />
@@ -121,7 +111,11 @@ export const SearchSelect = component$<SearchSelectProps>(
         </div>
 
         {open.value && (
-          <div class="ui-search-select__menu" role="listbox">
+          <div
+            class="ui-search-select__menu"
+            role="listbox"
+            style={leftStyle.value}
+          >
             {loading ? (
               <div class="ui-search-select__state">
                 <span class="ui-search-select__spinner" />

@@ -9,6 +9,7 @@ import {
 } from '@builder.io/qwik';
 
 import { DerivedFieldEnabledCtx } from '~/ui/composed/DerivedField/derived-field.context';
+import { useFloatingMenu } from '~/ui/hooks/useFloatingMenu';
 import { AppIcon } from '~/ui/icons';
 import type { SelectProps } from './select.types';
 import './select.css';
@@ -28,23 +29,16 @@ export const Select = component$<SelectProps>(
     required,
     onChange$,
   }) => {
-    const open = useSignal(false);
+    const { open, anchorRef, toggleFromRef$, leftStyle } = useFloatingMenu();
     const selectedValue = useSignal(value ?? '');
-    const rootRef = useSignal<Element>();
-    const menuTop = useSignal(0);
-    const menuLeft = useSignal(0);
-    const menuWidth = useSignal(0);
 
-    // Consume DerivedField context when present (null when used standalone)
     const fieldEnabled = useContext(DerivedFieldEnabledCtx, null);
 
-    // Sync external value prop
     useTask$(({ track }) => {
       const v = track(() => value);
       if (v !== undefined) selectedValue.value = v;
     });
 
-    // Close when parent DerivedField disables this field
     useTask$(({ track }) => {
       const ctx = fieldEnabled as Signal<boolean> | null;
       if (!ctx) return;
@@ -52,7 +46,6 @@ export const Select = component$<SelectProps>(
       if (!isEnabled) open.value = false;
     });
 
-    // ESC key + click-outside — only active while dropdown is open
     useVisibleTask$(({ track, cleanup }) => {
       const isOpen = track(() => open.value);
       if (!isOpen) return;
@@ -65,7 +58,7 @@ export const Select = component$<SelectProps>(
       };
 
       const onMousedown = (e: MouseEvent) => {
-        if (rootRef.value && !rootRef.value.contains(e.target as Node)) {
+        if (anchorRef.value && !anchorRef.value.contains(e.target as Node)) {
           open.value = false;
         }
       };
@@ -89,20 +82,9 @@ export const Select = component$<SelectProps>(
       await onChange$?.(nextValue);
     });
 
-    const toggleOpen$ = $(() => {
-      if (disabled) return;
-      if (!open.value && rootRef.value) {
-        const rect = (rootRef.value as HTMLElement).getBoundingClientRect();
-        menuTop.value = rect.bottom + 4;
-        menuLeft.value = rect.left;
-        menuWidth.value = rect.width;
-      }
-      open.value = !open.value;
-    });
-
     return (
       <span
-        ref={rootRef}
+        ref={anchorRef}
         class="ui-select-shell"
         data-variant={variant}
         data-size={size}
@@ -131,7 +113,9 @@ export const Select = component$<SelectProps>(
           aria-invalid={invalid ? 'true' : undefined}
           aria-expanded={open.value ? 'true' : 'false'}
           aria-haspopup="listbox"
-          onClick$={toggleOpen$}
+          onClick$={() => {
+            if (!disabled) toggleFromRef$();
+          }}
         >
           <span
             class={[
@@ -146,11 +130,7 @@ export const Select = component$<SelectProps>(
           <AppIcon intent="chevron-down" size="xs" />
         </span>
         {open.value && (
-          <span
-            class="ui-select-menu"
-            role="listbox"
-            style={`top:${menuTop.value}px;left:${menuLeft.value}px;width:${menuWidth.value}px`}
-          >
+          <span class="ui-select-menu" role="listbox" style={leftStyle.value}>
             {options.map((option) => (
               <button
                 key={option.value}

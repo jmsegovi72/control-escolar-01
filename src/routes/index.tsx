@@ -8,7 +8,7 @@ import { ROUTES } from '~/config/routes';
 import { authService } from '~/services/auth/auth.service';
 import type { LoginCredentials } from '~/types/auth.types';
 import { isFirstLoginResponse } from '~/types/auth.types';
-import { Button, Checkbox, Dialog, Field, Input } from '~/ui';
+import { Badge, Button, Checkbox, Dialog, Field, Input } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import { sessionStore } from '~/utils/session';
@@ -60,27 +60,51 @@ export default component$(() => {
 
   return (
     <main class="login-page">
-      <section class="login-brand" aria-label="Presentacion del sistema">
-        <div class="login-brand__mark" aria-hidden="true">
-          {appConfig.initials}
-        </div>
+      <section class="login-visual" aria-label="Presentacion del sistema">
+        <div class="login-visual__media" aria-hidden="true" />
+        <div class="login-visual__scrim" aria-hidden="true" />
 
-        <div class="login-brand__content">
-          <p class="login-kicker">{appConfig.description}</p>
-          <h1 class="login-title">
-            {messages.auth.login.welcome.replace('{name}', appConfig.name)}
-          </h1>
-          <p class="login-copy">{messages.auth.login.copy}</p>
+        <div class="login-visual__inner">
+          <div class="login-visual__brand">
+            <div class="login-visual__mark" aria-hidden="true">
+              {appConfig.initials}
+            </div>
+            <div class="login-visual__brand-copy">
+              <strong>{appConfig.name}</strong>
+              <span>{appConfig.description}</span>
+            </div>
+          </div>
+
+          <div class="login-visual__copy">
+            <p class="login-visual__eyebrow">
+              Sistema integral de control escolar
+            </p>
+            <h1 class="login-visual__headline">
+              Toda tu escuela, en un solo lugar.
+            </h1>
+            <p class="login-visual__description">
+              Accesos, seguimiento y operaci&oacute;n diaria resueltos desde una
+              experiencia m&aacute;s clara, m&aacute;s ordenada y m&aacute;s
+              confiable para el equipo escolar.
+            </p>
+          </div>
+
+          <div class="login-visual__meta" aria-label="Beneficios del sistema">
+            <span>Soporte administrativo</span>
+            <span class="login-visual__dot" aria-hidden="true" />
+            <span>Acceso protegido</span>
+            <span class="login-visual__dot" aria-hidden="true" />
+            <span>Ciclo 2025-2026</span>
+          </div>
         </div>
       </section>
 
       <section class="login-panel" aria-label="Inicio de sesion">
         <div class="login-card">
           <header class="login-access">
-            <p class="login-access__system">{appConfig.name}</p>
-            <span class="login-access__icon" aria-hidden="true">
-              <AppIcon intent="lock" size="xl" />
-            </span>
+            <Badge tone="primary" size="sm">
+              Ciclo escolar 2025-2026
+            </Badge>
             <h2 class="login-access__title">{messages.auth.login.formTitle}</h2>
             <p class="login-access__copy">{messages.auth.login.formCopy}</p>
           </header>
@@ -181,7 +205,9 @@ export default component$(() => {
                 autoComplete="username"
                 inputMode="email"
                 iconLeft="mail"
+                variant="line"
                 value={credentials.value.login}
+                invalid={Boolean(error.value) && !isLocked.value}
                 disabled={isLocked.value || isLoading.value}
                 onInput$={(event) => {
                   credentials.value = {
@@ -195,12 +221,25 @@ export default component$(() => {
               />
             </Field>
 
-            <Field
-              label={messages.auth.login.passwordLabel}
-              required
-              htmlFor="password"
-              disabled={isLocked.value}
+            <div
+              class="login-field"
+              data-disabled={isLocked.value ? 'true' : undefined}
             >
+              <div class="login-field__head">
+                <label class="login-field__label" for="password">
+                  {messages.auth.login.passwordLabel}
+                </label>
+                <button
+                  class="login-link"
+                  type="button"
+                  onClick$={() => {
+                    showHelp.value = !showHelp.value;
+                  }}
+                >
+                  {messages.auth.login.recoverPassword}
+                </button>
+              </div>
+
               <div class="login-password-field">
                 <Input
                   id="password"
@@ -209,7 +248,9 @@ export default component$(() => {
                   placeholder={messages.auth.login.passwordPlaceholder}
                   autoComplete="current-password"
                   iconLeft="lock"
+                  variant="line"
                   value={credentials.value.password}
+                  invalid={Boolean(error.value) && !isLocked.value}
                   disabled={isLocked.value || isLoading.value}
                   onInput$={(event) => {
                     credentials.value = {
@@ -234,19 +275,22 @@ export default component$(() => {
                     showPassword.value = !showPassword.value;
                   }}
                 >
-                  {showPassword.value
-                    ? messages.auth.login.hidePassword
-                    : messages.auth.login.showPassword}
+                  <AppIcon
+                    intent={showPassword.value ? 'view-off' : 'view'}
+                    size="sm"
+                  />
                 </button>
               </div>
-            </Field>
+            </div>
 
             {isLocked.value && (
               <div class="login-lockout-note">
                 <AppIcon intent="schedule" size="sm" />
                 <div>
                   <strong>{error.value}</strong>
-                  <span>{messages.auth.login.lockoutNote}</span>
+                  <span>
+                    {lockoutRemaining.value || messages.auth.login.lockoutNote}
+                  </span>
                 </div>
               </div>
             )}
@@ -351,15 +395,7 @@ export default component$(() => {
               >
                 {messages.auth.login.rememberDevice}
               </Checkbox>
-              <button
-                class="login-link"
-                type="button"
-                onClick$={() => {
-                  showHelp.value = !showHelp.value;
-                }}
-              >
-                {messages.auth.login.recoverPassword}
-              </button>
+              <span class="login-form__meta">Acceso seguro</span>
             </div>
 
             {showHelp.value && (
@@ -370,8 +406,10 @@ export default component$(() => {
             )}
 
             <Button
+              class="login-submit"
               type="submit"
               fullWidth
+              size="lg"
               iconRight="chevron-right"
               loading={isLoading.value}
               disabled={isLocked.value}
@@ -381,6 +419,26 @@ export default component$(() => {
                 : messages.auth.login.submitLabel}
             </Button>
           </form>
+
+          <div class="login-support">
+            <span class="login-support__label">
+              &iquest;Problemas para entrar?
+            </span>
+            <button
+              class="login-support__action"
+              type="button"
+              onClick$={() => {
+                showHelp.value = !showHelp.value;
+              }}
+            >
+              Contacta a soporte
+            </button>
+          </div>
+        </div>
+
+        <div class="login-panel__foot">
+          <span>&copy; 2026 Control Escolar</span>
+          <span class="login-panel__version">{appConfig.fullName}</span>
         </div>
       </section>
     </main>

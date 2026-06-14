@@ -13,7 +13,7 @@ import {
   Badge,
   Button,
   ConfirmAction,
-  PageReturn,
+  ModuleHeader,
   Panel,
   Toast,
   Toolbar,
@@ -141,11 +141,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="reset-login-page">
-        <PageReturn
-          eyebrow={m.pageReturnEyebrow}
-          title={m.title}
-          buttonLabel={m.pageReturnLabel}
-          onClick$={goBack$}
+        <ModuleHeader
+          tituloModulo={m.tituloModulo}
+          accionActual={m.title}
+          onBack$={goBack$}
         />
 
         {loading.value && (

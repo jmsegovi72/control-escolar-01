@@ -54,6 +54,27 @@ export const getTokenRemaining = () => {
   }
 };
 
+export const getTokenLoginTime = () => {
+  const token = sessionStore.getToken();
+  if (!token) return '';
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
+    const exp = Number(payload.exp ?? 0) * 1000;
+    let loginTime = Number(payload.iat ?? 0) * 1000;
+    if (!loginTime && exp) {
+      loginTime = exp - 4 * 3600 * 1000;
+    }
+    if (!loginTime) return '';
+    return new Date(loginTime).toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return '';
+  }
+};
+
 export const getAvatarUrl = (user: User) => {
   if (!user.photoUrl) {
     return user.userTypeCode === 'SUPER'

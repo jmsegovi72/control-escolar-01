@@ -71,9 +71,8 @@ export const createNavigation = (
             {
               id: 'persons-addresses',
               label: messages.layout.shell.nav.personsAddresses,
-              icon: 'school',
+              icon: 'pin',
               href: ROUTES.PERSONS_ADDRESSES,
-              disabled: true,
             },
             {
               id: 'persons-demographics',

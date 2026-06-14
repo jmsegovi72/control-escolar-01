@@ -1,0 +1,177 @@
+.ui-toggle-switch {
+  --toggle-width: 2.875rem;
+  --toggle-height: 1.625rem;
+  --toggle-knob-size: 1.25rem;
+  --toggle-padding: 0.1875rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.ui-toggle-switch[data-size="sm"] {
+  --toggle-width: 2.5rem;
+  --toggle-height: 1.375rem;
+  --toggle-knob-size: 1rem;
+  font-size: var(--font-size-xs);
+}
+
+.ui-toggle-switch[data-size="lg"] {
+  --toggle-width: 3.25rem;
+  --toggle-height: 1.875rem;
+  --toggle-knob-size: 1.5rem;
+  font-size: var(--font-size-md);
+}
+
+.ui-toggle-switch[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.ui-toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+}
+
+.ui-toggle-switch__control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  inline-size: var(--toggle-width);
+  block-size: var(--toggle-height);
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-surface-raised) 92%, white 8%) 0%,
+    color-mix(in srgb, var(--color-surface-subtle) 96%, var(--color-border) 4%)
+      100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 0.125rem 0.5rem color-mix(in srgb, var(--color-ink) 10%, transparent);
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard);
+}
+
+.ui-toggle-switch__control::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--toggle-padding);
+  inline-size: var(--toggle-knob-size);
+  block-size: var(--toggle-knob-size);
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.98),
+    rgba(255, 255, 255, 0.88) 52%,
+    rgba(232, 239, 244, 0.96) 100%
+  );
+  box-shadow:
+    0 0.125rem 0.5rem rgba(15, 23, 42, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.72) inset;
+  transform: translate(0, -50%);
+  transition:
+    transform 280ms var(--ease-standard),
+    background-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard);
+}
+
+.ui-toggle-switch:hover .ui-toggle-switch__control {
+  border-color: color-mix(
+    in srgb,
+    var(--color-primary) 56%,
+    var(--color-border-strong) 44%
+  );
+}
+
+.ui-toggle-switch input:checked + .ui-toggle-switch__control {
+  border-color: color-mix(in srgb, var(--color-primary) 80%, white 20%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-primary-soft) 72%, white 28%) 0%,
+    color-mix(in srgb, var(--color-primary) 88%, var(--color-primary-soft) 12%)
+      100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0.25rem 0.875rem color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.ui-toggle-switch input:checked + .ui-toggle-switch__control::after {
+  transform: translate(
+    calc(
+      var(--toggle-width) -
+      var(--toggle-knob-size) -
+      (var(--toggle-padding) * 2)
+    ),
+    -50%
+  );
+}
+
+.ui-toggle-switch input:focus-visible + .ui-toggle-switch__control {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    var(--focus-ring);
+}
+
+.ui-toggle-switch[data-invalid="true"] .ui-toggle-switch__control {
+  border-color: var(--field-border-error);
+}
+
+.ui-toggle-switch[data-disabled="true"] .ui-toggle-switch__control {
+  background: var(--field-bg-disabled);
+  box-shadow: none;
+}
+
+.ui-toggle-switch__copy {
+  display: grid;
+  gap: 0.125rem;
+  min-inline-size: 0;
+}
+
+.ui-toggle-switch__label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.ui-toggle-switch__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.ui-toggle-switch[data-size="sm"] .ui-toggle-switch__label {
+  font-size: var(--font-size-xs);
+}
+
+.ui-toggle-switch[data-size="lg"] .ui-toggle-switch__label {
+  font-size: var(--font-size-md);
+}
+
+.ui-toggle-switch__state {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-soft);
+}
+
+.ui-toggle-switch__description {
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  color: var(--color-text-soft);
+}
+
+.ui-toggle-switch[data-invalid="true"] .ui-toggle-switch__label,
+.ui-toggle-switch[data-invalid="true"] .ui-toggle-switch__description {
+  color: var(--field-error);
+}

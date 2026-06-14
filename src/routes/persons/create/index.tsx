@@ -13,7 +13,7 @@ import {
   DerivedField,
   Field,
   Input,
-  PageReturn,
+  ModuleHeader,
   Panel,
   Select,
   Toast,
@@ -296,11 +296,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="create-person-page">
-        <PageReturn
-          eyebrow={m.pageReturnEyebrow}
-          title={m.title}
-          buttonLabel={m.pageReturnLabel}
-          onClick$={async () => await nav(ROUTES.PERSONS)}
+        <ModuleHeader
+          tituloModulo={m.tituloModulo}
+          accionActual={m.title}
+          onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
         {error.value && (

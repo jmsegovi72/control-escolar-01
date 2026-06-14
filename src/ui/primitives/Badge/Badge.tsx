@@ -4,9 +4,13 @@ import type { BadgeProps } from './badge.types';
 import './badge.css';
 
 export const Badge = component$<BadgeProps>(
-  ({ tone = 'neutral', size = 'md' }) => {
+  ({ tone = 'neutral', size = 'md', class: className }) => {
     return (
-      <span class="ui-badge" data-tone={tone} data-size={size}>
+      <span
+        class={className ? `ui-badge ${className}` : 'ui-badge'}
+        data-tone={tone}
+        data-size={size}
+      >
         <Slot />
       </span>
     );

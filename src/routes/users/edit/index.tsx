@@ -15,7 +15,7 @@ import {
   Button,
   Field,
   Input,
-  PageReturn,
+  ModuleHeader,
   Panel,
   Select,
   Toast,
@@ -202,11 +202,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="edit-user-page">
-        <PageReturn
-          eyebrow={messages.users.edit.pageReturnEyebrow}
-          title={messages.users.edit.title}
-          buttonLabel={messages.users.edit.pageReturnLabel}
-          onClick$={goBack$}
+        <ModuleHeader
+          tituloModulo={messages.users.edit.tituloModulo}
+          accionActual={messages.users.edit.title}
+          onBack$={goBack$}
         />
 
         {error.value && (

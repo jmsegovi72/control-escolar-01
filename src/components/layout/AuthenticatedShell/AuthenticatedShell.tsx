@@ -2,7 +2,9 @@ import {
   $,
   component$,
   Slot,
+  useContextProvider,
   useSignal,
+  useStore,
   useVisibleTask$,
 } from '@builder.io/qwik';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
@@ -12,7 +14,14 @@ import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { authService } from '~/services/auth/auth.service';
 import { healthService } from '~/services/health/health.service';
-import { AppShell, Button, Panel, Sidebar } from '~/ui';
+import {
+  AppShell,
+  Button,
+  NotificationCenter,
+  Panel,
+  Sidebar,
+  ToggleSwitch,
+} from '~/ui';
 import type {
   SidebarBehavior,
   SidebarItem,
@@ -29,6 +38,7 @@ import {
   getInitials,
   getTokenRemaining,
 } from '~/utils/session-utils';
+import { AuthenticatedShellSystemStatusContext } from './authenticated-shell.context';
 
 type AuthenticatedShellProps = {
   eyebrow?: string;
@@ -60,6 +70,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     const sidebarBehavior = useSignal<SidebarBehavior>('fixed');
     const sidebarHovering = useSignal(false);
     const sidebarOpen = useSignal(false);
+    const openSettings = useSignal(false);
     const openItems = useSignal<string[]>([]);
     const time = useSignal(formatTime(new Date()));
     const date = useSignal(formatDate(new Date()));
@@ -77,6 +88,22 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     const authorized = useSignal(false);
     const sidebarUser = useSignal<SidebarUser | undefined>();
     const sections = useSignal<SidebarSection[]>([]);
+    const systemStatus = useStore({
+      backend: {
+        value: 'Validando',
+        tone: 'neutral' as SidebarStatusTone,
+      },
+      database: {
+        value: 'Validando',
+        tone: 'neutral' as SidebarStatusTone,
+      },
+      session: {
+        remaining: getTokenRemaining().label,
+        tone: getTokenRemaining().tone,
+      },
+    });
+
+    useContextProvider(AuthenticatedShellSystemStatusContext, systemStatus);
 
     useVisibleTask$(async () => {
       if (authService.requiresPasswordChange()) {
@@ -127,12 +154,18 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
         date.value = formatDate(now);
         sessionRemaining.value = remaining.label;
         sessionTone.value = remaining.tone;
+        systemStatus.session.remaining = remaining.label;
+        systemStatus.session.tone = remaining.tone;
       };
 
       const updateHealth = async () => {
         const systemHealth = await healthService.checkSystem();
         backendStatus.value = systemHealth.backend;
         databaseStatus.value = systemHealth.database;
+        systemStatus.backend.value = systemHealth.backend.value;
+        systemStatus.backend.tone = systemHealth.backend.tone;
+        systemStatus.database.value = systemHealth.database.value;
+        systemStatus.database.tone = systemHealth.database.tone;
       };
 
       updateClock();
@@ -334,17 +367,58 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           })}
         />
 
-        <Button
-          q:slot="actions"
-          variant="secondary"
-          iconLeft="logout"
-          onClick$={async () => {
-            authService.logout();
-            await nav(ROUTES.LOGIN);
-          }}
-        >
-          {messages.layout.shell.logoutLabel}
-        </Button>
+        <div q:slot="actions" class="authenticated-shell__top-actions">
+          <NotificationCenter
+            size="sm"
+            align="end"
+            unreadCount={0}
+            items={[]}
+            disabled
+          />
+          <div class="authenticated-shell__settings-wrap">
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft="settings"
+              aria-label={messages.layout.shell.userActions.settings}
+              title={messages.layout.shell.userActions.settings}
+              onClick$={() => {
+                openSettings.value = !openSettings.value;
+              }}
+            />
+            {openSettings.value && (
+              <div class="authenticated-shell__settings-dropdown">
+                <Panel
+                  title={messages.layout.shell.sidebarLabel}
+                  density="compact"
+                >
+                  <ToggleSwitch
+                    size="sm"
+                    checked={sidebarBehavior.value === 'hover'}
+                    showState
+                    onLabel="Auto colapso"
+                    offLabel="Fijo"
+                    onChange$={() => {
+                      toggleSidebarBehavior$();
+                      openSettings.value = false;
+                    }}
+                  />
+                </Panel>
+              </div>
+            )}
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            iconLeft="logout"
+            aria-label={messages.layout.shell.logoutLabel}
+            title={messages.layout.shell.logoutLabel}
+            onClick$={async () => {
+              authService.logout();
+              await nav(ROUTES.LOGIN);
+            }}
+          />
+        </div>
 
         {authorizationReady.value && authorized.value && (
           <div

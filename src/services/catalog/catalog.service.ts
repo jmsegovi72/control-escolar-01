@@ -1,3 +1,4 @@
+import type { Settlement, StreetType } from '~/types/address.types';
 import type { ApiResponse } from '~/types/api.types';
 import type {
   Municipality,
@@ -29,6 +30,19 @@ export const catalogService = {
 
     const response = await apiClient.get<ApiResponse<Municipality[]>>(
       `/municipalities?${query.toString()}`,
+    );
+    return response.data.data;
+  },
+
+  async getStreetTypes(): Promise<StreetType[]> {
+    const response =
+      await apiClient.get<ApiResponse<StreetType[]>>('/street-types');
+    return response.data.data;
+  },
+
+  async getSettlements(zipCode: string): Promise<Settlement[]> {
+    const response = await apiClient.get<ApiResponse<Settlement[]>>(
+      `/settlements/${zipCode}`,
     );
     return response.data.data;
   },

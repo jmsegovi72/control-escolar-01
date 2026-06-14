@@ -16,11 +16,8 @@
 }
 
 .ui-search-select__menu {
-  position: absolute;
-  z-index: 40;
-  top: calc(100% + var(--space-1));
-  right: 0;
-  left: 0;
+  position: fixed;
+  z-index: 200;
   display: grid;
   max-height: 16rem;
   overflow-x: hidden;

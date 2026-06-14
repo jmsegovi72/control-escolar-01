@@ -8,7 +8,7 @@ import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import { Avatar, Badge, Button, PageReturn, Panel, Toolbar } from '~/ui';
+import { Avatar, Badge, Button, ModuleHeader, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
@@ -25,7 +25,7 @@ export default component$(() => {
   const originDescription = useSignal<string>(
     messages.users.detail.originDirectDescription,
   );
-  const returnLabel = useSignal<string>(messages.users.detail.pageReturnLabel);
+  const returnLabel = useSignal<string>(messages.users.detail.etiquetaRegresar);
   const returnPath = useSignal('/users');
   const selectionMode = useSignal(false);
 
@@ -37,7 +37,7 @@ export default component$(() => {
     error.value = '';
     originLabel.value = messages.users.detail.originDirect;
     originDescription.value = messages.users.detail.originDirectDescription;
-    returnLabel.value = messages.users.detail.pageReturnLabel;
+    returnLabel.value = messages.users.detail.etiquetaRegresar;
     returnPath.value = '/users';
     selectionMode.value = false;
 
@@ -54,7 +54,7 @@ export default component$(() => {
       loadedFromContext.value = true;
       originLabel.value = messages.users.detail.originTable;
       originDescription.value = messages.users.detail.originTableDescription;
-      returnLabel.value = messages.users.detail.pageReturnLabel;
+      returnLabel.value = messages.users.detail.etiquetaRegresar;
       returnPath.value = usersWorkflow.getReturnPath();
       loading.value = false;
       return;
@@ -66,7 +66,7 @@ export default component$(() => {
       selectionMode.value = true;
       originLabel.value = messages.users.detail.originManual;
       originDescription.value = messages.users.detail.originManualDescription;
-      returnLabel.value = messages.users.detail.pageReturnLabel;
+      returnLabel.value = messages.users.detail.etiquetaRegresar;
       returnPath.value = '/users';
       loading.value = false;
       return;
@@ -77,7 +77,7 @@ export default component$(() => {
       loadedFromContext.value = false;
       originLabel.value = messages.users.detail.originUrl;
       originDescription.value = messages.users.detail.originUrlDescription;
-      returnLabel.value = messages.users.detail.pageReturnLabel;
+      returnLabel.value = messages.users.detail.etiquetaRegresar;
       returnPath.value = '/users';
     } catch (err) {
       user.value = null;
@@ -130,11 +130,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="user-detail">
-        <PageReturn
-          eyebrow={messages.users.detail.pageReturnEyebrow}
-          title={messages.users.detail.title}
-          buttonLabel={returnLabel.value}
-          onClick$={goBack$}
+        <ModuleHeader
+          tituloModulo={messages.users.detail.tituloModulo}
+          accionActual={messages.users.detail.title}
+          onBack$={goBack$}
         />
 
         {loading.value && (

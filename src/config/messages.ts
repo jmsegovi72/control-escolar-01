@@ -1,6 +1,7 @@
 export const messages = {
   app: {
-    name: 'SICES V1',
+    name: 'SICES',
+    version: 'V1',
     description: 'Sistema de Control Escolar',
     initials: 'SI',
   },
@@ -127,6 +128,7 @@ export const messages = {
       sidebarSettings: 'Configuración',
       sidebarFixed: 'Usar sidebar fijo',
       sidebarHover: 'Auto colapso',
+      sidebarLabel: 'Barra lateral',
       returnToDashboard: 'Volver al dashboard',
       clockLabel: 'Hora actual',
       backend: 'Backend',
@@ -241,8 +243,7 @@ export const messages = {
       toolbarCenter:
         'Desde aquí puedes filtrar usuarios y volver al flujo anterior.',
       newUser: 'Nuevo usuario',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       filterPanelTitle: 'Filtros',
       filterPanelDescription:
         'Combina criterios para localizar cuentas del sistema.',
@@ -319,8 +320,7 @@ export const messages = {
       accessDenied: 'Editar usuarios está reservado para cuentas SUPER.',
       toolbarCenter:
         'Guarda cambios para actualizar los permisos de acceso inmediatamente.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       successToastTitle: 'Cambios guardados',
       successToastDescription:
         'Los cambios del usuario se guardaron con éxito. Redirigiendo...',
@@ -364,8 +364,7 @@ export const messages = {
       toolbarBack: 'Volver',
       toolbarCenter:
         'El usuario se liga a una persona existente; si no existe, primero debe capturarse en Personas.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       successEyebrow: 'Usuario creado',
       successTitle: 'Entrega la contraseña temporal al usuario',
       successDescription:
@@ -423,8 +422,8 @@ export const messages = {
       description: 'Consulta datos generales, permisos y estado de acceso.',
       meta: 'Usuarios',
       accessDenied: 'El detalle de usuarios está reservado para cuentas SUPER.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
+      etiquetaRegresar: 'Regresar',
       originDirect: 'Acceso directo',
       originDirectDescription:
         'El detalle se abrió con un identificador en la URL.',
@@ -472,8 +471,7 @@ export const messages = {
       description: 'Restablece el flujo de primer acceso de un usuario.',
       meta: 'Usuarios',
       accessDenied: 'Resetear login está reservado para cuentas SUPER.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       loadingTitle: 'Cargando usuario',
       loadingDescription: 'Consultando datos...',
       errorToastTitle: 'Revisión necesaria',
@@ -523,8 +521,7 @@ export const messages = {
       meta: 'Usuarios',
       accessDenied:
         'Activar o desactivar usuarios está reservado para cuentas SUPER.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       loadingTitle: 'Cargando usuario',
       loadingDescription: 'Consultando datos...',
       errorToastTitle: 'Revisión necesaria',
@@ -577,8 +574,7 @@ export const messages = {
       description: 'Libera cuentas bloqueadas por intentos de acceso fallidos.',
       meta: 'Usuarios',
       accessDenied: 'Desbloquear usuarios está reservado para cuentas SUPER.',
-      pageReturnEyebrow: 'Módulo de usuarios',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de usuarios',
       loadingTitle: 'Cargando usuario',
       loadingDescription: 'Consultando datos...',
       errorToastTitle: 'Revisión necesaria',
@@ -628,8 +624,7 @@ export const messages = {
       accessDenied: 'No tienes permisos para registrar personas.',
       toolbarBack: 'Personas',
       toolbarCenter: 'Nueva persona',
-      pageReturnEyebrow: 'Personas',
-      pageReturnLabel: 'Volver a personas',
+      tituloModulo: 'Módulo de personas',
 
       curpStepTitle: 'Verifica la CURP',
       curpStepDescription:
@@ -799,8 +794,7 @@ export const messages = {
       toolbarBack: 'Personas',
       toolbarCenter: 'Filtra y localiza personas del sistema.',
       newPerson: 'Nueva persona',
-      pageReturnEyebrow: 'Módulo de personas',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de personas',
       filterPanelTitle: 'Filtros',
       filterPanelDescription:
         'Combina criterios para localizar personas registradas.',
@@ -851,8 +845,7 @@ export const messages = {
       accessDenied: 'No tienes permisos para editar personas.',
       toolbarBack: 'Personas',
       toolbarCenter: 'Editar persona',
-      pageReturnEyebrow: 'Personas',
-      pageReturnLabel: 'Volver a personas',
+      tituloModulo: 'Módulo de personas',
       loadingTitle: 'Cargando persona...',
       loadingDescription: 'Obteniendo datos del registro.',
       selectionTitle: 'Seleccionar persona',
@@ -902,8 +895,8 @@ export const messages = {
       meta: 'Personas',
       accessDenied:
         'Solo usuarios con acceso al módulo pueden consultar personas.',
-      pageReturnEyebrow: 'Módulo de personas',
-      pageReturnLabel: 'Regresar',
+      tituloModulo: 'Módulo de personas',
+      etiquetaRegresar: 'Regresar',
       originDirect: 'Acceso directo',
       originDirectDescription:
         'El detalle se abrió con un identificador en la URL.',
@@ -956,8 +949,7 @@ export const messages = {
         'No tienes permisos para realizar cargas masivas de personas.',
       toolbarBack: 'Personas',
       toolbarCenter: 'Importación por lotes',
-      pageReturnEyebrow: 'Personas',
-      pageReturnLabel: 'Volver a personas',
+      tituloModulo: 'Módulo de personas',
       successEyebrow: 'Importación exitosa',
       successTitle: '¡Lote importado con éxito!',
       successDescription:
@@ -991,6 +983,227 @@ export const messages = {
         email: 'Correo',
         observations: 'Observaciones',
       },
+    },
+  },
+
+  addresses: {
+    hub: {
+      eyebrow: 'Personas',
+      title: 'Direcciones',
+      description:
+        'Registro, consulta y actualización de domicilios de personas.',
+      meta: 'Módulo Direcciones',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden gestionar direcciones.',
+      toolbarBack: 'Personas',
+      toolbarCenter: 'Centro de direcciones',
+      newAddress: 'Nueva dirección',
+      openButton: 'Abrir',
+      goButton: 'Ir',
+      heroKicker: 'GESTIÓN DE DIRECCIONES',
+      heroTitle: 'Registra, consulta y actualiza domicilios',
+      heroDescription:
+        'Administra los domicilios asociados a cada persona: búsqueda, alta, edición y carga masiva desde un solo módulo.',
+      summaryLabel: 'Resumen del módulo',
+      summaryActions: 'acciones',
+      summaryAccess: 'acceso',
+      panelTitle: 'Acciones operativas',
+      panelDescription:
+        'Flujos para consulta, mantenimiento y carga de direcciones.',
+      relatedPanelTitle: 'Módulos relacionados',
+      relatedPanelDescription:
+        'Navega al módulo de personas para gestionar otros datos.',
+      primaryActions: {
+        search: {
+          title: 'Búsqueda avanzada',
+          description:
+            'Consulta direcciones con filtros y ejecuta acciones por fila.',
+          badge: 'Principal',
+        },
+        create: {
+          title: 'Crear dirección',
+          description: 'Registra un nuevo domicilio para una persona.',
+          badge: 'Alta',
+        },
+      },
+      operationalActions: {
+        detail: {
+          title: 'Ver dirección',
+          description: 'Consulta el domicilio de una persona por ID o CURP.',
+          badge: 'Selección',
+        },
+        edit: {
+          title: 'Editar dirección',
+          description: 'Modifica los datos del domicilio registrado.',
+          badge: 'Selección',
+        },
+        bulkLoad: {
+          title: 'Carga masiva',
+          description: 'Importa múltiples domicilios desde un archivo.',
+          badge: 'Importar',
+        },
+      },
+      relatedModules: {
+        zipCodes: {
+          title: 'Registrar código postal',
+          description:
+            'Da de alta un nuevo código postal para usarlo en domicilios.',
+          badge: 'Próximamente',
+        },
+      },
+    },
+    create: {
+      eyebrow: 'Direcciones',
+      title: 'Nueva dirección',
+      description: 'Registra el domicilio de una persona.',
+      meta: 'Nueva dirección',
+      accessDenied:
+        'Solo usuarios con acceso al módulo pueden registrar direcciones.',
+      toolbarBack: 'Regresar',
+      toolbarCenter: 'Nueva dirección',
+      tituloModulo: 'Módulo de direcciones',
+      successEyebrow: 'Dirección registrada',
+
+      panelPersonTitle: 'Persona',
+      panelPersonDescription:
+        'Selecciona la persona a la que pertenece esta dirección.',
+      personSearchLabel: 'Buscar persona',
+      personSearchPlaceholder: 'Nombre, CURP o ID',
+      personSearchHint: 'Escribe al menos 3 caracteres.',
+      personNoResults: 'No se encontró ninguna persona con ese criterio.',
+      personSelectedLabel: 'Persona seleccionada',
+      personChangeButton: 'Cambiar',
+
+      panelZipCodeTitle: 'Código postal',
+      panelZipCodeDescription:
+        'Escribe el código postal y selecciona el asentamiento.',
+      fieldZipCodeLabel: 'Código postal',
+      fieldZipCodePlaceholder: 'Ej. 97000',
+      fieldZipCodeHint: 'Escribe el código postal de 5 dígitos.',
+      cpNoResults: 'No se encontraron asentamientos para ese código postal.',
+      settlementLabel: 'Asentamiento',
+      derivedMunicipalityLabel: 'Municipio',
+      derivedStateLabel: 'Estado',
+      settlementChangeButton: 'Cambiar',
+
+      panelAddressTitle: 'Datos del domicilio',
+      panelAddressDescription: 'Completa la calle, número y referencias.',
+      fieldStreetTypeLabel: 'Tipo de vialidad',
+      fieldStreetTypePlaceholder: 'Selecciona...',
+      fieldStreetLabel: 'Nombre de la calle',
+      fieldStreetPlaceholder: 'Ej. Reforma',
+      fieldExteriorNumberLabel: 'Núm. exterior',
+      fieldExteriorNumberPlaceholder: 'Ej. 123',
+      fieldInteriorNumberLabel: 'Núm. interior',
+      fieldInteriorNumberPlaceholder: 'Ej. 4B',
+      fieldBlockLabel: 'Bloque',
+      fieldBlockPlaceholder: 'Ej. MZ 17 LTE 112',
+      fieldBetweenStreetsLabel: 'Entre calles',
+      fieldBetweenStreetsPlaceholder: 'Ej. Calle 20 y Calle 22',
+
+      errorPersonRequired: 'Selecciona una persona.',
+      errorSettlementRequired: 'Selecciona un asentamiento.',
+      errorStreetTypeRequired: 'Selecciona el tipo de vialidad.',
+      errorStreetRequired: 'Ingresa el nombre de la calle.',
+
+      saveButton: 'Guardar dirección',
+      saving: 'Guardando...',
+      cancelButton: 'Cancelar',
+
+      successTitle: 'Dirección registrada',
+      successMessage: 'El domicilio se guardó correctamente.',
+      successNewButton: 'Registrar otra',
+      successBackButton: 'Ir a direcciones',
+    },
+    edit: {
+      eyebrow: 'Direcciones',
+      title: 'Editar dirección',
+      description: 'Modifica los datos del domicilio registrado.',
+      meta: 'Editar dirección',
+      accessDenied:
+        'Solo usuarios con acceso al módulo pueden editar direcciones.',
+      toolbarBack: 'Regresar',
+      toolbarCenter: 'Editar dirección',
+      tituloModulo: 'Módulo de direcciones',
+      etiquetaRegresar: 'Regresar',
+
+      loadingTitle: 'Cargando dirección...',
+      loadingDescription: 'Obteniendo datos del domicilio.',
+
+      selectionTitle: 'Seleccionar persona',
+      selectionDescription: 'Busca por nombre o CURP para editar su domicilio.',
+      personSearchPlaceholder: 'Nombre, CURP o ID',
+      fieldPersonHint: 'Escribe al menos 3 caracteres para buscar.',
+      noResultsCriteria: 'No se encontraron personas con ese criterio.',
+      noAddressFound:
+        'Esta persona no tiene un domicilio registrado. Registra uno primero.',
+
+      panelPersonTitle: 'Persona',
+      panelPersonDescription: 'Titular del domicilio que se está editando.',
+
+      panelLocationTitle: 'Asentamiento',
+      panelLocationDescription:
+        'Ubicación actual. Cambia si necesitas actualizar el código postal.',
+      settlementChangeButton: 'Cambiar asentamiento',
+      cancelSettlementChange: 'Cancelar cambio',
+      fieldZipCodeLabel: 'Código postal',
+      fieldZipCodePlaceholder: 'Ej. 97000',
+      fieldZipCodeHint: 'Escribe el código postal de 5 dígitos.',
+      cpNoResults: 'No se encontraron asentamientos para ese código postal.',
+
+      panelAddressTitle: 'Datos del domicilio',
+      panelAddressDescription: 'Modifica calle, número y referencias.',
+
+      errorStreetTypeRequired: 'Selecciona el tipo de vialidad.',
+      errorStreetRequired: 'Ingresa el nombre de la calle.',
+
+      actionCancel: 'Cancelar',
+      actionSave: 'Guardar cambios',
+      saving: 'Guardando...',
+      successToastTitle: 'Cambios guardados',
+      successToastDescription: 'La dirección se actualizó correctamente.',
+    },
+    detail: {
+      eyebrow: 'Direcciones',
+      title: 'Detalle de dirección',
+      description:
+        'Consulta la información completa de un domicilio registrado.',
+      meta: 'Detalle',
+      accessDenied:
+        'Solo usuarios con acceso al módulo pueden consultar direcciones.',
+      toolbarBack: 'Regresar',
+      toolbarCenter: 'Detalle de dirección',
+      tituloModulo: 'Módulo de direcciones',
+      etiquetaRegresar: 'Regresar',
+      loadingTitle: 'Cargando dirección...',
+      loadingDescription: 'Obteniendo datos del domicilio.',
+      selectionTitle: 'Seleccionar persona',
+      selectionDescription:
+        'Busca por nombre o CURP para consultar su domicilio.',
+      fieldPersonHint: 'Escribe al menos 3 caracteres para buscar.',
+      noResultsCriteria: 'No se encontraron personas con ese criterio.',
+      noAddressFound: 'Esta persona no tiene un domicilio registrado.',
+      panelPersonTitle: 'Persona',
+      panelPersonDescription: 'Titular del domicilio.',
+      panelLocationTitle: 'Ubicación',
+      panelLocationDescription: 'Código postal y asentamiento.',
+      panelAddressTitle: 'Dirección',
+      panelAddressDescription: 'Ubicación y referencias.',
+      fieldId: 'ID de registro',
+      fieldFullName: 'Nombre completo',
+      fieldCurp: 'CURP',
+      fieldZipCode: 'Código postal',
+      fieldSettlement: 'Asentamiento',
+      fieldMunicipality: 'Municipio',
+      fieldState: 'Estado',
+      fieldStreetType: 'Tipo de vialidad',
+      fieldStreet: 'Calle',
+      fieldExteriorNumber: 'Núm. exterior',
+      fieldInteriorNumber: 'Núm. interior',
+      fieldBlock: 'Bloque',
+      fieldBetweenStreets: 'Entre calles',
+      actionEdit: 'Editar dirección',
+      actionSearch: 'Buscar dirección',
     },
   },
 

@@ -15,3 +15,19 @@
 .authenticated-shell__container--full-width {
   max-width: 100%;
 }
+
+.authenticated-shell__settings-wrap {
+  position: relative;
+}
+
+.authenticated-shell__settings-dropdown {
+  position: absolute;
+  z-index: 100;
+  right: 0;
+  top: calc(100% + var(--space-1));
+  width: 8rem;
+}
+
+.authenticated-shell__settings-dropdown .ui-panel__title {
+  font-size: var(--font-size-xs);
+}

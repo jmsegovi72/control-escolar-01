@@ -19,7 +19,7 @@ import {
   DataTable,
   Field,
   Input,
-  PageReturn,
+  ModuleHeader,
   Panel,
   Select,
   Toolbar,
@@ -396,11 +396,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="users-search">
-        <PageReturn
-          eyebrow={messages.users.search.pageReturnEyebrow}
-          title={messages.users.search.title}
-          buttonLabel={messages.users.search.pageReturnLabel}
-          onClick$={async () => await nav(ROUTES.USERS)}
+        <ModuleHeader
+          tituloModulo={messages.users.search.tituloModulo}
+          accionActual={messages.users.search.title}
+          onBack$={async () => await nav(ROUTES.USERS)}
         />
 
         <Panel

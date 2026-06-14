@@ -11,6 +11,7 @@ export interface User {
   secondLastName: string;
   fullName: string;
   photoUrl: string | null;
+  gender?: 'H' | 'M';
   roleId: number;
   roleName: string;
   roleDescription: string;

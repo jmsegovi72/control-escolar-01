@@ -6,9 +6,11 @@ export { Dialog } from './composed/Dialog/Dialog';
 export { DropdownMenu } from './composed/DropdownMenu/DropdownMenu';
 export { EmptyState } from './composed/EmptyState/EmptyState';
 export { FileUpload } from './composed/FileUpload/FileUpload';
+export { ModuleHeader } from './composed/ModuleHeader/ModuleHeader';
 export { NotificationCenter } from './composed/NotificationCenter/NotificationCenter';
 export { PageReturn } from './composed/PageReturn/PageReturn';
 export { SearchSelect } from './composed/SearchSelect/SearchSelect';
+export { SelectionStep } from './composed/SelectionStep/SelectionStep';
 export { Skeleton } from './composed/Skeleton/Skeleton';
 export {
   StatusIndicator,
@@ -40,6 +42,7 @@ export { Panel } from './primitives/Panel/Panel';
 export { RadioGroup } from './primitives/RadioGroup/RadioGroup';
 export { Select } from './primitives/Select/Select';
 export { Textarea } from './primitives/Textarea/Textarea';
+export { ToggleSwitch } from './primitives/ToggleSwitch/ToggleSwitch';
 export type {
   ComponentCategory,
   ComponentRegistryItem,

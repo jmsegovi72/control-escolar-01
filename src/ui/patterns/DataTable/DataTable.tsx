@@ -1,5 +1,6 @@
 import { $, component$, useSignal } from '@builder.io/qwik';
 
+import { useFloatingMenu } from '~/ui/hooks/useFloatingMenu';
 import { AppIcon } from '~/ui/icons';
 import { Badge } from '~/ui/primitives/Badge/Badge';
 import { Button } from '~/ui/primitives/Button/Button';
@@ -30,8 +31,7 @@ const getCellValue = <T extends Record<string, unknown>>(
 export const DataTable = component$(
   <T extends Record<string, unknown>>(props: DataTableProps<T>) => {
     const openActionIndex = useSignal<number | null>(null);
-    const menuTop = useSignal(0);
-    const menuRight = useSignal(0);
+    const { menuTop, menuRight, openFromElement$ } = useFloatingMenu();
 
     const hasActions = !!props.actions?.length;
     const actionMode = props.actionMode ?? 'auto';
@@ -303,7 +303,7 @@ export const DataTable = component$(
                                   ? 'true'
                                   : 'false'
                               }
-                              onClick$={$((event) => {
+                              onClick$={$(async (event) => {
                                 event.stopPropagation();
                                 if (openActionIndex.value === rowIndex) {
                                   openActionIndex.value = null;
@@ -312,13 +312,7 @@ export const DataTable = component$(
                                 const btn = (
                                   event.target as HTMLElement
                                 ).closest('button');
-                                if (btn) {
-                                  const rect = btn.getBoundingClientRect();
-                                  menuTop.value = rect.bottom + 4;
-                                  menuRight.value =
-                                    document.documentElement.clientWidth -
-                                    rect.right;
-                                }
+                                if (btn) await openFromElement$(btn);
                                 openActionIndex.value = rowIndex;
                               })}
                             >

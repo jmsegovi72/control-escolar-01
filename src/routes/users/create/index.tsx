@@ -21,7 +21,7 @@ import {
   Checkbox,
   Field,
   Input,
-  PageReturn,
+  ModuleHeader,
   Panel,
   SearchSelect,
   Select,
@@ -198,11 +198,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="create-user-page">
-        <PageReturn
-          eyebrow={messages.users.create.pageReturnEyebrow}
-          title={messages.users.create.title}
-          buttonLabel={messages.users.create.pageReturnLabel}
-          onClick$={async () => await nav('/users')}
+        <ModuleHeader
+          tituloModulo={messages.users.create.tituloModulo}
+          accionActual={messages.users.create.title}
+          onBack$={async () => await nav('/users')}
         />
 
         {error.value && (

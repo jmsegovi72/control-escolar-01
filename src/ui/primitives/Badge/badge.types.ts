@@ -13,5 +13,6 @@ export type BadgeSize = 'sm' | 'md';
 export type BadgeProps = {
   tone?: BadgeTone;
   size?: BadgeSize;
+  class?: string;
   children?: JSXChildren;
 };

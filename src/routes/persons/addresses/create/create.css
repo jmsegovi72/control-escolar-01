@@ -1,0 +1,128 @@
+.create-address-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-address-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* ── Tarjeta de persona/asentamiento seleccionado ── */
+
+.create-address-person-card,
+.create-address-settlement-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-2);
+  background: var(--color-success-soft);
+  padding: var(--space-3) var(--space-4);
+}
+
+.create-address-person-card__icon,
+.create-address-settlement-card__icon {
+  display: inline-grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--color-success) 20%, transparent);
+  color: var(--color-success);
+}
+
+.create-address-person-card__info,
+.create-address-settlement-card__info {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.create-address-person-card__info strong,
+.create-address-settlement-card__info strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.create-address-person-card__info span,
+.create-address-settlement-card__info span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+/* ── Formulario del domicilio ── */
+
+.create-address-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-address-grid {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.create-address-grid--street {
+  grid-template-columns: 14rem minmax(0, 1fr);
+}
+
+.create-address-grid--numbers {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* ── Botonera ── */
+
+.create-address-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+/* ── Pantalla de éxito ── */
+
+.create-address-success {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.create-address-success__icon {
+  display: inline-grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.create-address-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 760px) {
+  .create-address-grid--street {
+    grid-template-columns: 1fr;
+  }
+
+  .create-address-grid--numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .create-address-grid--numbers {
+    grid-template-columns: 1fr;
+  }
+}

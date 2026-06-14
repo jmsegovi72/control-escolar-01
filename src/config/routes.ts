@@ -22,10 +22,18 @@ export const ROUTES = {
   PERSONS_EMERGENCY: '/persons/emergency-contacts',
   PERSONS_BULK_LOAD: '/persons/bulk-load',
 
+  ADDRESSES: '/persons/addresses',
+  ADDRESSES_SEARCH: '/persons/addresses/search',
+  ADDRESSES_CREATE: '/persons/addresses/create',
+  ADDRESSES_DETAIL: '/persons/addresses/detail',
+  ADDRESSES_EDIT: '/persons/addresses/edit',
+  ADDRESSES_BULK_LOAD: '/persons/addresses/bulk-load',
+
   STUDENTS_ADMISSION: '/students/admission',
   STUDENTS_ENROLLMENT: '/students/enrollment',
   STUDENTS_GRADES: '/students/grades',
 
   CATALOGS_ZIP_CODES: '/zip-codes',
+  CATALOGS_ZIP_CODES_CREATE: '/zip-codes/create',
   CATALOGS_CLASSES: '/classes',
 } as const;

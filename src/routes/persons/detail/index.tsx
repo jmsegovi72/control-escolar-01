@@ -10,7 +10,7 @@ import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
 import type { PersonDetail } from '~/types/person.types';
-import { Avatar, Button, PageReturn, Panel, Toolbar } from '~/ui';
+import { Avatar, Button, ModuleHeader, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { personsWorkflow } from '~/utils/persons-workflow';
 import './detail.css';
@@ -32,7 +32,7 @@ export default component$(() => {
   const person = useSignal<PersonDetail | null>(null);
   const loading = useSignal(true);
   const error = useSignal('');
-  const returnLabel = useSignal<string>(m.detail.pageReturnLabel);
+  const returnLabel = useSignal<string>(m.detail.etiquetaRegresar);
   const returnPath = useSignal<string>(ROUTES.PERSONS);
   const selectionMode = useSignal(false);
 
@@ -42,7 +42,7 @@ export default component$(() => {
 
     loading.value = true;
     error.value = '';
-    returnLabel.value = m.detail.pageReturnLabel;
+    returnLabel.value = m.detail.etiquetaRegresar;
     returnPath.value = ROUTES.PERSONS;
     selectionMode.value = false;
 
@@ -124,11 +124,10 @@ export default component$(() => {
       </Toolbar>
 
       <div class="person-detail">
-        <PageReturn
-          eyebrow={m.detail.pageReturnEyebrow}
-          title={m.detail.title}
-          buttonLabel={returnLabel.value}
-          onClick$={goBack$}
+        <ModuleHeader
+          tituloModulo={m.detail.tituloModulo}
+          accionActual={m.detail.title}
+          onBack$={goBack$}
         />
 
         {loading.value && (
