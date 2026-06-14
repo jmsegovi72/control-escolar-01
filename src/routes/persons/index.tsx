@@ -6,7 +6,7 @@ import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/Authe
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
-import { Badge, Button, Panel, Toolbar } from '~/ui';
+import { Button, Toolbar } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import './persons.css';
 
@@ -16,7 +16,7 @@ type PersonAction = {
   description: string;
   href: string;
   icon: Parameters<typeof AppIcon>[0]['intent'];
-  tone: 'primary' | 'neutral' | 'warning' | 'danger' | 'info';
+  tone: 'primary' | 'success' | 'warning' | 'violet' | 'teal' | 'gray';
   badge?: string;
   disabled?: boolean;
 };
@@ -39,7 +39,7 @@ const primaryActions: PersonAction[] = [
     description: m.primaryActions.create.description,
     href: ROUTES.PERSONS_CREATE,
     icon: 'add',
-    tone: 'info',
+    tone: 'success',
     badge: m.primaryActions.create.badge,
   },
 ];
@@ -51,7 +51,7 @@ const operationalActions: PersonAction[] = [
     description: m.operationalActions.detail.description,
     href: ROUTES.PERSONS_DETAIL,
     icon: 'view',
-    tone: 'neutral',
+    tone: 'warning',
     badge: m.operationalActions.detail.badge,
   },
   {
@@ -60,7 +60,7 @@ const operationalActions: PersonAction[] = [
     description: m.operationalActions.edit.description,
     href: ROUTES.PERSONS_EDIT,
     icon: 'edit',
-    tone: 'neutral',
+    tone: 'primary',
     badge: m.operationalActions.edit.badge,
   },
   {
@@ -69,7 +69,7 @@ const operationalActions: PersonAction[] = [
     description: m.operationalActions.bulkLoad.description,
     href: ROUTES.PERSONS_BULK_LOAD,
     icon: 'upload',
-    tone: 'info',
+    tone: 'violet',
     badge: m.operationalActions.bulkLoad.badge,
   },
 ];
@@ -81,8 +81,9 @@ const relatedModules: PersonAction[] = [
     description: m.relatedModules.emergency.description,
     href: ROUTES.PERSONS_EMERGENCY,
     icon: 'phone',
-    tone: 'warning',
+    tone: 'gray',
     badge: m.relatedModules.emergency.badge,
+    disabled: true,
   },
   {
     id: 'addresses',
@@ -90,7 +91,7 @@ const relatedModules: PersonAction[] = [
     description: m.relatedModules.addresses.description,
     href: ROUTES.PERSONS_ADDRESSES,
     icon: 'pin',
-    tone: 'neutral',
+    tone: 'teal',
     badge: m.relatedModules.addresses.badge,
   },
   {
@@ -99,10 +100,28 @@ const relatedModules: PersonAction[] = [
     description: m.relatedModules.demographics.description,
     href: ROUTES.PERSONS_DEMOGRAPHICS,
     icon: 'group',
-    tone: 'neutral',
+    tone: 'gray',
     badge: m.relatedModules.demographics.badge,
+    disabled: true,
   },
 ];
+
+const badgeToneByAction: Record<PersonAction['id'], string> = {
+  search: 'primary',
+  create: 'alta',
+  detail: 'seleccion',
+  edit: 'seleccion',
+  bulkLoad: 'importar',
+  emergency: 'modulo-off',
+  addresses: 'modulo-on',
+  demographics: 'modulo-off',
+};
+
+const sectionCountLabel = (count: number, noun: string) =>
+  `${count} ${noun}${count === 1 ? '' : 's'}`;
+
+const totalActions =
+  primaryActions.length + operationalActions.length + relatedModules.length;
 
 export default component$(() => {
   const nav = useNavigate();
@@ -128,126 +147,223 @@ export default component$(() => {
         </Button>
       </Toolbar>
 
-      <div class="persons-hub">
-        <section class="persons-hub__hero">
-          <div>
-            <span class="persons-hub__kicker">{m.heroKicker}</span>
-            <h2>{m.heroTitle}</h2>
-            <p>{m.heroDescription}</p>
-          </div>
-          <div class="persons-hub__summary" aria-label={m.summaryLabel}>
-            <span>
-              <strong>8</strong>
-              {m.summaryActions}
-            </span>
-            <span>
-              <strong>{appConfig.initials}</strong>
-              {m.summaryAccess}
-            </span>
+      <div class="persons-page">
+        <section class="persons-module-card">
+          <div class="persons-module-card__top">
+            <div class="persons-module-card__left">
+              <div class="persons-module-card__eyebrow">
+                <AppIcon intent="group" size="sm" />
+                <span>{m.toolbarLeading}</span>
+              </div>
+
+              <h1 class="persons-module-card__title">{m.title}</h1>
+              <p class="persons-module-card__description">{m.description}</p>
+
+              <div class="persons-module-card__meta">
+                <span class="persons-module-card__pill persons-module-card__pill--accent">
+                  <AppIcon intent="settings" size="sm" />
+                  <span>{m.meta}</span>
+                </span>
+                <span class="persons-module-card__pill">
+                  <AppIcon intent="search" size="sm" />
+                  <span>{totalActions} acciones del módulo</span>
+                </span>
+                <span class="persons-module-card__pill">
+                  <AppIcon intent="settings" size="sm" />
+                  <span>Acceso SUPER y CE</span>
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section class="persons-hub__grid persons-hub__grid--primary">
-          {primaryActions.map((action) => (
-            <article
-              class="persons-action-card"
-              data-tone={action.tone}
-              key={action.id}
-            >
-              <div class="persons-action-card__icon" aria-hidden="true">
-                <AppIcon intent={action.icon} size="md" />
-              </div>
-              <div class="persons-action-card__copy">
-                <div class="persons-action-card__title-row">
-                  <h3>{action.title}</h3>
-                  {action.badge && <Badge tone="primary">{action.badge}</Badge>}
-                </div>
-                <p>{action.description}</p>
-              </div>
-              <Button
-                variant="primary"
-                iconRight="chevron-right"
-                onClick$={async () => await nav(action.href)}
-              >
-                {m.openButton}
-              </Button>
-            </article>
-          ))}
-        </section>
+        <section class="persons-section">
+          <header class="persons-section__label">
+            <span class="persons-section__title">Acciones principales</span>
+            <span class="persons-section__line" aria-hidden="true" />
+            <span class="persons-section__count">{primaryActions.length}</span>
+          </header>
 
-        <Panel
-          title={m.panelTitle}
-          description={m.panelDescription}
-          density="compact"
-        >
-          <div class="persons-hub__grid">
-            {operationalActions.map((action) => (
+          <div class="persons-main-grid">
+            {primaryActions.map((action) => (
               <article
-                class="persons-action-card persons-action-card--compact"
-                data-tone={action.tone}
+                class={`persons-main-card persons-main-card--${action.tone}`}
                 key={action.id}
               >
-                <div class="persons-action-card__icon" aria-hidden="true">
-                  <AppIcon intent={action.icon} size="sm" />
-                </div>
-                <div class="persons-action-card__copy">
-                  <div class="persons-action-card__title-row">
-                    <h3>{action.title}</h3>
-                    {action.badge && (
-                      <Badge tone="neutral">{action.badge}</Badge>
-                    )}
+                <div class="persons-main-card__top">
+                  <div
+                    class={`persons-main-card__icon persons-main-card__icon--${action.tone}`}
+                    aria-hidden="true"
+                  >
+                    <AppIcon intent={action.icon} size="lg" />
                   </div>
+
+                  {action.badge && (
+                    <span
+                      class={`persons-badge persons-badge--${badgeToneByAction[action.id]}`}
+                    >
+                      {action.badge}
+                    </span>
+                  )}
+                </div>
+
+                <div class="persons-main-card__body">
+                  <h2>{action.title}</h2>
                   <p>{action.description}</p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  iconRight="chevron-right"
-                  onClick$={async () => await nav(action.href)}
-                >
-                  {m.goButton}
-                </Button>
-              </article>
-            ))}
-          </div>
-        </Panel>
 
-        <Panel
-          title={m.relatedPanelTitle}
-          description={m.relatedPanelDescription}
-          density="compact"
-        >
-          <div class="persons-hub__grid">
-            {relatedModules.map((module) => (
-              <article
-                class="persons-action-card persons-action-card--compact"
-                data-tone={module.tone}
-                key={module.id}
-              >
-                <div class="persons-action-card__icon" aria-hidden="true">
-                  <AppIcon intent={module.icon} size="sm" />
-                </div>
-                <div class="persons-action-card__copy">
-                  <div class="persons-action-card__title-row">
-                    <h3>{module.title}</h3>
-                    {module.badge && (
-                      <Badge tone="neutral">{module.badge}</Badge>
-                    )}
-                  </div>
-                  <p>{module.description}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  iconRight="chevron-right"
-                  onClick$={async () => await nav(module.href)}
-                >
-                  {m.goButton}
-                </Button>
+                <footer class="persons-main-card__footer">
+                  <span class="persons-main-card__path">{action.href}</span>
+                  <button
+                    class={`persons-main-card__button persons-main-card__button--${action.tone}`}
+                    type="button"
+                    onClick$={async () => await nav(action.href)}
+                  >
+                    {m.openButton}
+                    <AppIcon intent="chevron-right" size="sm" />
+                  </button>
+                </footer>
               </article>
             ))}
           </div>
-        </Panel>
+        </section>
+
+        <section class="persons-section">
+          <header class="persons-section__label">
+            <span class="persons-section__title">Acciones operativas</span>
+            <span class="persons-section__line" aria-hidden="true" />
+            <span class="persons-section__count">
+              {operationalActions.length}
+            </span>
+          </header>
+
+          <article class="persons-panel">
+            <header class="persons-panel__header">
+              <div>
+                <div class="persons-panel__title">
+                  <AppIcon intent="settings" size="sm" />
+                  <span>Operaciones sobre personas</span>
+                </div>
+                <p class="persons-panel__subtitle">
+                  Requieren seleccionar una persona de la búsqueda
+                </p>
+              </div>
+              <span class="persons-panel__count">
+                {sectionCountLabel(operationalActions.length, 'acción')}
+              </span>
+            </header>
+
+            <div class="persons-panel__rows">
+              {operationalActions.map((action) => (
+                <article class="persons-row" key={action.id}>
+                  <div
+                    class={`persons-row__icon persons-row__icon--${action.tone}`}
+                    aria-hidden="true"
+                  >
+                    <AppIcon intent={action.icon} size="md" />
+                  </div>
+
+                  <div class="persons-row__body">
+                    <h3>{action.title}</h3>
+                    <p>{action.description}</p>
+                  </div>
+
+                  <div class="persons-row__right">
+                    {action.badge && (
+                      <span
+                        class={`persons-badge persons-badge--${badgeToneByAction[action.id]}`}
+                      >
+                        {action.badge}
+                      </span>
+                    )}
+
+                    <button
+                      class="persons-row__button"
+                      type="button"
+                      onClick$={async () => await nav(action.href)}
+                    >
+                      {m.goButton}
+                      <AppIcon intent="chevron-right" size="sm" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <section class="persons-section">
+          <header class="persons-section__label">
+            <span class="persons-section__title">Módulos relacionados</span>
+            <span class="persons-section__line" aria-hidden="true" />
+            <span class="persons-section__count">{relatedModules.length}</span>
+          </header>
+
+          <article class="persons-panel">
+            <header class="persons-panel__header">
+              <div>
+                <div class="persons-panel__title">
+                  <AppIcon intent="group" size="sm" />
+                  <span>Extensiones por persona</span>
+                </div>
+                <p class="persons-panel__subtitle">
+                  Se ejecutan en contexto de la persona activa
+                </p>
+              </div>
+              <span class="persons-panel__count">
+                {sectionCountLabel(relatedModules.length, 'módulo')}
+              </span>
+            </header>
+
+            <div class="persons-panel__rows">
+              {relatedModules.map((module) => (
+                <article
+                  class={{
+                    'persons-row': true,
+                    'persons-row--disabled': Boolean(module.disabled),
+                  }}
+                  key={module.id}
+                >
+                  <div
+                    class={`persons-row__icon persons-row__icon--${module.tone}`}
+                    aria-hidden="true"
+                  >
+                    <AppIcon intent={module.icon} size="md" />
+                  </div>
+
+                  <div class="persons-row__body">
+                    <h3>{module.title}</h3>
+                    <p>{module.description}</p>
+                  </div>
+
+                  <div class="persons-row__right">
+                    {module.badge && (
+                      <span
+                        class={`persons-badge persons-badge--${badgeToneByAction[module.id]}`}
+                      >
+                        {module.badge}
+                      </span>
+                    )}
+
+                    <button
+                      class="persons-row__button"
+                      type="button"
+                      disabled={module.disabled}
+                      onClick$={async () => {
+                        if (!module.disabled) {
+                          await nav(module.href);
+                        }
+                      }}
+                    >
+                      {m.goButton}
+                      <AppIcon intent="chevron-right" size="sm" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
       </div>
     </AuthenticatedShell>
   );

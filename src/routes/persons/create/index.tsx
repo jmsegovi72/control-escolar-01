@@ -21,77 +21,18 @@ import {
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
+import {
+  CURP_REGEX,
+  CURP_STATE_OPTIONS,
+  CurpData,
+  extractDataFromCURP,
+} from '~/utils/curp';
 import './create.css';
 
-const CURP_REGEX = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\d{10}$/;
 
 const m = messages.persons.create;
-
-type CurpData = {
-  gender: 'H' | 'M';
-  birthDate: Date;
-  nationality: 'M' | 'NE';
-  stateCode: string;
-};
-
-const CURP_STATE_MAP: Record<string, string> = {
-  AS: 'Aguascalientes',
-  BC: 'Baja California',
-  BS: 'Baja California Sur',
-  CC: 'Campeche',
-  CS: 'Chiapas',
-  CH: 'Chihuahua',
-  CL: 'Coahuila de Zaragoza',
-  CM: 'Colima',
-  DF: 'Ciudad de México',
-  DG: 'Durango',
-  GT: 'Guanajuato',
-  GR: 'Guerrero',
-  HG: 'Hidalgo',
-  JC: 'Jalisco',
-  MC: 'Estado de México',
-  MN: 'Michoacán',
-  MS: 'Morelos',
-  NT: 'Nayarit',
-  NL: 'Nuevo León',
-  OC: 'Oaxaca',
-  PL: 'Puebla',
-  QT: 'Querétaro',
-  QR: 'Quintana Roo',
-  SP: 'San Luis Potosí',
-  SL: 'Sinaloa',
-  SR: 'Sonora',
-  TC: 'Tabasco',
-  TS: 'Tamaulipas',
-  TL: 'Tlaxcala',
-  VZ: 'Veracruz',
-  YN: 'Yucatán',
-  ZS: 'Zacatecas',
-  NE: 'Extranjero',
-};
-
-const stateOptions = Object.entries(CURP_STATE_MAP).map(([code, name]) => ({
-  value: code,
-  label: name,
-}));
-
-const extractDataFromCURP = (curp: string): CurpData => {
-  const gender = curp.charAt(10) as 'H' | 'M';
-  const year = curp.substring(4, 6);
-  const month = curp.substring(6, 8);
-  const day = curp.substring(8, 10);
-  const currentYY = new Date().getFullYear() % 100;
-  const fullYear = Number(year) <= currentYY ? `20${year}` : `19${year}`;
-  const birthDate = new Date(`${fullYear}-${month}-${day}`);
-  if (isNaN(birthDate.getTime())) {
-    throw new Error('La CURP contiene una fecha inválida.');
-  }
-  const stateCode = curp.substring(11, 13);
-  const nationality: 'M' | 'NE' = stateCode === 'NE' ? 'NE' : 'M';
-  return { gender, birthDate, nationality, stateCode };
-};
 
 export default component$(() => {
   const nav = useNavigate();
@@ -471,7 +412,7 @@ export default component$(() => {
                     <DerivedField label={m.labelState} optional>
                       <Select
                         value={stateCode.value}
-                        options={stateOptions}
+                        options={CURP_STATE_OPTIONS}
                         onChange$={(v) => {
                           stateCode.value = v;
                         }}

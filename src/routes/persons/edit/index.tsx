@@ -22,6 +22,7 @@ import {
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
+import { deriveCurpDisplay } from '~/utils/curp';
 import './edit.css';
 
 const DEFAULT_PERSON_AVATAR = '/avatars/user-default.svg';
@@ -38,60 +39,6 @@ const PHONE_REGEX = /^\d{10}$/;
 
 const m = messages.persons.edit;
 const mc = messages.persons.create;
-
-const CURP_STATE_MAP: Record<string, string> = {
-  AS: 'Aguascalientes',
-  BC: 'Baja California',
-  BS: 'Baja California Sur',
-  CC: 'Campeche',
-  CS: 'Chiapas',
-  CH: 'Chihuahua',
-  CL: 'Coahuila de Zaragoza',
-  CM: 'Colima',
-  DF: 'Ciudad de México',
-  DG: 'Durango',
-  GT: 'Guanajuato',
-  GR: 'Guerrero',
-  HG: 'Hidalgo',
-  JC: 'Jalisco',
-  MC: 'Estado de México',
-  MN: 'Michoacán',
-  MS: 'Morelos',
-  NT: 'Nayarit',
-  NL: 'Nuevo León',
-  OC: 'Oaxaca',
-  PL: 'Puebla',
-  QT: 'Querétaro',
-  QR: 'Quintana Roo',
-  SP: 'San Luis Potosí',
-  SL: 'Sinaloa',
-  SR: 'Sonora',
-  TC: 'Tabasco',
-  TS: 'Tamaulipas',
-  TL: 'Tlaxcala',
-  VZ: 'Veracruz',
-  YN: 'Yucatán',
-  ZS: 'Zacatecas',
-  NE: 'Extranjero',
-};
-
-const deriveCurpDisplay = (curp: string) => {
-  if (!curp || curp.length < 13)
-    return { gender: '', birthDate: '', nationality: '', stateName: '' };
-  const g = curp.charAt(10);
-  const yr = curp.substring(4, 6);
-  const mo = curp.substring(6, 8);
-  const dy = curp.substring(8, 10);
-  const sc = curp.substring(11, 13);
-  const fy =
-    Number(yr) <= new Date().getFullYear() % 100 ? `20${yr}` : `19${yr}`;
-  return {
-    gender: g === 'H' ? mc.optionMale : g === 'M' ? mc.optionFemale : '',
-    birthDate: `${dy}/${mo}/${fy}`,
-    nationality: sc === 'NE' ? mc.optionForeigner : mc.optionMexican,
-    stateName: CURP_STATE_MAP[sc] ?? '',
-  };
-};
 
 export default component$(() => {
   const nav = useNavigate();
@@ -353,7 +300,13 @@ export default component$(() => {
 
                   <div class="edit-person-derived-grid">
                     {(() => {
-                      const d = deriveCurpDisplay(currentPerson.curp);
+                      const d = deriveCurpDisplay(
+                        currentPerson.curp,
+                        mc.optionMale,
+                        mc.optionFemale,
+                        mc.optionForeigner,
+                        mc.optionMexican,
+                      );
                       return (
                         <>
                           <Field label={mc.labelGender}>
