@@ -11,6 +11,7 @@ export const AppShell = component$<AppShellProps>(
     description,
     meta,
     density = 'comfortable',
+    headerVariant = 'stacked',
     sidebarOpen,
     sidebarToggleLabel = 'Abrir menu',
     onToggleSidebar$,
@@ -22,6 +23,7 @@ export const AppShell = component$<AppShellProps>(
       <section
         class="ui-app-shell"
         data-density={density}
+        data-header-variant={headerVariant}
         data-sidebar-open={sidebarOpen ? 'true' : undefined}
       >
         {hasSidebarControl && (
@@ -40,7 +42,9 @@ export const AppShell = component$<AppShellProps>(
         <div class="ui-app-shell__workspace">
           <header class="ui-app-shell__header">
             <div class="ui-app-shell__heading">
-              {eyebrow && <span class="ui-app-shell__eyebrow">{eyebrow}</span>}
+              {headerVariant === 'stacked' && eyebrow && (
+                <span class="ui-app-shell__eyebrow">{eyebrow}</span>
+              )}
               <div class="ui-app-shell__title-row">
                 {hasSidebarControl && (
                   <button
@@ -53,10 +57,34 @@ export const AppShell = component$<AppShellProps>(
                     <AppIcon intent="dashboard" size="sm" />
                   </button>
                 )}
-                <h1>{title}</h1>
-                {meta && <span>{meta}</span>}
+                {headerVariant === 'inline' ? (
+                  <div class="ui-app-shell__inline-path">
+                    {eyebrow && (
+                      <span class="ui-app-shell__inline-eyebrow">
+                        {eyebrow}
+                      </span>
+                    )}
+                    {eyebrow && (
+                      <span
+                        class="ui-app-shell__inline-separator"
+                        aria-hidden="true"
+                      >
+                        /
+                      </span>
+                    )}
+                    <h1>{title}</h1>
+                    {meta && <span class="ui-app-shell__meta">{meta}</span>}
+                  </div>
+                ) : (
+                  <>
+                    <h1>{title}</h1>
+                    {meta && <span class="ui-app-shell__meta">{meta}</span>}
+                  </>
+                )}
               </div>
-              {description && <p>{description}</p>}
+              {headerVariant === 'stacked' && description && (
+                <p>{description}</p>
+              )}
             </div>
 
             <div class="ui-app-shell__actions">

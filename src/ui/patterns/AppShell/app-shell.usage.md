@@ -22,6 +22,7 @@ No representa una ruta real. Solo organiza el `Sidebar`, el encabezado del modul
 | `description` | `string` | Descripcion breve. |
 | `meta` | `string` | Chip informativo junto al titulo. |
 | `density` | `comfortable \| compact` | Espaciado general. |
+| `headerVariant` | `stacked \| inline` | Encabezado clasico o encabezado delgado tipo ruta. |
 
 ## Ejemplo
 
@@ -36,6 +37,20 @@ No representa una ruta real. Solo organiza el `Sidebar`, el encabezado del modul
   <Button q:slot="actions" iconLeft="add">Nuevo alumno</Button>
   <Input q:slot="toolbar" variant="quiet" iconLeft="search" />
   <DataTable rows={rows} columns={columns} />
+</AppShell>
+```
+
+## Variante inline
+
+```tsx
+<AppShell
+  eyebrow="SICES V1"
+  title="Dashboard"
+  density="compact"
+  headerVariant="inline"
+>
+  <Sidebar q:slot="sidebar" {...sidebarProps} />
+  <Button q:slot="actions" size="sm" iconLeft="add">Nuevo</Button>
 </AppShell>
 ```
 

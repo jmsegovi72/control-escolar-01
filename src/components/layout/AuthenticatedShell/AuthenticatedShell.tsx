@@ -212,10 +212,12 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
     return (
       <AppShell
-        eyebrow={eyebrow ?? appConfig.name}
+        eyebrow={eyebrow ?? appConfig.fullName}
         title={title}
         description={description}
         meta={meta}
+        density="compact"
+        headerVariant="inline"
         sidebarOpen={sidebarOpen.value}
         onToggleSidebar$={$(() => {
           sidebarOpen.value = !sidebarOpen.value;

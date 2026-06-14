@@ -111,11 +111,7 @@ const DASHBOARD_MODULES: DashboardModule[] = [
 
 export default component$(() => {
   return (
-    <AuthenticatedShell
-      eyebrow={appConfig.name}
-      title="Dashboard"
-      meta="Vista inicial"
-    >
+    <AuthenticatedShell eyebrow={appConfig.name} title="Dashboard">
       <DashboardContent />
     </AuthenticatedShell>
   );
@@ -279,10 +275,10 @@ const DashboardContent = component$(() => {
         <header class="dashboard-section-header">
           <div>
             <h3 class="dashboard-section-header__title">
-              Acceso rapido a modulos
+              Acceso rápido a módulos
             </h3>
             <p class="dashboard-section-header__sub">
-              Modulos activos en esta version del sistema
+              Módulos activos en esta versión del sistema
             </p>
           </div>
         </header>
@@ -317,7 +313,7 @@ const DashboardContent = component$(() => {
                   tone={module.status === 'active' ? 'success' : 'neutral'}
                   class="dashboard-module-card__tag"
                 >
-                  {module.status === 'active' ? 'Activo' : 'Proximamente'}
+                  {module.status === 'active' ? 'Activo' : 'Próximamente'}
                 </Badge>
               </div>
 
@@ -392,7 +388,7 @@ function getJwtStatus(tone: SidebarStatusTone): {
   tone: SidebarStatusTone;
 } {
   if (tone === 'offline') {
-    return { value: 'Sin sesi�n', tone: 'offline' };
+    return { value: 'Sin sesión', tone: 'offline' };
   }
 
   if (tone === 'warning') {
@@ -408,7 +404,7 @@ function getJwtStatus(tone: SidebarStatusTone): {
 
 function getSessionStatus(tone: SidebarStatusTone) {
   if (tone === 'offline') {
-    return 'Sin sesi�n';
+    return 'Sin sesión';
   }
 
   if (tone === 'warning') {
