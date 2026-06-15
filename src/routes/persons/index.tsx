@@ -107,7 +107,6 @@ export default component$(() => {
       eyebrow={messages.app.name}
       title={m.title}
       description={m.description}
-      meta={m.meta}
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
     >
