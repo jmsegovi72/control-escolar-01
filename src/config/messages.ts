@@ -172,7 +172,7 @@ export const messages = {
       title: 'Usuarios',
       description:
         'Gestión de cuentas, acceso inicial, bloqueo y restablecimiento administrado.',
-      meta: 'Módulo SUPER',
+      meta: 'Módulo Usuarios',
       accessDenied: 'El módulo de usuarios está reservado para cuentas SUPER.',
       toolbarCenter: 'Consulta, alta y administración de accesos del sistema.',
       toolbarLeading: 'Hub de acciones',
