@@ -104,7 +104,7 @@ const totalActions =
 export default component$(() => {
   return (
     <AuthenticatedShell
-      eyebrow={m.eyebrow}
+      eyebrow={messages.app.name}
       title={m.title}
       description={m.description}
       meta={m.meta}
