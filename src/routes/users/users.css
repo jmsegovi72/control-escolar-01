@@ -1,170 +1,31 @@
-.users-hub {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.users-hub__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-4);
-  align-items: end;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-1);
-  padding: var(--space-5);
-}
-
-.users-hub__kicker {
-  color: var(--color-primary);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-}
-
-.users-hub__hero h2 {
-  margin: var(--space-2) 0 0;
-  color: var(--color-text);
-  font-size: var(--font-size-2xl);
-  line-height: var(--line-height-tight);
-}
-
-.users-hub__hero p {
-  max-width: 46rem;
-  margin: var(--space-2) 0 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-.users-hub__summary {
+.users-page {
   display: flex;
-  gap: var(--space-2);
+  flex-direction: column;
+  gap: var(--space-7);
+  padding: var(--space-7);
+  background: var(--color-bg);
 }
 
-.users-hub__summary span {
+.users-main-grid {
   display: grid;
-  min-width: 5.5rem;
-  gap: var(--space-1);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2);
-  background: var(--color-surface-subtle);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  padding: var(--space-3);
-}
-
-.users-hub__summary strong {
-  color: var(--color-text);
-  font-size: var(--font-size-lg);
-}
-
-.users-hub__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-
-.users-hub__grid--primary {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
 }
 
-.users-action-card {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: var(--space-3);
-  align-items: center;
-  min-width: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-1);
-  padding: var(--space-4);
-}
-
-.users-action-card--compact {
-  box-shadow: none;
-  padding: var(--space-3);
-}
-
-.users-action-card__icon {
-  display: inline-grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  border-radius: var(--radius-2);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
-
-.users-action-card[data-tone="warning"] .users-action-card__icon {
-  background: var(--color-warning-soft);
-  color: var(--color-warning);
-}
-
-.users-action-card[data-tone="danger"] .users-action-card__icon {
-  background: var(--color-danger-soft);
-  color: var(--color-danger);
-}
-
-.users-action-card[data-tone="info"] .users-action-card__icon {
-  background: var(--color-info-soft);
-  color: var(--color-info);
-}
-
-.users-action-card[data-tone="neutral"] .users-action-card__icon {
-  background: var(--color-muted);
-  color: var(--color-text-soft);
-}
-
-.users-action-card__copy {
-  display: grid;
-  min-width: 0;
-  gap: var(--space-1);
-}
-
-.users-action-card__title-row {
+.users-panel__rows {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
+  flex-direction: column;
 }
 
-.users-action-card h3 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-tight);
-}
-
-.users-action-card p {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-base);
-}
-
-@media (max-width: 1100px) {
-  .users-hub__grid,
-  .users-hub__grid--primary {
+@media (max-width: 1080px) {
+  .users-main-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 720px) {
-  .users-hub__hero {
-    grid-template-columns: 1fr;
-  }
-
-  .users-hub__summary {
-    flex-wrap: wrap;
-  }
-
-  .users-action-card {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .users-action-card > .ui-button {
-    grid-column: 1 / -1;
-    justify-self: start;
+@media (max-width: 760px) {
+  .users-page {
+    gap: var(--space-6);
+    padding: var(--space-5);
   }
 }
