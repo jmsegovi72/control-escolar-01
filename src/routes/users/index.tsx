@@ -97,7 +97,7 @@ export default component$(() => {
       <HubHeader
         q:slot="hub-header"
         eyebrow="Gestión de usuarios"
-        icon="group"
+        icon="staff"
         title={m.title}
         description={m.description}
         metaItems={[
