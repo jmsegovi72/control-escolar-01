@@ -422,6 +422,17 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           />
         </div>
 
+        <div q:slot="hub-header" style="display: contents;">
+          {authorizationReady.value && authorized.value && (
+            <Slot name="hub-header" />
+          )}
+        </div>
+        <div q:slot="toolbar" style="display: contents;">
+          {authorizationReady.value && authorized.value && (
+            <Slot name="toolbar" />
+          )}
+        </div>
+
         {authorizationReady.value && authorized.value && (
           <div
             class={`authenticated-shell__container${fullWidth ? ' authenticated-shell__container--full-width' : ''}`}

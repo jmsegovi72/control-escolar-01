@@ -10,7 +10,7 @@
 .ui-dialog__backdrop {
   position: absolute;
   inset: 0;
-  background: rgb(15 23 42 / 0.42);
+  background: var(--overlay-medium);
 }
 
 .ui-dialog__surface {

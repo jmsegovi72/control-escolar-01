@@ -92,6 +92,10 @@ export const AppShell = component$<AppShellProps>(
             </div>
           </header>
 
+          <div class="ui-app-shell__hub-header">
+            <Slot name="hub-header" />
+          </div>
+
           <div class="ui-app-shell__toolbar">
             <Slot name="toolbar" />
           </div>

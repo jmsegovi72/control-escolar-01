@@ -267,12 +267,12 @@
 }
 
 .ui-sidebar__user-menu .ui-user-menu__item[data-tone="danger"] {
-  color: #e56b6b;
+  color: var(--color-danger);
 }
 
 .ui-sidebar__user-menu .ui-user-menu__item[data-tone="danger"]:hover {
-  background: rgb(239 68 68 / 10%);
-  color: #f08a8a;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .ui-sidebar__user-menu .ui-user-menu__separator {
@@ -296,7 +296,7 @@
   place-items: center;
   border-radius: 9px;
   background: rgb(48 96 204 / 11%);
-  color: #7fa3ff;
+  color: var(--sidebar-primary-icon);
 }
 
 .ui-sidebar__clock-copy strong {
@@ -459,8 +459,8 @@
 .ui-sidebar__badge {
   min-width: 1.4rem;
   border-radius: var(--radius-round);
-  background: #b95d20;
-  color: var(--color-on-primary);
+  background: var(--color-warning);
+  color: var(--color-on-warning);
   font-size: 0.625rem;
   font-weight: var(--font-weight-bold);
   line-height: 1;

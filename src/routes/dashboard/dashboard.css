@@ -333,17 +333,17 @@
 
 .dashboard-module-card__icon[data-tone="teal"] {
   background: rgb(23 163 184 / 12%);
-  color: #14879b;
+  color: var(--raw-teal-600);
 }
 
 .dashboard-module-card__icon[data-tone="violet"] {
   background: rgb(139 92 246 / 12%);
-  color: #7c3aed;
+  color: var(--color-violet);
 }
 
 .dashboard-module-card__icon[data-tone="slate"] {
   background: rgb(71 85 105 / 12%);
-  color: #475569;
+  color: var(--raw-slate-700);
 }
 
 .dashboard-module-card__icon[data-tone="gray"] {

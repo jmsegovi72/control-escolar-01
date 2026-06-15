@@ -63,22 +63,22 @@
   height: 0.65rem;
   border-radius: var(--radius-round);
   background: var(--color-text-muted);
-  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.14);
+  box-shadow: 0 0 0 3px rgb(100 116 139 / 14%);
 }
 
 .ui-status-indicator[data-tone="online"] .ui-status-indicator__dot {
   background: var(--color-success);
-  box-shadow: 0 0 0 3px rgb(22 163 74 / 0.14);
+  box-shadow: 0 0 0 3px rgb(22 163 74 / 14%);
 }
 
 .ui-status-indicator[data-tone="warning"] .ui-status-indicator__dot {
   background: var(--color-warning);
-  box-shadow: 0 0 0 3px rgb(217 119 6 / 0.16);
+  box-shadow: 0 0 0 3px rgb(217 119 6 / 16%);
 }
 
 .ui-status-indicator[data-tone="offline"] .ui-status-indicator__dot {
   background: var(--color-danger);
-  box-shadow: 0 0 0 3px rgb(220 38 38 / 0.14);
+  box-shadow: 0 0 0 3px rgb(220 38 38 / 14%);
 }
 
 .ui-status-indicator__icon {
