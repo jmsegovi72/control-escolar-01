@@ -96,13 +96,14 @@ export default component$(() => {
     >
       <HubHeader
         q:slot="hub-header"
-        eyebrow={m.toolbarLeading}
-        icon="staff"
+        eyebrow="Gestión de usuarios"
+        icon="group"
         title={m.title}
         description={m.description}
         metaItems={[
+          { label: m.meta, icon: 'settings', tone: 'accent' },
           { label: `${totalActions} acciones del módulo`, icon: 'search' },
-          { label: 'Acceso SUPER', icon: 'settings', tone: 'accent' },
+          { label: 'Acceso SUPER', icon: 'settings' },
         ]}
       />
 
