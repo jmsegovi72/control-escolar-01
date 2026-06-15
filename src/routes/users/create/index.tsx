@@ -547,6 +547,7 @@ export default component$(() => {
               {messages.users.create.actionCancel}
             </Button>
             <Button
+              variant="success"
               iconLeft="save"
               loading={saving.value}
               disabled={!selectedPerson.value || saving.value}

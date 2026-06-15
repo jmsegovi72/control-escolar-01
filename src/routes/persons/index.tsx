@@ -117,7 +117,7 @@ export default component$(() => {
         title={m.title}
         description={m.description}
         metaItems={[
-          { label: m.meta, icon: 'settings', tone: 'accent' },
+          { label: m.meta, icon: 'group', tone: 'accent' },
           { label: `${totalActions} acciones del módulo`, icon: 'search' },
           { label: 'Acceso SUPER y CE', icon: 'settings' },
         ]}

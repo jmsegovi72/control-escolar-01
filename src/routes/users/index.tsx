@@ -30,7 +30,7 @@ const primaryActions = [
     description: m.primaryActions.create.description,
     href: ROUTES.USERS_CREATE,
     icon: 'add' as const,
-    tone: 'info' as const,
+    tone: 'success' as const,
     badge: m.primaryActions.create.badge,
   },
 ];
@@ -101,7 +101,7 @@ export default component$(() => {
         title={m.title}
         description={m.description}
         metaItems={[
-          { label: m.meta, icon: 'settings', tone: 'accent' },
+          { label: m.meta, icon: 'staff', tone: 'accent' },
           { label: `${totalActions} acciones del módulo`, icon: 'search' },
           { label: 'Acceso SUPER', icon: 'settings' },
         ]}
@@ -125,7 +125,10 @@ export default component$(() => {
           </div>
         </HubSection>
 
-        <HubSection title="Acciones operativas" count={operationalActions.length}>
+        <HubSection
+          title="Acciones operativas"
+          count={operationalActions.length}
+        >
           <Panel
             title={m.panelTitle}
             description={m.panelDescription}
