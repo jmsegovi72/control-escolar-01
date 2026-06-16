@@ -1,36 +1,27 @@
 import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { useNavigate } from '@builder.io/qwik-city';
 
+import { ActionCard } from '~/components/action-card';
+import { ActionRow } from '~/components/action-row';
+import { HubHeader } from '~/components/hub-header';
+import { HubSection } from '~/components/hub-section';
 import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/AuthenticatedShell';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
-import { Badge, Button, Panel, Toolbar } from '~/ui';
-import { AppIcon } from '~/ui/icons';
+import { Panel } from '~/ui';
 import './addresses.css';
-
-type AddressAction = {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-  icon: Parameters<typeof AppIcon>[0]['intent'];
-  tone: 'primary' | 'neutral' | 'warning' | 'danger' | 'info';
-  badge?: string;
-  disabled?: boolean;
-};
 
 const m = messages.addresses.hub;
 
-const primaryActions: AddressAction[] = [
+const primaryActions = [
   {
     id: 'search',
     title: m.primaryActions.search.title,
     description: m.primaryActions.search.description,
     href: ROUTES.ADDRESSES_SEARCH,
-    icon: 'search',
-    tone: 'primary',
+    icon: 'search' as const,
+    tone: 'primary' as const,
     badge: m.primaryActions.search.badge,
   },
   {
@@ -38,20 +29,20 @@ const primaryActions: AddressAction[] = [
     title: m.primaryActions.create.title,
     description: m.primaryActions.create.description,
     href: ROUTES.ADDRESSES_CREATE,
-    icon: 'add',
-    tone: 'info',
+    icon: 'add' as const,
+    tone: 'success' as const,
     badge: m.primaryActions.create.badge,
   },
 ];
 
-const operationalActions: AddressAction[] = [
+const operationalActions = [
   {
     id: 'detail',
     title: m.operationalActions.detail.title,
     description: m.operationalActions.detail.description,
     href: ROUTES.ADDRESSES_DETAIL,
-    icon: 'view',
-    tone: 'neutral',
+    icon: 'view' as const,
+    tone: 'gray' as const,
     badge: m.operationalActions.detail.badge,
   },
   {
@@ -59,8 +50,8 @@ const operationalActions: AddressAction[] = [
     title: m.operationalActions.edit.title,
     description: m.operationalActions.edit.description,
     href: ROUTES.ADDRESSES_EDIT,
-    icon: 'edit',
-    tone: 'neutral',
+    icon: 'edit' as const,
+    tone: 'gray' as const,
     badge: m.operationalActions.edit.badge,
   },
   {
@@ -68,177 +59,117 @@ const operationalActions: AddressAction[] = [
     title: m.operationalActions.bulkLoad.title,
     description: m.operationalActions.bulkLoad.description,
     href: ROUTES.ADDRESSES_BULK_LOAD,
-    icon: 'upload',
-    tone: 'info',
+    icon: 'upload' as const,
+    tone: 'violet' as const,
     badge: m.operationalActions.bulkLoad.badge,
   },
 ];
 
-const relatedModules: AddressAction[] = [
+const relatedModules = [
   {
     id: 'zipCodes',
     title: m.relatedModules.zipCodes.title,
     description: m.relatedModules.zipCodes.description,
     href: ROUTES.CATALOGS_ZIP_CODES_CREATE,
-    icon: 'pin',
-    tone: 'neutral',
+    icon: 'pin' as const,
+    tone: 'gray' as const,
     badge: m.relatedModules.zipCodes.badge,
     disabled: true,
   },
 ];
 
-export default component$(() => {
-  const nav = useNavigate();
+const totalActions =
+  primaryActions.length + operationalActions.length + relatedModules.length;
 
+export default component$(() => {
   return (
     <AuthenticatedShell
-      eyebrow={m.eyebrow}
+      eyebrow={messages.app.name}
       title={m.title}
       description={m.description}
-      meta={m.meta}
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={async () => await nav(ROUTES.PERSONS)}
-        >
-          {m.toolbarBack}
-        </Button>
-        <span q:slot="center">{m.toolbarCenter}</span>
-        <Button
-          q:slot="actions"
-          iconLeft="add"
-          onClick$={async () => await nav(ROUTES.ADDRESSES_CREATE)}
-        >
-          {m.newAddress}
-        </Button>
-      </Toolbar>
+      <HubHeader
+        q:slot="hub-header"
+        eyebrow={m.toolbarLeading}
+        icon="pin"
+        title={m.title}
+        description={m.description}
+        metaItems={[
+          { label: m.meta, icon: 'pin', tone: 'accent' },
+          { label: `${totalActions} acciones del módulo`, icon: 'search' },
+          { label: 'Acceso SUPER y CE', icon: 'settings' },
+        ]}
+      />
 
-      <div class="addresses-hub">
-        <section class="addresses-hub__hero">
-          <div>
-            <span class="addresses-hub__kicker">{m.heroKicker}</span>
-            <h2>{m.heroTitle}</h2>
-            <p>{m.heroDescription}</p>
-          </div>
-          <div class="addresses-hub__summary" aria-label={m.summaryLabel}>
-            <span>
-              <strong>5</strong>
-              {m.summaryActions}
-            </span>
-            <span>
-              <strong>{appConfig.initials}</strong>
-              {m.summaryAccess}
-            </span>
-          </div>
-        </section>
-
-        <section class="addresses-hub__grid addresses-hub__grid--primary">
-          {primaryActions.map((action) => (
-            <article
-              class="addresses-action-card"
-              data-tone={action.tone}
-              key={action.id}
-            >
-              <div class="addresses-action-card__icon" aria-hidden="true">
-                <AppIcon intent={action.icon} size="md" />
-              </div>
-              <div class="addresses-action-card__copy">
-                <div class="addresses-action-card__title-row">
-                  <h3>{action.title}</h3>
-                  {action.badge && <Badge tone="primary">{action.badge}</Badge>}
-                </div>
-                <p>{action.description}</p>
-              </div>
-              <Button
-                variant="primary"
-                iconRight="chevron-right"
-                onClick$={async () => await nav(action.href)}
-              >
-                {m.openButton}
-              </Button>
-            </article>
-          ))}
-        </section>
-
-        <Panel
-          title={m.panelTitle}
-          description={m.panelDescription}
-          density="compact"
-        >
-          <div class="addresses-hub__grid">
-            {operationalActions.map((action) => (
-              <article
-                class="addresses-action-card addresses-action-card--compact"
-                data-tone={action.tone}
+      <div class="addresses-page">
+        <HubSection title="Acciones principales" count={primaryActions.length}>
+          <div class="addresses-main-grid">
+            {primaryActions.map((action) => (
+              <ActionCard
                 key={action.id}
-              >
-                <div class="addresses-action-card__icon" aria-hidden="true">
-                  <AppIcon intent={action.icon} size="sm" />
-                </div>
-                <div class="addresses-action-card__copy">
-                  <div class="addresses-action-card__title-row">
-                    <h3>{action.title}</h3>
-                    {action.badge && (
-                      <Badge tone="neutral">{action.badge}</Badge>
-                    )}
-                  </div>
-                  <p>{action.description}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  iconRight="chevron-right"
-                  onClick$={async () => await nav(action.href)}
-                >
-                  {m.goButton}
-                </Button>
-              </article>
+                icon={action.icon}
+                tone={action.tone}
+                title={action.title}
+                description={action.description}
+                badge={action.badge}
+                href={action.href}
+                actionLabel={m.openButton}
+              />
             ))}
           </div>
-        </Panel>
+        </HubSection>
 
-        <Panel
-          title={m.relatedPanelTitle}
-          description={m.relatedPanelDescription}
-          density="compact"
+        <HubSection
+          title="Acciones operativas"
+          count={operationalActions.length}
         >
-          <div class="addresses-hub__grid">
-            {relatedModules.map((module) => (
-              <article
-                class="addresses-action-card addresses-action-card--compact"
-                data-tone={module.tone}
-                key={module.id}
-              >
-                <div class="addresses-action-card__icon" aria-hidden="true">
-                  <AppIcon intent={module.icon} size="sm" />
-                </div>
-                <div class="addresses-action-card__copy">
-                  <div class="addresses-action-card__title-row">
-                    <h3>{module.title}</h3>
-                    {module.badge && (
-                      <Badge tone="neutral">{module.badge}</Badge>
-                    )}
-                  </div>
-                  <p>{module.description}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  iconRight="chevron-right"
+          <Panel
+            title={m.panelTitle}
+            description={m.panelDescription}
+            icon="settings"
+          >
+            <div class="addresses-panel__rows">
+              {operationalActions.map((action) => (
+                <ActionRow
+                  key={action.id}
+                  icon={action.icon}
+                  tone={action.tone}
+                  title={action.title}
+                  description={action.description}
+                  badge={action.badge}
+                  href={action.href}
+                  actionLabel={m.goButton}
+                />
+              ))}
+            </div>
+          </Panel>
+        </HubSection>
+
+        <HubSection title="Módulos relacionados" count={relatedModules.length}>
+          <Panel
+            title={m.relatedPanelTitle}
+            description={m.relatedPanelDescription}
+            icon="pin"
+          >
+            <div class="addresses-panel__rows">
+              {relatedModules.map((module) => (
+                <ActionRow
+                  key={module.id}
+                  icon={module.icon}
+                  tone={module.tone}
+                  title={module.title}
+                  description={module.description}
+                  badge={module.badge}
+                  href={module.href}
                   disabled={module.disabled}
-                  onClick$={async () => await nav(module.href)}
-                >
-                  {m.goButton}
-                </Button>
-              </article>
-            ))}
-          </div>
-        </Panel>
+                  actionLabel={m.goButton}
+                />
+              ))}
+            </div>
+          </Panel>
+        </HubSection>
       </div>
     </AuthenticatedShell>
   );

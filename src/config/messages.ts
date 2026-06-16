@@ -997,6 +997,7 @@ export const messages = {
         'Solo usuarios con acceso al sistema de control escolar pueden gestionar direcciones.',
       toolbarBack: 'Personas',
       toolbarCenter: 'Centro de direcciones',
+      toolbarLeading: 'Gestión de direcciones',
       newAddress: 'Nueva dirección',
       openButton: 'Abrir',
       goButton: 'Ir',
