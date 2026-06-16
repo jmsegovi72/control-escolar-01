@@ -33,19 +33,18 @@ export const Field = component$<FieldProps>(
             </span>
           )}
           {!required && optional && (
-            <span class="ui-field__meta"> opcional</span>
+            <span class="ui-field__meta"> Opcional</span>
           )}
         </span>
         <Slot />
-        {(error || hint) && (
-          <span
-            class="ui-field__message"
-            role={error ? 'alert' : undefined}
-            aria-live={error ? 'polite' : undefined}
-          >
-            {error ? error : hint}
-          </span>
-        )}
+        <span
+          class="ui-field__message"
+          role={error ? 'alert' : undefined}
+          aria-live={error ? 'polite' : undefined}
+          data-empty={!error && !hint ? 'true' : undefined}
+        >
+          {error || hint}
+        </span>
       </label>
     );
   },

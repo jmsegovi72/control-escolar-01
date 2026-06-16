@@ -234,9 +234,11 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           activeItem={
             location.url.pathname.startsWith('/users')
               ? 'users'
-              : location.url.pathname.startsWith('/persons')
-                ? 'persons-management'
-                : 'dashboard'
+              : location.url.pathname.startsWith('/persons/addresses')
+                ? 'persons-addresses'
+                : location.url.pathname.startsWith('/persons')
+                  ? 'persons-management'
+                  : 'dashboard'
           }
           openItems={openItems.value}
           collapsed={sidebarCollapsed}

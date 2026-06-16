@@ -25,6 +25,11 @@
   color: var(--field-hint);
   font-size: var(--field-message-size);
   line-height: 1.45;
+  min-height: calc(1em * 1.45);
+}
+
+.ui-field__message[data-empty="true"] {
+  visibility: hidden;
 }
 
 .ui-field[data-invalid="true"] .ui-field__message {

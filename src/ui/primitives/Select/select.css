@@ -49,6 +49,10 @@
   cursor: pointer;
   background: transparent;
   color: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-input);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-base);
   outline: 0;
   padding: 0;
   text-align: left;
@@ -117,17 +121,18 @@
 }
 
 .ui-select-shell[data-variant="line"] {
+  min-height: var(--field-height-lg);
   border-bottom: 1px solid var(--field-border);
-  padding: 0 var(--space-1);
+  padding: 0;
 }
 
 .ui-select-shell[data-variant="line"]::after {
   position: absolute;
   right: 0;
-  bottom: -1px;
+  bottom: calc(var(--border-width-1) * -1);
   left: 0;
-  height: 2px;
-  background: var(--field-border-focus);
+  height: var(--border-width-2);
+  background: var(--color-primary);
   content: "";
   transform: scaleX(0);
   transform-origin: left center;

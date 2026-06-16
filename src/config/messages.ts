@@ -624,7 +624,15 @@ export const messages = {
       accessDenied: 'No tienes permisos para registrar personas.',
       toolbarBack: 'Personas',
       toolbarCenter: 'Nueva persona',
+      toolbarCenterResult: 'Persona registrada',
       tituloModulo: 'Módulo de personas',
+      stepsAriaLabel: 'Progreso de registro de persona',
+      step1Eyebrow: 'Paso 1',
+      step1Label: 'Captura de CURP',
+      step2Eyebrow: 'Paso 2',
+      step2Label: 'Datos de la persona',
+      step3Eyebrow: 'Paso 3',
+      step3Label: 'Resultados',
 
       curpStepTitle: 'Verifica la CURP',
       curpStepDescription:
@@ -636,6 +644,7 @@ export const messages = {
       curpErrorDate: 'La CURP contiene una fecha inválida.',
       curpErrorDuplicate: 'Esta CURP ya está registrada en el sistema.',
       curpErrorCheck: 'No se pudo verificar la CURP. Intenta de nuevo.',
+      actionGoToPersonData: 'Datos de la persona',
 
       panelNameTitle: 'Nombre completo',
       panelNameDescription:
@@ -650,7 +659,7 @@ export const messages = {
 
       panelIdTitle: 'Identificación',
       panelIdDescription:
-        'La CURP está validada. Activa el checkbox de cada campo derivado si necesitas editarlo.',
+        'CURP verificada. Datos derivados llenados automáticamente.',
       labelCurp: 'CURP',
       placeholderCurp: 'Ej. GAGL900101HMCLRN09',
       hintCurp: '18 caracteres en mayúsculas.',
@@ -668,6 +677,7 @@ export const messages = {
       labelHomoclave: 'Homoclave',
       placeholderHomoclave: 'Ej. A8B',
       hintHomoclave: 'Opcional. 3 caracteres alfanuméricos.',
+      editDerivedCheckbox: 'Editar datos derivados',
 
       panelContactTitle: 'Contacto',
       panelContactDescription:
@@ -695,6 +705,8 @@ export const messages = {
       photoChange: 'Cambiar foto',
       photoSelect: 'Seleccionar foto',
       photoRemove: 'Quitar',
+      photoHint: 'PNG o JPEG, máx. 2 MB',
+      photoPreviewAlt: 'Vista previa de la fotografía',
 
       actionCancel: 'Cancelar',
       actionRegister: 'Registrar persona',
@@ -707,6 +719,17 @@ export const messages = {
         'La persona ha sido registrada en el sistema y está disponible.',
       successCreateAnother: 'Registrar otra persona',
       successFinish: 'Ir a personas',
+      errorResultEyebrow: 'No se pudo registrar',
+      errorResultTitle: 'Error al guardar la persona',
+      errorBackToForm: 'Volver al formulario',
+      errorRetry: 'Reintentar',
+      resultCurp: 'CURP registrada',
+      resultName: 'Nombre',
+      resultGender: 'Género',
+      resultBirthDate: 'Fecha de nacimiento',
+      resultPhone: 'Teléfono',
+      resultEmail: 'Correo',
+      resultNoData: 'No disponible',
     },
     hub: {
       eyebrow: 'Gestión',

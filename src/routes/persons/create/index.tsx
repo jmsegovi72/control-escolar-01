@@ -10,10 +10,8 @@ import { personService } from '~/services/person/person.service';
 import {
   Button,
   DateInput,
-  DerivedField,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   Toast,
@@ -24,7 +22,7 @@ import { normalizeError } from '~/utils/api-error';
 import {
   CURP_REGEX,
   CURP_STATE_OPTIONS,
-  CurpData,
+  type CurpData,
   extractDataFromCURP,
 } from '~/utils/curp';
 import './create.css';
@@ -37,22 +35,19 @@ const m = messages.persons.create;
 export default component$(() => {
   const nav = useNavigate();
 
-  // ── Paso 1: CURP ──
   const curp = useSignal('');
   const curpValidating = useSignal(false);
   const curpValid = useSignal(false);
   const curpError = useSignal('');
 
-  // ── Paso 2: Formulario ──
   const showForm = useSignal(false);
+  const resultTone = useSignal<'success' | 'error' | ''>('');
 
-  // Campos derivados de CURP
   const gender = useSignal('');
   const birthDate = useSignal('');
   const nationality = useSignal('');
   const stateCode = useSignal('');
 
-  // Campos manuales
   const firstName = useSignal('');
   const firstLastName = useSignal('');
   const secondLastName = useSignal('');
@@ -63,16 +58,15 @@ export default component$(() => {
   const saving = useSignal(false);
   const error = useSignal('');
   const errorField = useSignal('');
-  const success = useSignal(false);
   const photoFile = useSignal<File | null>(null);
   const photoPreview = useSignal('');
 
-  // Validación automática de CURP — mismo patrón que el buscador de personas en users/create
-  useTask$(async ({ track }) => {
+  useTask$(({ track, cleanup }) => {
     const value = track(() => curp.value);
 
     curpValid.value = false;
     curpError.value = '';
+    curpValidating.value = false;
 
     const trimmed = value.trim();
 
@@ -98,28 +92,65 @@ export default component$(() => {
 
     curpValidating.value = true;
 
-    try {
-      await personService.findOne(trimmed);
-      curpError.value = m.curpErrorDuplicate;
-    } catch (err) {
-      const normalized = normalizeError(err, '');
-      if (normalized.statusCode === 404) {
-        gender.value = extracted.gender;
-        birthDate.value = extracted.birthDate.toISOString().split('T')[0];
-        nationality.value = extracted.nationality;
-        stateCode.value = extracted.stateCode;
-        curpValid.value = true;
-      } else {
-        curpError.value = m.curpErrorCheck;
+    const timer = setTimeout(async () => {
+      try {
+        await personService.findOne(trimmed);
+        curpError.value = m.curpErrorDuplicate;
+        curpValidating.value = false;
+      } catch (err) {
+        const normalized = normalizeError(err, '');
+        if (normalized.statusCode === 404) {
+          gender.value = extracted.gender;
+          birthDate.value = extracted.birthDate.toISOString().split('T')[0];
+          nationality.value = extracted.nationality;
+          stateCode.value = extracted.stateCode;
+          curpValid.value = true;
+        } else {
+          curpError.value = m.curpErrorCheck;
+        }
+        curpValidating.value = false;
       }
-    } finally {
-      curpValidating.value = false;
+    }, 600);
+
+    cleanup(() => {
+      clearTimeout(timer);
+    });
+  });
+
+  const resetAll$ = $(() => {
+    curp.value = '';
+    curpValid.value = false;
+    curpError.value = '';
+    curpValidating.value = false;
+    showForm.value = false;
+    resultTone.value = '';
+    gender.value = '';
+    birthDate.value = '';
+    nationality.value = '';
+    stateCode.value = '';
+    firstName.value = '';
+    firstLastName.value = '';
+    secondLastName.value = '';
+    homoclave.value = '';
+    phone.value = '';
+    email.value = '';
+    error.value = '';
+    errorField.value = '';
+    photoFile.value = null;
+    photoPreview.value = '';
+  });
+
+  const clearFieldError$ = $((field: string) => {
+    if (errorField.value === field) {
+      errorField.value = '';
+      error.value = '';
     }
   });
 
   const createPerson$ = $(async () => {
     error.value = '';
     errorField.value = '';
+    resultTone.value = '';
 
     const fn = firstName.value.trim().toUpperCase();
     const fln = firstLastName.value.trim().toUpperCase();
@@ -189,10 +220,10 @@ export default component$(() => {
         try {
           await personService.uploadPhoto(created.id, photoFile.value);
         } catch {
-          // photo upload failure is non-blocking
+          // La foto es opcional; si falla, no bloquea el registro principal.
         }
       }
-      success.value = true;
+      resultTone.value = 'success';
     } catch (err) {
       const normalized = normalizeError(
         err,
@@ -200,6 +231,7 @@ export default component$(() => {
       );
       error.value = normalized.message;
       errorField.value = normalized.invalidField ?? '';
+      resultTone.value = 'error';
     } finally {
       saving.value = false;
     }
@@ -215,6 +247,25 @@ export default component$(() => {
     { value: 'NE', label: m.optionForeigner },
   ];
 
+  const currentStep = resultTone.value ? 3 : showForm.value ? 2 : 1;
+  const completedName = [
+    firstName.value.trim(),
+    firstLastName.value.trim(),
+    secondLastName.value.trim(),
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const genderLabel =
+    gender.value === 'H'
+      ? m.optionMale
+      : gender.value === 'M'
+        ? m.optionFemale
+        : m.resultNoData;
+  const birthDateLabel = birthDate.value || m.resultNoData;
+  const toolbarTitle = resultTone.value
+    ? m.toolbarCenterResult
+    : m.toolbarCenter;
+
   return (
     <AuthenticatedShell
       eyebrow={m.eyebrow}
@@ -223,6 +274,7 @@ export default component$(() => {
       meta={m.meta}
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
+      fullWidth
     >
       <Toolbar q:slot="toolbar">
         <Button
@@ -233,422 +285,500 @@ export default component$(() => {
         >
           {m.toolbarBack}
         </Button>
-        <span q:slot="center">{m.toolbarCenter}</span>
+        <span q:slot="center">{toolbarTitle}</span>
       </Toolbar>
 
       <div class="create-person-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
-          onBack$={async () => await nav(ROUTES.PERSONS)}
-        />
+        <div class="create-person-steps" aria-label={m.stepsAriaLabel}>
+          {[
+            { step: 1, eyebrow: m.step1Eyebrow, label: m.step1Label },
+            { step: 2, eyebrow: m.step2Eyebrow, label: m.step2Label },
+            { step: 3, eyebrow: m.step3Eyebrow, label: m.step3Label },
+          ].map((item, index) => {
+            const stepDone = item.step === 3 && resultTone.value === 'success';
+            const done = currentStep > item.step || stepDone;
+            const active = currentStep === item.step && !stepDone;
+            const tone =
+              item.step === 3 && resultTone.value === 'error'
+                ? 'error'
+                : 'default';
 
-        {error.value && (
-          <Toast
-            tone="danger"
-            title={messages.persons.common.errorToastTitle}
-            description={error.value}
-          />
-        )}
-
-        {/* ── Estado de éxito ── */}
-        {success.value ? (
-          <Panel
-            eyebrow={m.successEyebrow}
-            title={m.successTitle}
-            description={m.successDescription}
-          >
-            <div class="create-person-success">
-              <div class="create-person-success__icon" aria-hidden="true">
-                <AppIcon intent="success" size="lg" />
-              </div>
-              <div class="create-person-success__actions">
-                <Button
-                  variant="secondary"
-                  onClick$={async () => await nav(ROUTES.PERSONS)}
-                >
-                  {m.successFinish}
-                </Button>
-                <Button
-                  iconLeft="add"
-                  onClick$={() => {
-                    curp.value = '';
-                    curpValid.value = false;
-                    curpError.value = '';
-                    showForm.value = false;
-                    gender.value = '';
-                    birthDate.value = '';
-                    nationality.value = '';
-                    stateCode.value = '';
-                    firstName.value = '';
-                    firstLastName.value = '';
-                    secondLastName.value = '';
-                    homoclave.value = '';
-                    phone.value = '';
-                    email.value = '';
-                    error.value = '';
-                    errorField.value = '';
-                    success.value = false;
-                    photoFile.value = null;
-                    photoPreview.value = '';
-                  }}
-                >
-                  {m.successCreateAnother}
-                </Button>
-              </div>
-            </div>
-          </Panel>
-        ) : !showForm.value ? (
-          /* ── Paso 1: Verificar CURP ── */
-          <Panel title={m.curpStepTitle} description={m.curpStepDescription}>
-            <div class="create-person-form">
-              <div class="create-person-grid create-person-grid--curp">
-                <Field
-                  label={m.labelCurp}
-                  required
-                  hint={
-                    !curpError.value &&
-                    !curpValid.value &&
-                    !curpValidating.value
-                      ? m.hintCurp
-                      : undefined
-                  }
-                  error={curpError.value || undefined}
-                >
-                  <Input
-                    value={curp.value}
-                    placeholder={m.placeholderCurp}
-                    maxLength={18}
-                    invalid={!!curpError.value}
-                    onInput$={(e) => {
-                      curp.value = (
-                        e.target as HTMLInputElement
-                      ).value.toUpperCase();
-                    }}
+            return (
+              <>
+                {index > 0 && (
+                  <span
+                    class="create-person-steps__connector"
+                    data-done={currentStep > item.step - 1 ? 'true' : 'false'}
                   />
-                </Field>
-              </div>
-
-              {curpValidating.value && (
-                <p class="create-person-curp-status create-person-curp-status--loading">
-                  {m.curpValidatingMsg}
-                </p>
-              )}
-
-              {curpValid.value && !curpValidating.value && (
-                <p class="create-person-curp-status create-person-curp-status--valid">
-                  <AppIcon intent="check" size="sm" />
-                  {m.curpAvailable}
-                </p>
-              )}
-            </div>
-          </Panel>
-        ) : (
-          /* ── Paso 2: Formulario completo ── */
-          <div class="create-person-layout">
-            {/* Panel: Identificación */}
-            <Panel title={m.panelIdTitle} description={m.panelIdDescription}>
-              <div class="create-person-form">
-                {/* CURP (readonly) + Homoclave */}
-                <div class="create-person-grid create-person-grid--curp">
-                  <Field label={m.labelCurp}>
-                    <Input value={curp.value} disabled />
-                  </Field>
-
-                  <Field label={m.labelHomoclave} hint={m.hintHomoclave}>
-                    <Input
-                      value={homoclave.value}
-                      placeholder={m.placeholderHomoclave}
-                      onInput$={(e) => {
-                        const raw = (e.target as HTMLInputElement).value;
-                        homoclave.value = raw
-                          .toUpperCase()
-                          .replace(/[^A-Z0-9]/g, '')
-                          .slice(0, 3);
-                      }}
-                    />
-                  </Field>
+                )}
+                <div
+                  class="create-person-steps__item"
+                  data-active={active ? 'true' : 'false'}
+                  data-done={done ? 'true' : 'false'}
+                  data-tone={tone}
+                >
+                  <span class="create-person-steps__num">
+                    {done ? <AppIcon intent="check" size="xs" /> : item.step}
+                  </span>
+                  <span class="create-person-steps__text">
+                    <span>{item.eyebrow}</span>
+                    <strong>{item.label}</strong>
+                  </span>
                 </div>
+              </>
+            );
+          })}
+        </div>
 
-                {/* Datos derivados de CURP */}
-                <div class="create-person-derived">
-                  <p class="create-person-derived__title">
-                    {m.derivedSectionTitle}
-                  </p>
-
-                  <div class="create-person-derived-grid">
-                    <DerivedField label={m.labelGender} optional>
-                      <Select
-                        value={gender.value}
-                        options={genderOptions}
-                        invalid={errorField.value === 'gender'}
-                        onChange$={(v) => {
-                          gender.value = v;
-                        }}
-                      />
-                    </DerivedField>
-
-                    <DerivedField label={m.labelBirthDate} optional>
-                      <DateInput
-                        value={birthDate.value}
+        <div class="create-person-stage">
+          {!showForm.value && !resultTone.value && (
+            <div class="create-person-card">
+              <Panel
+                icon="person"
+                title={m.curpStepTitle}
+                description={m.curpStepDescription}
+              >
+                <div class="create-person-form">
+                  <Field
+                    label={m.labelCurp}
+                    required
+                    hint={
+                      !curpError.value &&
+                      !curpValid.value &&
+                      !curpValidating.value
+                        ? m.hintCurp
+                        : undefined
+                    }
+                    error={curpError.value || undefined}
+                  >
+                    <div class="create-person-curp-field">
+                      <Input
+                        variant="line"
+                        value={curp.value}
+                        placeholder={m.placeholderCurp}
+                        maxLength={18}
+                        invalid={!!curpError.value}
                         onInput$={(e) => {
-                          birthDate.value = (
+                          curp.value = (
                             e.target as HTMLInputElement
-                          ).value;
+                          ).value.toUpperCase();
                         }}
                       />
-                    </DerivedField>
-
-                    <DerivedField label={m.labelNationality} optional>
-                      <Select
-                        value={nationality.value}
-                        options={nationalityOptions}
-                        onChange$={(v) => {
-                          nationality.value = v;
-                        }}
-                      />
-                    </DerivedField>
-
-                    <DerivedField label={m.labelState} optional>
-                      <Select
-                        value={stateCode.value}
-                        options={CURP_STATE_OPTIONS}
-                        onChange$={(v) => {
-                          stateCode.value = v;
-                        }}
-                      />
-                    </DerivedField>
-                  </div>
-                </div>
-              </div>
-            </Panel>
-
-            {/* Panel: Nombre */}
-            <Panel
-              title={m.panelNameTitle}
-              description={m.panelNameDescription}
-            >
-              <div class="create-person-form">
-                <div class="create-person-grid create-person-grid--thirds">
-                  <Field
-                    label={m.labelFirstName}
-                    required
-                    error={
-                      errorField.value === 'firstName'
-                        ? m.errorFirstNameRequired
-                        : undefined
-                    }
-                  >
-                    <Input
-                      iconLeft="person"
-                      value={firstName.value}
-                      placeholder={m.placeholderFirstName}
-                      invalid={errorField.value === 'firstName'}
-                      onInput$={(e) => {
-                        firstName.value = (
-                          e.target as HTMLInputElement
-                        ).value.toUpperCase();
-                      }}
-                    />
+                      <span
+                        class="create-person-curp-field__count"
+                        data-complete={
+                          curp.value.length === 18 ? 'true' : 'false'
+                        }
+                      >
+                        {curp.value.length}/18
+                      </span>
+                    </div>
                   </Field>
 
-                  <Field
-                    label={m.labelFirstLastName}
-                    required
-                    error={
-                      errorField.value === 'firstLastName'
-                        ? m.errorFirstLastNameRequired
-                        : undefined
-                    }
-                  >
-                    <Input
-                      iconLeft="person"
-                      value={firstLastName.value}
-                      placeholder={m.placeholderFirstLastName}
-                      invalid={errorField.value === 'firstLastName'}
-                      onInput$={(e) => {
-                        firstLastName.value = (
-                          e.target as HTMLInputElement
-                        ).value.toUpperCase();
-                      }}
-                    />
-                  </Field>
-
-                  <Field
-                    label={m.labelSecondLastName}
-                    hint={m.hintSecondLastName}
-                    error={
-                      errorField.value === 'secondLastName'
-                        ? m.errorSecondLastNameLength
-                        : undefined
-                    }
-                  >
-                    <Input
-                      iconLeft="person"
-                      value={secondLastName.value}
-                      placeholder={m.placeholderSecondLastName}
-                      invalid={errorField.value === 'secondLastName'}
-                      onInput$={(e) => {
-                        secondLastName.value = (
-                          e.target as HTMLInputElement
-                        ).value.toUpperCase();
-                      }}
-                    />
-                  </Field>
-                </div>
-              </div>
-            </Panel>
-
-            {/* Panel: Contacto */}
-            <Panel
-              title={m.panelContactTitle}
-              description={m.panelContactDescription}
-            >
-              <div class="create-person-form">
-                <div class="create-person-grid">
-                  <Field
-                    label={m.labelPhone}
-                    required
-                    hint={m.hintPhone}
-                    error={
-                      errorField.value === 'phone'
-                        ? phone.value
-                          ? m.errorPhoneInvalid
-                          : m.errorPhoneRequired
-                        : undefined
-                    }
-                  >
-                    <Input
-                      iconLeft="phone"
-                      type="tel"
-                      value={phone.value}
-                      placeholder={m.placeholderPhone}
-                      invalid={errorField.value === 'phone'}
-                      onInput$={(e) => {
-                        phone.value = (e.target as HTMLInputElement).value
-                          .replace(/\D/g, '')
-                          .slice(0, 10);
-                      }}
-                    />
-                  </Field>
-
-                  <Field
-                    label={m.labelEmail}
-                    required
-                    error={
-                      errorField.value === 'email'
-                        ? email.value
-                          ? m.errorEmailInvalid
-                          : m.errorEmailRequired
-                        : undefined
-                    }
-                  >
-                    <Input
-                      iconLeft="mail"
-                      type="email"
-                      value={email.value}
-                      placeholder={m.placeholderEmail}
-                      invalid={errorField.value === 'email'}
-                      onInput$={(e) => {
-                        email.value = (e.target as HTMLInputElement).value;
-                      }}
-                    />
-                  </Field>
-                </div>
-              </div>
-            </Panel>
-
-            {/* Panel: Foto */}
-            <Panel
-              title={m.panelPhotoTitle}
-              description={m.panelPhotoDescription}
-              density="compact"
-            >
-              <div class="create-person-photo">
-                <div class="create-person-photo__preview">
-                  {photoPreview.value ? (
-                    <img src={photoPreview.value} alt="Vista previa" />
-                  ) : (
-                    <AppIcon intent="person" size="lg" />
+                  {curpValidating.value && (
+                    <p class="create-person-curp-status">
+                      <span class="create-person-spinner" aria-hidden="true" />
+                      {m.curpValidatingMsg}
+                    </p>
                   )}
-                </div>
-                <div class="create-person-photo__controls">
-                  <input
-                    id="person-photo"
-                    class="create-person-photo__input"
-                    type="file"
-                    accept="image/png,image/jpeg"
-                    onChange$={(event) => {
-                      const file = (event.target as HTMLInputElement)
-                        .files?.[0];
-                      if (!file) return;
-                      photoFile.value = file;
-                      photoPreview.value = URL.createObjectURL(file);
+
+                  {curpValid.value && !curpValidating.value && (
+                    <p class="create-person-curp-status" data-tone="success">
+                      <AppIcon intent="check" size="sm" />
+                      {m.curpAvailable}
+                    </p>
+                  )}
+
+                  <Button
+                    fullWidth
+                    size="lg"
+                    disabled={!curpValid.value || curpValidating.value}
+                    loading={curpValidating.value}
+                    onClick$={() => {
+                      showForm.value = true;
+                      error.value = '';
+                      errorField.value = '';
                     }}
+                  >
+                    {m.actionGoToPersonData}
+                  </Button>
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {showForm.value && !resultTone.value && (
+            <div class="create-person-card">
+              <div class="create-person-layout">
+                {error.value && !resultTone.value && (
+                  <Toast
+                    tone="danger"
+                    title={messages.persons.common.errorToastTitle}
+                    description={error.value}
                   />
-                  <label class="create-person-photo__button" for="person-photo">
-                    {photoFile.value ? m.photoChange : m.photoSelect}
-                  </label>
-                  {photoFile.value && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick$={() => {
-                        photoFile.value = null;
-                        photoPreview.value = '';
-                      }}
+                )}
+
+                <Panel
+                  icon="person"
+                  title={m.panelIdTitle}
+                  description={m.panelIdDescription}
+                >
+                  <div class="create-person-form">
+                    <div class="create-person-curp-readonly">
+                      <strong>{curp.value}</strong>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick$={() => {
+                          showForm.value = false;
+                          error.value = '';
+                          errorField.value = '';
+                        }}
+                      >
+                        {m.actionChangeCurp}
+                      </Button>
+                    </div>
+
+                    <div class="create-person-derived">
+                      <p class="create-person-derived__title">
+                        {m.derivedSectionTitle}
+                      </p>
+                      <div class="create-person-derived-grid">
+                        <div class="create-person-derived-item">
+                          <span>{m.labelGender}</span>
+                          <Select
+                            variant="line"
+                            value={gender.value}
+                            options={genderOptions}
+                            invalid={errorField.value === 'gender'}
+                            onChange$={(v) => {
+                              gender.value = v;
+                              clearFieldError$('gender');
+                            }}
+                          />
+                        </div>
+
+                        <div class="create-person-derived-item">
+                          <span>{m.labelBirthDate}</span>
+                          <DateInput
+                            variant="line"
+                            value={birthDate.value}
+                            onInput$={(e) => {
+                              birthDate.value = (
+                                e.target as HTMLInputElement
+                              ).value;
+                            }}
+                          />
+                        </div>
+
+                        <div class="create-person-derived-item">
+                          <span>{m.labelNationality}</span>
+                          <Select
+                            variant="line"
+                            value={nationality.value}
+                            options={nationalityOptions}
+                            onChange$={(v) => {
+                              nationality.value = v;
+                            }}
+                          />
+                        </div>
+
+                        <div class="create-person-derived-item">
+                          <span>{m.labelState}</span>
+                          <Select
+                            variant="line"
+                            value={stateCode.value}
+                            options={CURP_STATE_OPTIONS}
+                            onChange$={(v) => {
+                              stateCode.value = v;
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Panel>
+
+                <Panel icon="person" title={m.panelNameTitle}>
+                  <div class="create-person-form">
+                    <Field
+                      label={m.labelFirstName}
+                      required
+                      error={
+                        errorField.value === 'firstName'
+                          ? m.errorFirstNameRequired
+                          : undefined
+                      }
                     >
-                      {m.photoRemove}
-                    </Button>
-                  )}
+                      <Input
+                        variant="line"
+                        value={firstName.value}
+                        placeholder={m.placeholderFirstName}
+                        invalid={errorField.value === 'firstName'}
+                        onInput$={(e) => {
+                          firstName.value = (
+                            e.target as HTMLInputElement
+                          ).value.toUpperCase();
+                          clearFieldError$('firstName');
+                        }}
+                      />
+                    </Field>
+
+                    <div class="create-person-grid">
+                      <Field
+                        label={m.labelFirstLastName}
+                        required
+                        error={
+                          errorField.value === 'firstLastName'
+                            ? m.errorFirstLastNameRequired
+                            : undefined
+                        }
+                      >
+                        <Input
+                          variant="line"
+                          value={firstLastName.value}
+                          placeholder={m.placeholderFirstLastName}
+                          invalid={errorField.value === 'firstLastName'}
+                          onInput$={(e) => {
+                            firstLastName.value = (
+                              e.target as HTMLInputElement
+                            ).value.toUpperCase();
+                            clearFieldError$('firstLastName');
+                          }}
+                        />
+                      </Field>
+
+                      <Field
+                        label={m.labelSecondLastName}
+                        optional
+                        error={
+                          errorField.value === 'secondLastName'
+                            ? m.errorSecondLastNameLength
+                            : undefined
+                        }
+                      >
+                        <Input
+                          variant="line"
+                          value={secondLastName.value}
+                          placeholder={m.placeholderSecondLastName}
+                          invalid={errorField.value === 'secondLastName'}
+                          onInput$={(e) => {
+                            secondLastName.value = (
+                              e.target as HTMLInputElement
+                            ).value.toUpperCase();
+                            clearFieldError$('secondLastName');
+                          }}
+                        />
+                      </Field>
+                    </div>
+                  </div>
+                </Panel>
+
+                <Panel icon="mail" title={m.panelContactTitle}>
+                  <div class="create-person-grid">
+                    <Field
+                      label={m.labelPhone}
+                      required
+                      hint={m.hintPhone}
+                      error={
+                        errorField.value === 'phone'
+                          ? phone.value
+                            ? m.errorPhoneInvalid
+                            : m.errorPhoneRequired
+                          : undefined
+                      }
+                    >
+                      <Input
+                        variant="line"
+                        iconLeft="phone"
+                        type="tel"
+                        value={phone.value}
+                        placeholder={m.placeholderPhone}
+                        invalid={errorField.value === 'phone'}
+                        onInput$={(e) => {
+                          phone.value = (e.target as HTMLInputElement).value
+                            .replace(/\D/g, '')
+                            .slice(0, 10);
+                          clearFieldError$('phone');
+                        }}
+                      />
+                    </Field>
+
+                    <Field
+                      label={m.labelEmail}
+                      required
+                      error={
+                        errorField.value === 'email'
+                          ? email.value
+                            ? m.errorEmailInvalid
+                            : m.errorEmailRequired
+                          : undefined
+                      }
+                    >
+                      <Input
+                        variant="line"
+                        iconLeft="mail"
+                        type="email"
+                        value={email.value}
+                        placeholder={m.placeholderEmail}
+                        invalid={errorField.value === 'email'}
+                        onInput$={(e) => {
+                          email.value = (e.target as HTMLInputElement).value;
+                          clearFieldError$('email');
+                        }}
+                      />
+                    </Field>
+                  </div>
+                </Panel>
+
+                <Panel
+                  icon="person"
+                  title={m.panelPhotoTitle}
+                  description={m.panelPhotoDescription}
+                >
+                  <div class="create-person-photo">
+                    <div class="create-person-photo__preview">
+                      {photoPreview.value ? (
+                        <img src={photoPreview.value} alt={m.photoPreviewAlt} />
+                      ) : (
+                        <AppIcon intent="person" size="lg" />
+                      )}
+                    </div>
+                    <div class="create-person-photo__controls">
+                      <input
+                        id="person-photo"
+                        class="create-person-photo__input"
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        onChange$={(event) => {
+                          const file = (event.target as HTMLInputElement)
+                            .files?.[0];
+                          if (!file) return;
+                          photoFile.value = file;
+                          photoPreview.value = URL.createObjectURL(file);
+                        }}
+                      />
+                      <label
+                        class="create-person-photo__button"
+                        for="person-photo"
+                      >
+                        {photoFile.value ? m.photoChange : m.photoSelect}
+                      </label>
+                      <span>{m.photoHint}</span>
+                      {photoFile.value && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick$={() => {
+                            photoFile.value = null;
+                            photoPreview.value = '';
+                          }}
+                        >
+                          {m.photoRemove}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </Panel>
+
+                <div class="create-person-actions">
+                  <Button variant="secondary" onClick$={resetAll$}>
+                    {m.actionCancel}
+                  </Button>
+                  <Button
+                    iconRight="chevron-right"
+                    loading={saving.value}
+                    onClick$={createPerson$}
+                  >
+                    {m.actionSave}
+                  </Button>
                 </div>
               </div>
-            </Panel>
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* ── Botonera ── */}
-        {!success.value && (
-          <div class="create-person-actions">
-            <Button
-              variant="secondary"
-              onClick$={async () => {
-                if (showForm.value) {
-                  showForm.value = false;
-                  error.value = '';
-                  errorField.value = '';
-                } else {
-                  await nav(ROUTES.PERSONS);
-                }
-              }}
-            >
-              {m.actionCancel}
-            </Button>
+          {resultTone.value && (
+            <div class="create-person-card">
+              <section
+                class="create-person-result"
+                data-tone={resultTone.value}
+              >
+                <header class="create-person-result__header">
+                  <div class="create-person-result__icon" aria-hidden="true">
+                    <AppIcon
+                      intent={
+                        resultTone.value === 'success' ? 'success' : 'close'
+                      }
+                      size="lg"
+                    />
+                  </div>
+                  <span>
+                    {resultTone.value === 'success'
+                      ? m.successEyebrow
+                      : m.errorResultEyebrow}
+                  </span>
+                  <h2>
+                    {resultTone.value === 'success'
+                      ? m.successTitle
+                      : m.errorResultTitle}
+                  </h2>
+                  <p>
+                    {resultTone.value === 'success'
+                      ? m.successDescription
+                      : error.value}
+                  </p>
+                </header>
 
-            {!showForm.value ? (
-              <Button
-                iconLeft="person"
-                disabled={!curpValid.value || curpValidating.value}
-                loading={curpValidating.value}
-                onClick$={() => {
-                  showForm.value = true;
-                  error.value = '';
-                  errorField.value = '';
-                }}
-              >
-                {m.actionRegister}
-              </Button>
-            ) : (
-              <Button
-                iconLeft="save"
-                loading={saving.value}
-                onClick$={createPerson$}
-              >
-                {m.actionSave}
-              </Button>
-            )}
-          </div>
-        )}
+                <div class="create-person-result__body">
+                  {[
+                    [m.resultCurp, curp.value],
+                    [m.resultName, completedName || m.resultNoData],
+                    [m.resultGender, genderLabel],
+                    [m.resultBirthDate, birthDateLabel],
+                    [m.resultPhone, phone.value || m.resultNoData],
+                    [m.resultEmail, email.value || m.resultNoData],
+                  ].map(([label, value]) => (
+                    <div class="create-person-result__row" key={label}>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                    </div>
+                  ))}
+                </div>
+
+                <div class="create-person-result__actions">
+                  {resultTone.value === 'success' ? (
+                    <>
+                      <Button variant="secondary" onClick$={resetAll$}>
+                        {m.successCreateAnother}
+                      </Button>
+                      <Button
+                        iconRight="chevron-right"
+                        onClick$={async () => await nav(ROUTES.PERSONS_SEARCH)}
+                      >
+                        {m.successFinish}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="secondary"
+                        onClick$={() => {
+                          resultTone.value = '';
+                          error.value = '';
+                        }}
+                      >
+                        {m.errorBackToForm}
+                      </Button>
+                      <Button loading={saving.value} onClick$={createPerson$}>
+                        {m.errorRetry}
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </section>
+            </div>
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );
