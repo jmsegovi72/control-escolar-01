@@ -17,8 +17,8 @@ import { personService } from '~/services/person/person.service';
 import type { AddressListItem } from '~/types/address.types';
 import type { PersonListItem } from '~/types/person.types';
 import {
+  ActionHeader,
   Button,
-  ModuleHeader,
   Panel,
   SelectionStep,
   Toast,
@@ -140,11 +140,7 @@ export default component$(() => {
       </Toolbar>
 
       <div class="detail-address-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
-          onBack$={goBack$}
-        />
+        <ActionHeader title={m.title} onBack$={goBack$} />
 
         {/* ── Cargando ── */}
         {loading.value && (

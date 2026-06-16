@@ -212,10 +212,13 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
     return (
       <AppShell
-        eyebrow={eyebrow ?? appConfig.fullName}
+        eyebrow={
+          !eyebrow || eyebrow === messages.app.name
+            ? (eyebrow ?? appConfig.fullName)
+            : `${messages.app.name} / ${eyebrow}`
+        }
         title={title}
         description={description}
-        meta={meta}
         density="compact"
         headerVariant="inline"
         sidebarOpen={sidebarOpen.value}

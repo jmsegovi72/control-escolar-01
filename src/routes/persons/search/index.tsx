@@ -18,11 +18,11 @@ import type {
   PersonSearchCatalogs,
 } from '~/types/person.types';
 import {
+  ActionHeader,
   Button,
   DataTable,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   Toolbar,
@@ -305,9 +305,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="persons-search">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
+        <ActionHeader
+          title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 

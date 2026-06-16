@@ -17,11 +17,11 @@ import type { Role, UserType } from '~/types/catalog.types';
 import type { Person } from '~/types/person.types';
 import type { CreateUserDto } from '~/types/user.types';
 import {
+  ActionHeader,
   Button,
   Checkbox,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   SearchSelect,
   Select,
@@ -198,9 +198,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="create-user-page">
-        <ModuleHeader
-          tituloModulo={messages.users.create.tituloModulo}
-          accionActual={messages.users.create.title}
+        <ActionHeader
+          title={messages.users.create.title}
           onBack$={async () => await nav('/users')}
         />
 

@@ -8,14 +8,15 @@ import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
 import {
+  ActionHeader,
   Button,
   DateInput,
   Field,
   Input,
   Panel,
   Select,
+  StepIndicator,
   Toast,
-  Toolbar,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
@@ -262,10 +263,6 @@ export default component$(() => {
         ? m.optionFemale
         : m.resultNoData;
   const birthDateLabel = birthDate.value || m.resultNoData;
-  const toolbarTitle = resultTone.value
-    ? m.toolbarCenterResult
-    : m.toolbarCenter;
-
   return (
     <AuthenticatedShell
       eyebrow={m.eyebrow}
@@ -276,59 +273,21 @@ export default component$(() => {
       accessDeniedDescription={m.accessDenied}
       fullWidth
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={async () => await nav(ROUTES.PERSONS)}
-        >
-          {m.toolbarBack}
-        </Button>
-        <span q:slot="center">{toolbarTitle}</span>
-      </Toolbar>
-
       <div class="create-person-page">
-        <div class="create-person-steps" aria-label={m.stepsAriaLabel}>
-          {[
-            { step: 1, eyebrow: m.step1Eyebrow, label: m.step1Label },
-            { step: 2, eyebrow: m.step2Eyebrow, label: m.step2Label },
-            { step: 3, eyebrow: m.step3Eyebrow, label: m.step3Label },
-          ].map((item, index) => {
-            const stepDone = item.step === 3 && resultTone.value === 'success';
-            const done = currentStep > item.step || stepDone;
-            const active = currentStep === item.step && !stepDone;
-            const tone =
-              item.step === 3 && resultTone.value === 'error'
-                ? 'error'
-                : 'default';
+        <ActionHeader
+          title={m.title}
+          onBack$={async () => await nav(ROUTES.PERSONS)}
+        />
 
-            return (
-              <>
-                {index > 0 && (
-                  <span
-                    class="create-person-steps__connector"
-                    data-done={currentStep > item.step - 1 ? 'true' : 'false'}
-                  />
-                )}
-                <div
-                  class="create-person-steps__item"
-                  data-active={active ? 'true' : 'false'}
-                  data-done={done ? 'true' : 'false'}
-                  data-tone={tone}
-                >
-                  <span class="create-person-steps__num">
-                    {done ? <AppIcon intent="check" size="xs" /> : item.step}
-                  </span>
-                  <span class="create-person-steps__text">
-                    <span>{item.eyebrow}</span>
-                    <strong>{item.label}</strong>
-                  </span>
-                </div>
-              </>
-            );
-          })}
-        </div>
+        <StepIndicator
+          steps={[
+            { eyebrow: m.step1Eyebrow, label: m.step1Label },
+            { eyebrow: m.step2Eyebrow, label: m.step2Label },
+            { eyebrow: m.step3Eyebrow, label: m.step3Label },
+          ]}
+          current={currentStep}
+          tone={resultTone.value || undefined}
+        />
 
         <div class="create-person-stage">
           {!showForm.value && !resultTone.value && (

@@ -15,11 +15,11 @@ import { ROUTES } from '~/config/routes';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
 import {
+  ActionHeader,
   Button,
   DataTable,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   Toolbar,
@@ -396,9 +396,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="users-search">
-        <ModuleHeader
-          tituloModulo={messages.users.search.tituloModulo}
-          accionActual={messages.users.search.title}
+        <ActionHeader
+          title={messages.users.search.title}
           onBack$={async () => await nav(ROUTES.USERS)}
         />
 

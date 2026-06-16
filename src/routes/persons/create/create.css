@@ -5,117 +5,6 @@
   background: var(--color-bg);
 }
 
-.create-person-steps {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  min-height: 4.25rem;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-  padding: 0 var(--space-8);
-}
-
-.create-person-steps__item {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.create-person-steps__num {
-  display: inline-grid;
-  width: 1.875rem;
-  height: 1.875rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border: var(--border-width-2) solid var(--color-border);
-  border-radius: var(--radius-round);
-  background: var(--color-muted);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  transition:
-    background var(--duration-slow) var(--ease-out),
-    border-color var(--duration-slow) var(--ease-out),
-    box-shadow var(--duration-slow) var(--ease-out),
-    color var(--duration-slow) var(--ease-out);
-}
-
-.create-person-steps__item[data-active="true"] .create-person-steps__num {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  box-shadow: var(--focus-ring);
-}
-
-.create-person-steps__item[data-done="true"] .create-person-steps__num {
-  border-color: var(--color-success);
-  background: var(--color-success);
-  color: var(--color-on-success);
-}
-
-.create-person-steps__item[data-tone="error"][data-active="true"]
-  .create-person-steps__num {
-  border-color: var(--color-danger);
-  background: var(--color-danger);
-  color: var(--color-inverse);
-  box-shadow: var(--focus-ring-danger);
-}
-
-.create-person-steps__text {
-  display: grid;
-  min-width: 0;
-  gap: var(--space-1);
-}
-
-.create-person-steps__text span {
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-2xs);
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.create-person-steps__text strong {
-  overflow: hidden;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.create-person-steps__item[data-active="true"]
-  .create-person-steps__text
-  strong {
-  color: var(--color-text);
-}
-
-.create-person-steps__item[data-done="true"] .create-person-steps__text strong {
-  color: var(--color-text-soft);
-}
-
-.create-person-steps__connector {
-  flex: 1 1 auto;
-  width: auto;
-  max-width: 4rem;
-  height: var(--border-width-2);
-  margin: 0 var(--space-3);
-  border-radius: var(--radius-round);
-  background: var(--color-border);
-  transition: background var(--duration-slow) var(--ease-out);
-}
-
-.create-person-steps__connector[data-done="true"] {
-  background: var(--color-success);
-}
-
 .create-person-stage {
   display: grid;
   min-height: 0;
@@ -551,17 +440,6 @@
 @media (max-width: 860px) {
   .create-person-page {
     margin: calc(var(--space-3) * -1);
-  }
-
-  .create-person-steps {
-    justify-content: flex-start;
-    gap: var(--space-2);
-    overflow-x: auto;
-    padding: 0 var(--space-4);
-  }
-
-  .create-person-steps__connector {
-    width: var(--space-8);
   }
 
   .create-person-stage {

@@ -18,10 +18,10 @@ import { personService } from '~/services/person/person.service';
 import type { Settlement, StreetType } from '~/types/address.types';
 import type { PersonListItem } from '~/types/person.types';
 import {
+  ActionHeader,
   Button,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   SelectionStep,
@@ -209,9 +209,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="create-address-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
+        <ActionHeader
+          title={m.title}
           onBack$={async () => await nav(ROUTES.ADDRESSES)}
         />
 

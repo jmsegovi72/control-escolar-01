@@ -9,11 +9,11 @@ import { messages } from '~/config/messages';
 import { userService } from '~/services/user/user.service';
 import type { UnlockUserResult, UserListItem } from '~/types/user.types';
 import {
+  ActionHeader,
   Avatar,
   Badge,
   Button,
   ConfirmAction,
-  ModuleHeader,
   Panel,
   Toast,
   Toolbar,
@@ -140,11 +140,7 @@ export default component$(() => {
       </Toolbar>
 
       <div class="unlock-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
-          onBack$={goBack$}
-        />
+        <ActionHeader title={m.title} onBack$={goBack$} />
 
         {loading.value && (
           <Panel title={m.loadingTitle} description={m.loadingDescription}>

@@ -23,10 +23,10 @@ import type {
 } from '~/types/address.types';
 import type { PersonListItem } from '~/types/person.types';
 import {
+  ActionHeader,
   Button,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   SelectionStep,
@@ -255,11 +255,7 @@ export default component$(() => {
       </Toolbar>
 
       <div class="edit-address-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
-          onBack$={goBack$}
-        />
+        <ActionHeader title={m.title} onBack$={goBack$} />
 
         {error.value && !errorField.value && (
           <Toast tone="danger" title="Error">

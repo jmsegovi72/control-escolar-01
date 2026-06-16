@@ -6,16 +6,17 @@ import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/Authe
 import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { userService } from '~/services/user/user.service';
 import type { Role, UserType } from '~/types/catalog.types';
 import type { UserListItem } from '~/types/user.types';
 import {
+  ActionHeader,
   Avatar,
   Button,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Select,
   Toast,
@@ -202,10 +203,9 @@ export default component$(() => {
       </Toolbar>
 
       <div class="edit-user-page">
-        <ModuleHeader
-          tituloModulo={messages.users.edit.tituloModulo}
-          accionActual={messages.users.edit.title}
-          onBack$={goBack$}
+        <ActionHeader
+          title={messages.users.edit.title}
+          onBack$={async () => await nav(ROUTES.USERS)}
         />
 
         {error.value && (

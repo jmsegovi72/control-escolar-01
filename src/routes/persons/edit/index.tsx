@@ -11,11 +11,11 @@ import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
 import type { PersonDetail } from '~/types/person.types';
 import {
+  ActionHeader,
   Button,
   DerivedField,
   Field,
   Input,
-  ModuleHeader,
   Panel,
   Toast,
   Toolbar,
@@ -198,9 +198,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="edit-person-page">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
+        <ActionHeader
+          title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 

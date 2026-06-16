@@ -1,4 +1,5 @@
 export { Accordion } from './composed/Accordion/Accordion';
+export { ActionHeader } from './composed/ActionHeader/ActionHeader';
 export { DateRangeInput } from './composed/DateRangeInput/DateRangeInput';
 export { DerivedField } from './composed/DerivedField/DerivedField';
 export { DetailDrawer } from './composed/DetailDrawer/DetailDrawer';
@@ -6,12 +7,12 @@ export { Dialog } from './composed/Dialog/Dialog';
 export { DropdownMenu } from './composed/DropdownMenu/DropdownMenu';
 export { EmptyState } from './composed/EmptyState/EmptyState';
 export { FileUpload } from './composed/FileUpload/FileUpload';
-export { ModuleHeader } from './composed/ModuleHeader/ModuleHeader';
 export { NotificationCenter } from './composed/NotificationCenter/NotificationCenter';
 export { PageReturn } from './composed/PageReturn/PageReturn';
 export { SearchSelect } from './composed/SearchSelect/SearchSelect';
 export { SelectionStep } from './composed/SelectionStep/SelectionStep';
 export { Skeleton } from './composed/Skeleton/Skeleton';
+export { StepIndicator } from './composed/StepIndicator/StepIndicator';
 export {
   StatusIndicator,
   SystemHealth,

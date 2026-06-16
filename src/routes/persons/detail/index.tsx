@@ -10,7 +10,7 @@ import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
 import type { PersonDetail } from '~/types/person.types';
-import { Avatar, Button, ModuleHeader, Panel, Toolbar } from '~/ui';
+import { ActionHeader, Avatar, Button, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { personsWorkflow } from '~/utils/persons-workflow';
 import './detail.css';
@@ -124,11 +124,7 @@ export default component$(() => {
       </Toolbar>
 
       <div class="person-detail">
-        <ModuleHeader
-          tituloModulo={m.detail.tituloModulo}
-          accionActual={m.detail.title}
-          onBack$={goBack$}
-        />
+        <ActionHeader title={m.detail.title} onBack$={goBack$} />
 
         {loading.value && (
           <Panel

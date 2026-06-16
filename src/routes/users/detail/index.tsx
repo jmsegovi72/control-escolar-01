@@ -6,9 +6,10 @@ import { AuthenticatedShell } from '~/components/layout/AuthenticatedShell/Authe
 import { UserSearchPanel } from '~/components/users';
 import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
+import { ROUTES } from '~/config/routes';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import { Avatar, Badge, Button, ModuleHeader, Panel, Toolbar } from '~/ui';
+import { ActionHeader, Avatar, Badge, Button, Panel, Toolbar } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
@@ -130,10 +131,9 @@ export default component$(() => {
       </Toolbar>
 
       <div class="user-detail">
-        <ModuleHeader
-          tituloModulo={messages.users.detail.tituloModulo}
-          accionActual={messages.users.detail.title}
-          onBack$={goBack$}
+        <ActionHeader
+          title={messages.users.detail.title}
+          onBack$={async () => await nav(ROUTES.USERS)}
         />
 
         {loading.value && (

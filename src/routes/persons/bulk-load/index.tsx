@@ -8,7 +8,7 @@ import { ROUTES } from '~/config/routes';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { personService } from '~/services/person/person.service';
 import type { CreatePersonDto } from '~/types/person.types';
-import { Button, DataTable, ModuleHeader, Panel, Toolbar } from '~/ui';
+import { ActionHeader, Button, DataTable, Panel, Toolbar } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import {
@@ -598,9 +598,8 @@ export default component$(() => {
       </Toolbar>
 
       <div class="import-container">
-        <ModuleHeader
-          tituloModulo={m.tituloModulo}
-          accionActual={m.title}
+        <ActionHeader
+          title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
