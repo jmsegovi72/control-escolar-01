@@ -9,7 +9,7 @@ import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { userService } from '~/services/user/user.service';
 import type { UserListItem } from '~/types/user.types';
-import { ActionHeader, Avatar, Badge, Button, Panel, Toolbar } from '~/ui';
+import { ActionHeader, Avatar, Badge, Button, Panel } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
 import { usersWorkflow } from '~/utils/users-workflow';
@@ -111,210 +111,193 @@ export default component$(() => {
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={messages.users.detail.accessDenied}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={goBack$}
-        >
-          {returnLabel.value}
-        </Button>
-        <Button
-          q:slot="actions"
-          variant="secondary"
-          iconLeft="search"
-          onClick$={async () => await nav('/users/search')}
-        >
-          {messages.users.common.searchUsersAction}
-        </Button>
-      </Toolbar>
-
       <div class="user-detail">
         <ActionHeader
           title={messages.users.detail.title}
           onBack$={async () => await nav(ROUTES.USERS)}
         />
 
-        {loading.value && (
-          <Panel
-            title={messages.users.common.loadingPanelTitle}
-            description={messages.users.common.loadingPanelDescription}
-          >
-            <div class="user-detail__loading" />
-          </Panel>
-        )}
-
-        {!loading.value && error.value && (
-          <Panel
-            eyebrow={messages.users.common.errorToastTitle}
-            title={messages.users.detail.errorTitle}
-            description={error.value}
-          >
-            <div class="user-detail__actions">
-              <Button variant="secondary" iconLeft="back" onClick$={goBack$}>
-                {messages.users.common.backLabel}
-              </Button>
-              <Button
-                iconLeft="search"
-                onClick$={async () => await nav('/users/search')}
-              >
-                {messages.users.common.goToSearchAction}
-              </Button>
-            </div>
-          </Panel>
-        )}
-
-        {!loading.value && selectionMode.value && !currentUser && (
-          <UserSearchPanel
-            title={messages.users.common.searchUserTitle}
-            description={messages.users.detail.selectionDescription}
-            fieldHint={messages.users.common.fieldUserHint}
-            noResultsMessage={messages.users.detail.noResultsCriteria}
-            badgeField="isActive"
-            badgeTrueLabel={messages.users.detail.resultActive}
-            badgeFalseLabel={messages.users.detail.resultInactive}
-            badgeTrueTone="success"
-            badgeFalseTone="danger"
-            onSelect$={openManualDetail$}
-          />
-        )}
-
-        {!loading.value && currentUser && (
-          <div class="user-detail__layout">
-            <div class="user-detail__profile-card">
-              <Avatar
-                src={resolvePhotoUrl(currentUser)}
-                name={currentUser.fullName}
-                size="xl"
-              />
-              <div class="user-detail__profile-info">
-                <h2>{currentUser.fullName}</h2>
-                <p>{currentUser.username}</p>
-              </div>
-              <div class="user-detail__profile-badges">
-                <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
-                  {currentUser.isActive
-                    ? messages.users.detail.resultActive
-                    : messages.users.detail.resultInactive}
-                </Badge>
-                <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
-                  {currentUser.firstLogin
-                    ? messages.users.detail.firstLoginPending
-                    : messages.users.detail.firstLoginCompleted}
-                </Badge>
-              </div>
-            </div>
-
+        <div class="user-detail__content">
+          {loading.value && (
             <Panel
-              title={messages.users.detail.panelAccountTitle}
-              description={messages.users.detail.panelAccountDescription}
+              title={messages.users.common.loadingPanelTitle}
+              description={messages.users.common.loadingPanelDescription}
             >
-              <dl class="user-detail__info-grid">
-                <div>
-                  <dt>{messages.users.detail.fieldId}</dt>
-                  <dd>{currentUser.id}</dd>
-                </div>
-                <div>
-                  <dt>{messages.users.detail.fieldUsername}</dt>
-                  <dd>{currentUser.username}</dd>
-                </div>
-                <div>
-                  <dt>{messages.users.detail.fieldFullName}</dt>
-                  <dd>{currentUser.fullName}</dd>
-                </div>
-              </dl>
+              <div class="user-detail__loading" />
             </Panel>
+          )}
 
-            <div class="user-detail__actions-card">
-              <h3>{messages.users.detail.accountActionsTitle}</h3>
-              <div class="user-detail__action-list">
-                <Button
-                  variant="primary"
-                  iconLeft="edit"
-                  fullWidth
-                  onClick$={async () =>
-                    await nav(`/users/edit?id=${currentUser.id}`)
-                  }
-                >
-                  {messages.users.detail.actionEdit}
+          {!loading.value && error.value && (
+            <Panel
+              eyebrow={messages.users.common.errorToastTitle}
+              title={messages.users.detail.errorTitle}
+              description={error.value}
+            >
+              <div class="user-detail__actions">
+                <Button variant="secondary" iconLeft="back" onClick$={goBack$}>
+                  {messages.users.common.backLabel}
                 </Button>
                 <Button
-                  variant="secondary"
-                  iconLeft="toggle"
-                  fullWidth
-                  onClick$={async () =>
-                    await nav(`/users/toggle?id=${currentUser.id}`)
-                  }
+                  iconLeft="search"
+                  onClick$={async () => await nav('/users/search')}
                 >
-                  {currentUser.isActive
-                    ? messages.users.detail.actionDeactivate
-                    : messages.users.detail.actionActivate}
+                  {messages.users.common.goToSearchAction}
                 </Button>
+              </div>
+            </Panel>
+          )}
+
+          {!loading.value && selectionMode.value && !currentUser && (
+            <UserSearchPanel
+              title={messages.users.common.searchUserTitle}
+              description={messages.users.detail.selectionDescription}
+              fieldHint={messages.users.common.fieldUserHint}
+              noResultsMessage={messages.users.detail.noResultsCriteria}
+              badgeField="isActive"
+              badgeTrueLabel={messages.users.detail.resultActive}
+              badgeFalseLabel={messages.users.detail.resultInactive}
+              badgeTrueTone="success"
+              badgeFalseTone="danger"
+              onSelect$={openManualDetail$}
+            />
+          )}
+
+          {!loading.value && currentUser && (
+            <div class="user-detail__layout">
+              <div class="user-detail__profile-card">
+                <Avatar
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="xl"
+                />
+                <div class="user-detail__profile-info">
+                  <h2>{currentUser.fullName}</h2>
+                  <p>{currentUser.username}</p>
+                </div>
+                <div class="user-detail__profile-badges">
+                  <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
+                    {currentUser.isActive
+                      ? messages.users.detail.resultActive
+                      : messages.users.detail.resultInactive}
+                  </Badge>
+                  <Badge tone={currentUser.firstLogin ? 'warning' : 'success'}>
+                    {currentUser.firstLogin
+                      ? messages.users.detail.firstLoginPending
+                      : messages.users.detail.firstLoginCompleted}
+                  </Badge>
+                </div>
+              </div>
+
+              <Panel
+                title={messages.users.detail.panelAccountTitle}
+                description={messages.users.detail.panelAccountDescription}
+              >
+                <dl class="user-detail__info-grid">
+                  <div>
+                    <dt>{messages.users.detail.fieldId}</dt>
+                    <dd>{currentUser.id}</dd>
+                  </div>
+                  <div>
+                    <dt>{messages.users.detail.fieldUsername}</dt>
+                    <dd>{currentUser.username}</dd>
+                  </div>
+                  <div>
+                    <dt>{messages.users.detail.fieldFullName}</dt>
+                    <dd>{currentUser.fullName}</dd>
+                  </div>
+                </dl>
+              </Panel>
+
+              <div class="user-detail__actions-card">
+                <h3>{messages.users.detail.accountActionsTitle}</h3>
+                <div class="user-detail__action-list">
+                  <Button
+                    variant="primary"
+                    iconLeft="edit"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/edit?id=${currentUser.id}`)
+                    }
+                  >
+                    {messages.users.detail.actionEdit}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="toggle"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/toggle?id=${currentUser.id}`)
+                    }
+                  >
+                    {currentUser.isActive
+                      ? messages.users.detail.actionDeactivate
+                      : messages.users.detail.actionActivate}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="unlock"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/unlock?id=${currentUser.id}`)
+                    }
+                  >
+                    {messages.users.detail.actionUnlock}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    iconLeft="login-reset"
+                    fullWidth
+                    onClick$={async () =>
+                      await nav(`/users/reset-login?id=${currentUser.id}`)
+                    }
+                  >
+                    {messages.users.detail.actionResetAccess}
+                  </Button>
+                </div>
+              </div>
+
+              <Panel
+                title={messages.users.detail.panelRolesTitle}
+                description={messages.users.detail.panelRolesDescription}
+              >
+                <dl class="user-detail__info-grid">
+                  <div>
+                    <dt>{messages.users.detail.rolePrincipal}</dt>
+                    <dd>{currentUser.roleName}</dd>
+                  </div>
+                  <div>
+                    <dt>{messages.users.detail.roleDescription}</dt>
+                    <dd>
+                      {currentUser.roleDescription ||
+                        messages.users.detail.roleNoDescription}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{messages.users.detail.userType}</dt>
+                    <dd>{currentUser.userTypeName}</dd>
+                  </div>
+                  <div>
+                    <dt>{messages.users.detail.userTypeScope}</dt>
+                    <dd>
+                      {currentUser.userTypeDescription ||
+                        messages.users.detail.userTypeNoDescription}
+                    </dd>
+                  </div>
+                </dl>
+              </Panel>
+
+              <div class="user-detail__footer-actions">
                 <Button
                   variant="secondary"
-                  iconLeft="unlock"
-                  fullWidth
-                  onClick$={async () =>
-                    await nav(`/users/unlock?id=${currentUser.id}`)
-                  }
+                  iconLeft="search"
+                  onClick$={async () => await nav('/users/detail')}
                 >
-                  {messages.users.detail.actionUnlock}
-                </Button>
-                <Button
-                  variant="secondary"
-                  iconLeft="login-reset"
-                  fullWidth
-                  onClick$={async () =>
-                    await nav(`/users/reset-login?id=${currentUser.id}`)
-                  }
-                >
-                  {messages.users.detail.actionResetAccess}
+                  {messages.users.common.searchOtherAction}
                 </Button>
               </div>
             </div>
-
-            <Panel
-              title={messages.users.detail.panelRolesTitle}
-              description={messages.users.detail.panelRolesDescription}
-            >
-              <dl class="user-detail__info-grid">
-                <div>
-                  <dt>{messages.users.detail.rolePrincipal}</dt>
-                  <dd>{currentUser.roleName}</dd>
-                </div>
-                <div>
-                  <dt>{messages.users.detail.roleDescription}</dt>
-                  <dd>
-                    {currentUser.roleDescription ||
-                      messages.users.detail.roleNoDescription}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{messages.users.detail.userType}</dt>
-                  <dd>{currentUser.userTypeName}</dd>
-                </div>
-                <div>
-                  <dt>{messages.users.detail.userTypeScope}</dt>
-                  <dd>
-                    {currentUser.userTypeDescription ||
-                      messages.users.detail.userTypeNoDescription}
-                  </dd>
-                </div>
-              </dl>
-            </Panel>
-
-            <div class="user-detail__footer-actions">
-              <Button
-                variant="secondary"
-                iconLeft="search"
-                onClick$={async () => await nav('/users/detail')}
-              >
-                {messages.users.common.searchOtherAction}
-              </Button>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );

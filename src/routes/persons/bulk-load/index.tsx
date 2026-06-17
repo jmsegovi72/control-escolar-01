@@ -8,7 +8,7 @@ import { ROUTES } from '~/config/routes';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { personService } from '~/services/person/person.service';
 import type { CreatePersonDto } from '~/types/person.types';
-import { ActionHeader, Button, DataTable, Panel, Toolbar } from '~/ui';
+import { ActionHeader, Button, DataTable, Panel } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import {
@@ -585,251 +585,246 @@ export default component$(() => {
       accessDeniedDescription={m.accessDenied}
       fullWidth={step.value === 'review' && !validating.value}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={async () => await nav(ROUTES.PERSONS)}
-        >
-          {m.toolbarBack}
-        </Button>
-        <span q:slot="center">{m.toolbarCenter}</span>
-      </Toolbar>
-
       <div class="import-container">
         <ActionHeader
           title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
-        {/* loader */}
-        {validating.value && (
-          <Panel>
-            <div class="import-success-panel">
-              <div class="import-success-icon import-spin">
-                <AppIcon intent="refresh" size="lg" />
-              </div>
-              <h2>Procesando y validando archivo...</h2>
-              <p>
-                Por favor espera un momento mientras validamos los formatos y
-                duplicados.
-              </p>
-            </div>
-          </Panel>
-        )}
-
-        {/* step 1: upload */}
-        {!validating.value && step.value === 'upload' && (
-          <div>
-            {errorMsg.value && (
-              <div style={{ marginBottom: 'var(--space-4)' }}>
-                <Panel density="compact">
-                  <div class="import-alert-banner error" style={{ margin: 0 }}>
-                    <strong>Error de validación del archivo:</strong>{' '}
-                    {errorMsg.value}
-                  </div>
-                </Panel>
-              </div>
-            )}
-
-            <Panel
-              title={m.uploadPanelTitle}
-              description={m.uploadPanelSubtitle}
-            >
-              <div
-                style={{
-                  marginBottom: 'var(--space-4)',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                }}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  iconLeft="download"
-                  onClick$={downloadTemplate$}
-                >
-                  Descargar plantilla CSV
-                </Button>
-              </div>
-
-              <input
-                type="file"
-                accept=".csv"
-                id="csv-file-input"
-                style={{ display: 'none' }}
-                onChange$={onFileSelect$}
-              />
-
-              <div
-                class="import-upload-zone"
-                onDragOver$={(e) => e.preventDefault()}
-                onDrop$={onDrop$}
-                onClick$={onClickZone$}
-              >
-                <div class="import-upload-icon">
-                  <AppIcon intent="upload" size="xl" />
+        <div class="import-container__content">
+          {/* loader */}
+          {validating.value && (
+            <Panel>
+              <div class="import-success-panel">
+                <div class="import-success-icon import-spin">
+                  <AppIcon intent="refresh" size="lg" />
                 </div>
-                <div class="import-upload-text">{m.uploadZoneTitle}</div>
-                <div class="import-upload-subtext">{m.uploadZoneSubtitle}</div>
+                <h2>Procesando y validando archivo...</h2>
+                <p>
+                  Por favor espera un momento mientras validamos los formatos y
+                  duplicados.
+                </p>
               </div>
+            </Panel>
+          )}
 
-              <div class="import-upload-info">
-                <span
+          {/* step 1: upload */}
+          {!validating.value && step.value === 'upload' && (
+            <div>
+              {errorMsg.value && (
+                <div style={{ marginBottom: 'var(--space-4)' }}>
+                  <Panel density="compact">
+                    <div
+                      class="import-alert-banner error"
+                      style={{ margin: 0 }}
+                    >
+                      <strong>Error de validación del archivo:</strong>{' '}
+                      {errorMsg.value}
+                    </div>
+                  </Panel>
+                </div>
+              )}
+
+              <Panel
+                title={m.uploadPanelTitle}
+                description={m.uploadPanelSubtitle}
+              >
+                <div
                   style={{
-                    fontSize: 'var(--font-size-xs)',
-                    fontWeight: 'var(--font-weight-semibold)',
-                    color: 'var(--text-primary)',
-                  }}
-                >
-                  Guía de Campos del Archivo CSV:
-                </span>
-                <ul
-                  style={{
-                    margin: 0,
-                    paddingLeft: 'var(--space-4)',
-                    fontSize: 'var(--font-size-xs)',
-                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--space-4)',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: 'var(--space-1)',
+                    justifyContent: 'flex-end',
                   }}
                 >
-                  <li>
-                    <strong>Requeridos:</strong> CURP (18 caracteres), Nombre,
-                    Primer Apellido, Teléfono (10 dígitos), Correo.
-                  </li>
-                  <li>
-                    <strong>Opcionales:</strong> Segundo Apellido, Municipio
-                    (ID), Homoclave.
-                  </li>
-                  <li
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    iconLeft="download"
+                    onClick$={downloadTemplate$}
+                  >
+                    Descargar plantilla CSV
+                  </Button>
+                </div>
+
+                <input
+                  type="file"
+                  accept=".csv"
+                  id="csv-file-input"
+                  style={{ display: 'none' }}
+                  onChange$={onFileSelect$}
+                />
+
+                <div
+                  class="import-upload-zone"
+                  onDragOver$={(e) => e.preventDefault()}
+                  onDrop$={onDrop$}
+                  onClick$={onClickZone$}
+                >
+                  <div class="import-upload-icon">
+                    <AppIcon intent="upload" size="xl" />
+                  </div>
+                  <div class="import-upload-text">{m.uploadZoneTitle}</div>
+                  <div class="import-upload-subtext">
+                    {m.uploadZoneSubtitle}
+                  </div>
+                </div>
+
+                <div class="import-upload-info">
+                  <span
                     style={{
-                      listStyleType: 'none',
-                      marginTop: 'var(--space-2)',
-                      color: 'var(--text-secondary)',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      color: 'var(--text-primary)',
                     }}
                   >
-                    <em>
-                      * Nota: El Género, Fecha de Nacimiento y Nacionalidad se
-                      obtienen automáticamente a partir de la CURP.
-                    </em>
-                  </li>
-                </ul>
-              </div>
-            </Panel>
-          </div>
-        )}
-
-        {/* step 2: review */}
-        {!validating.value && step.value === 'review' && (
-          <div>
-            <div class="import-stats">
-              <div class="import-stat-card valid">
-                <div class="import-stat-number valid">{validCount}</div>
-                <div class="import-stat-label">{m.statsValid}</div>
-              </div>
-              <div class="import-stat-card warning">
-                <div class="import-stat-number warning">{warningCount}</div>
-                <div class="import-stat-label">{m.statsWarning}</div>
-              </div>
-              <div class="import-stat-card invalid">
-                <div class="import-stat-number invalid">{invalidCount}</div>
-                <div class="import-stat-label">{m.statsError}</div>
-              </div>
-              <div class="import-stat-card">
-                <div class="import-stat-number">{readyCount}</div>
-                <div class="import-stat-label">{m.statsReady}</div>
-              </div>
+                    Guía de Campos del Archivo CSV:
+                  </span>
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: 'var(--space-4)',
+                      fontSize: 'var(--font-size-xs)',
+                      color: 'var(--text-secondary)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 'var(--space-1)',
+                    }}
+                  >
+                    <li>
+                      <strong>Requeridos:</strong> CURP (18 caracteres), Nombre,
+                      Primer Apellido, Teléfono (10 dígitos), Correo.
+                    </li>
+                    <li>
+                      <strong>Opcionales:</strong> Segundo Apellido, Municipio
+                      (ID), Homoclave.
+                    </li>
+                    <li
+                      style={{
+                        listStyleType: 'none',
+                        marginTop: 'var(--space-2)',
+                        color: 'var(--text-secondary)',
+                      }}
+                    >
+                      <em>
+                        * Nota: El Género, Fecha de Nacimiento y Nacionalidad se
+                        obtienen automáticamente a partir de la CURP.
+                      </em>
+                    </li>
+                  </ul>
+                </div>
+              </Panel>
             </div>
+          )}
 
-            <Panel
-              title={`Registros cargados (${totalCount})`}
-              description="Selecciona los registros válidos que deseas registrar en el padrón."
-            >
-              <DataTable
-                columns={columns}
-                rows={tableRows}
-                selectable={true}
-                emptyTitle={m.tableEmpty}
-                onRowSelect$={onRowSelect$}
-                onSelectAll$={onSelectAll$}
-              />
-
-              <div class="import-actions">
-                <Button variant="ghost" onClick$={resetForm$}>
-                  {m.actionCancel}
-                </Button>
-                <Button
-                  variant="primary"
-                  disabled={readyCount === 0 || importing.value}
-                  onClick$={handleImport$}
-                >
-                  {importing.value ? m.actionImporting : m.actionImport}
-                </Button>
+          {/* step 2: review */}
+          {!validating.value && step.value === 'review' && (
+            <div>
+              <div class="import-stats">
+                <div class="import-stat-card valid">
+                  <div class="import-stat-number valid">{validCount}</div>
+                  <div class="import-stat-label">{m.statsValid}</div>
+                </div>
+                <div class="import-stat-card warning">
+                  <div class="import-stat-number warning">{warningCount}</div>
+                  <div class="import-stat-label">{m.statsWarning}</div>
+                </div>
+                <div class="import-stat-card invalid">
+                  <div class="import-stat-number invalid">{invalidCount}</div>
+                  <div class="import-stat-label">{m.statsError}</div>
+                </div>
+                <div class="import-stat-card">
+                  <div class="import-stat-number">{readyCount}</div>
+                  <div class="import-stat-label">{m.statsReady}</div>
+                </div>
               </div>
-            </Panel>
-          </div>
-        )}
 
-        {/* step 3: success */}
-        {!validating.value && step.value === 'success' && (
-          <Panel>
-            <div class="import-success-panel">
-              <div class="import-success-icon">
-                <AppIcon intent="success" size="lg" />
-              </div>
-              <h2>{m.successTitle}</h2>
-              <p>
-                Se han registrado exitosamente {registeredCount.value}{' '}
-                {registeredCount.value === 1 ? 'persona' : 'personas'} en el
-                padrón del sistema.
-              </p>
-              <div class="import-success-actions">
-                <Button onClick$={async () => await nav(ROUTES.PERSONS)}>
-                  {m.successFinish}
-                </Button>
-                <Button variant="ghost" onClick$={resetForm$}>
-                  {m.successUploadAnother}
-                </Button>
-              </div>
-            </div>
-          </Panel>
-        )}
-
-        {/* step 4: error */}
-        {!validating.value && step.value === 'error' && (
-          <Panel>
-            <div class="import-success-panel">
-              <div
-                class="import-success-icon"
-                style={{
-                  backgroundColor: 'var(--color-danger-light)',
-                  color: 'var(--color-danger)',
-                }}
+              <Panel
+                title={`Registros cargados (${totalCount})`}
+                description="Selecciona los registros válidos que deseas registrar en el padrón."
               >
-                <AppIcon intent="cancel" size="lg" />
+                <DataTable
+                  columns={columns}
+                  rows={tableRows}
+                  selectable={true}
+                  emptyTitle={m.tableEmpty}
+                  onRowSelect$={onRowSelect$}
+                  onSelectAll$={onSelectAll$}
+                />
+
+                <div class="import-actions">
+                  <Button variant="ghost" onClick$={resetForm$}>
+                    {m.actionCancel}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    disabled={readyCount === 0 || importing.value}
+                    onClick$={handleImport$}
+                  >
+                    {importing.value ? m.actionImporting : m.actionImport}
+                  </Button>
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {/* step 3: success */}
+          {!validating.value && step.value === 'success' && (
+            <Panel>
+              <div class="import-success-panel">
+                <div class="import-success-icon">
+                  <AppIcon intent="success" size="lg" />
+                </div>
+                <h2>{m.successTitle}</h2>
+                <p>
+                  Se han registrado exitosamente {registeredCount.value}{' '}
+                  {registeredCount.value === 1 ? 'persona' : 'personas'} en el
+                  padrón del sistema.
+                </p>
+                <div class="import-success-actions">
+                  <Button onClick$={async () => await nav(ROUTES.PERSONS)}>
+                    {m.successFinish}
+                  </Button>
+                  <Button variant="ghost" onClick$={resetForm$}>
+                    {m.successUploadAnother}
+                  </Button>
+                </div>
               </div>
-              <h2>{m.errorTitle}</h2>
-              <p style={{ marginBottom: 'var(--space-md)' }}>
-                {m.errorDetails} {errorMsg.value}
-              </p>
-              <div class="import-success-actions">
-                <Button
-                  onClick$={async () => {
-                    step.value = 'review';
+            </Panel>
+          )}
+
+          {/* step 4: error */}
+          {!validating.value && step.value === 'error' && (
+            <Panel>
+              <div class="import-success-panel">
+                <div
+                  class="import-success-icon"
+                  style={{
+                    backgroundColor: 'var(--color-danger-light)',
+                    color: 'var(--color-danger)',
                   }}
                 >
-                  {m.errorBack}
-                </Button>
-                <Button variant="ghost" onClick$={resetForm$}>
-                  {m.errorCancel}
-                </Button>
+                  <AppIcon intent="cancel" size="lg" />
+                </div>
+                <h2>{m.errorTitle}</h2>
+                <p style={{ marginBottom: 'var(--space-md)' }}>
+                  {m.errorDetails} {errorMsg.value}
+                </p>
+                <div class="import-success-actions">
+                  <Button
+                    onClick$={async () => {
+                      step.value = 'review';
+                    }}
+                  >
+                    {m.errorBack}
+                  </Button>
+                  <Button variant="ghost" onClick$={resetForm$}>
+                    {m.errorCancel}
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Panel>
-        )}
+            </Panel>
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );

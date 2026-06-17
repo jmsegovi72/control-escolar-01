@@ -16,7 +16,6 @@ import {
   ConfirmAction,
   Panel,
   Toast,
-  Toolbar,
 } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
@@ -121,104 +120,161 @@ export default component$(() => {
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={m.accessDenied}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={goBack$}
-        >
-          {messages.users.common.backLabel}
-        </Button>
-        <Button
-          q:slot="actions"
-          variant="secondary"
-          iconLeft="search"
-          onClick$={async () => await nav('/users/search')}
-        >
-          {messages.users.common.searchUsersAction}
-        </Button>
-      </Toolbar>
-
       <div class="reset-login-page">
         <ActionHeader title={m.title} onBack$={goBack$} />
 
-        {loading.value && (
-          <Panel title={m.loadingTitle} description={m.loadingDescription}>
-            <div class="reset-login__loading" />
-          </Panel>
-        )}
-
-        {!loading.value && error.value && (
-          <Toast tone="danger" title={m.errorToastTitle}>
-            {error.value}
-          </Toast>
-        )}
-
-        {!loading.value && selectionMode.value && !currentUser && (
-          <UserSearchPanel
-            title={m.selectionTitle}
-            description={m.selectionDescription}
-            fieldHint={m.fieldUserHint}
-            noResultsMessage={m.noResultsCriteria}
-            filters={{ isActive: true, isFirstLogin: false }}
-            badgeField="firstLogin"
-            badgeTrueLabel={m.firstLoginPending}
-            badgeFalseLabel={m.firstLoginCompleted}
-            badgeTrueTone="warning"
-            badgeFalseTone="success"
-            onSelect$={openManualUser$}
-          />
-        )}
-
-        {!loading.value && currentUser && (
-          <>
-            <Panel
-              eyebrow={m.selectedEyebrow}
-              title={currentUser.fullName}
-              description={m.selectedDescription}
-            >
-              <Avatar
-                q:slot="leading"
-                src={resolvePhotoUrl(currentUser)}
-                name={currentUser.fullName}
-                size="xl"
-              />
-              <div class="reset-login__summary">
-                <dl>
-                  <div>
-                    <dt>{m.fieldId}</dt>
-                    <dd>{currentUser.id}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldUser}</dt>
-                    <dd>{currentUser.username}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldRole}</dt>
-                    <dd>{currentUser.roleName}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldFirstLogin}</dt>
-                    <dd>
-                      <Badge
-                        tone={currentUser.firstLogin ? 'warning' : 'success'}
-                      >
-                        {currentUser.firstLogin
-                          ? m.badgePending
-                          : m.badgeCompleted}
-                      </Badge>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+        <div class="reset-login-page__content">
+          {loading.value && (
+            <Panel title={m.loadingTitle} description={m.loadingDescription}>
+              <div class="reset-login__loading" />
             </Panel>
+          )}
 
-            {!resetResult.value && !actionError.value && (
-              <>
+          {!loading.value && error.value && (
+            <Toast tone="danger" title={m.errorToastTitle}>
+              {error.value}
+            </Toast>
+          )}
+
+          {!loading.value && selectionMode.value && !currentUser && (
+            <UserSearchPanel
+              title={m.selectionTitle}
+              description={m.selectionDescription}
+              fieldHint={m.fieldUserHint}
+              noResultsMessage={m.noResultsCriteria}
+              filters={{ isActive: true, isFirstLogin: false }}
+              badgeField="firstLogin"
+              badgeTrueLabel={m.firstLoginPending}
+              badgeFalseLabel={m.firstLoginCompleted}
+              badgeTrueTone="warning"
+              badgeFalseTone="success"
+              onSelect$={openManualUser$}
+            />
+          )}
+
+          {!loading.value && currentUser && (
+            <>
+              <Panel
+                eyebrow={m.selectedEyebrow}
+                title={currentUser.fullName}
+                description={m.selectedDescription}
+              >
+                <Avatar
+                  q:slot="leading"
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="xl"
+                />
+                <div class="reset-login__summary">
+                  <dl>
+                    <div>
+                      <dt>{m.fieldId}</dt>
+                      <dd>{currentUser.id}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldUser}</dt>
+                      <dd>{currentUser.username}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldRole}</dt>
+                      <dd>{currentUser.roleName}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldFirstLogin}</dt>
+                      <dd>
+                        <Badge
+                          tone={currentUser.firstLogin ? 'warning' : 'success'}
+                        >
+                          {currentUser.firstLogin
+                            ? m.badgePending
+                            : m.badgeCompleted}
+                        </Badge>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </Panel>
+
+              {!resetResult.value && !actionError.value && (
+                <>
+                  <Panel
+                    title={m.confirmTitle}
+                    description={m.confirmDescription}
+                  >
+                    <div class="reset-login__actions">
+                      <Button
+                        variant="secondary"
+                        iconLeft="search"
+                        onClick$={async () => await nav('/users/reset-login')}
+                      >
+                        {m.changeUser}
+                      </Button>
+                      <Button
+                        variant="danger"
+                        iconLeft="login-reset"
+                        disabled={saving.value}
+                        onClick$={() => {
+                          confirmOpen.value = true;
+                        }}
+                      >
+                        {m.resetButton}
+                      </Button>
+                    </div>
+                  </Panel>
+
+                  <ConfirmAction
+                    open={confirmOpen.value}
+                    tone="danger"
+                    icon="login-reset"
+                    title={m.confirmDialogTitle}
+                    description={m.confirmDialogDescription.replace(
+                      '{fullName}',
+                      currentUser.fullName,
+                    )}
+                    details={m.confirmDialogDetails}
+                    confirmLabel={m.confirmDialogLabel}
+                    loading={saving.value}
+                    onCancel$={() => {
+                      confirmOpen.value = false;
+                    }}
+                    onConfirm$={resetLogin$}
+                  />
+                </>
+              )}
+
+              {resetResult.value && (
                 <Panel
-                  title={m.confirmTitle}
-                  description={m.confirmDescription}
+                  eyebrow={m.resultEyebrow}
+                  title={
+                    resetResult.value.message ||
+                    messages.users.resetLoginSuccess
+                  }
+                  description={messages.users.resetLoginResultDescription.replace(
+                    '{fullName}',
+                    currentUser.fullName,
+                  )}
+                >
+                  <div class="reset-login__success">
+                    <span>{m.resultTempPasswordLabel}</span>
+                    <strong>{resetResult.value.tempPassword}</strong>
+                  </div>
+                  <div class="reset-login__actions">
+                    <Button
+                      variant="secondary"
+                      iconLeft="search"
+                      onClick$={async () => await nav('/users/reset-login')}
+                    >
+                      {m.resetOther}
+                    </Button>
+                  </div>
+                </Panel>
+              )}
+
+              {actionError.value && (
+                <Panel
+                  eyebrow={m.errorEyebrow}
+                  title={m.errorTitle}
+                  description={actionError.value}
                 >
                   <div class="reset-login__actions">
                     <Button
@@ -226,87 +282,14 @@ export default component$(() => {
                       iconLeft="search"
                       onClick$={async () => await nav('/users/reset-login')}
                     >
-                      {m.changeUser}
-                    </Button>
-                    <Button
-                      variant="danger"
-                      iconLeft="login-reset"
-                      disabled={saving.value}
-                      onClick$={() => {
-                        confirmOpen.value = true;
-                      }}
-                    >
-                      {m.resetButton}
+                      {m.resetOther}
                     </Button>
                   </div>
                 </Panel>
-
-                <ConfirmAction
-                  open={confirmOpen.value}
-                  tone="danger"
-                  icon="login-reset"
-                  title={m.confirmDialogTitle}
-                  description={m.confirmDialogDescription.replace(
-                    '{fullName}',
-                    currentUser.fullName,
-                  )}
-                  details={m.confirmDialogDetails}
-                  confirmLabel={m.confirmDialogLabel}
-                  loading={saving.value}
-                  onCancel$={() => {
-                    confirmOpen.value = false;
-                  }}
-                  onConfirm$={resetLogin$}
-                />
-              </>
-            )}
-
-            {resetResult.value && (
-              <Panel
-                eyebrow={m.resultEyebrow}
-                title={
-                  resetResult.value.message || messages.users.resetLoginSuccess
-                }
-                description={messages.users.resetLoginResultDescription.replace(
-                  '{fullName}',
-                  currentUser.fullName,
-                )}
-              >
-                <div class="reset-login__success">
-                  <span>{m.resultTempPasswordLabel}</span>
-                  <strong>{resetResult.value.tempPassword}</strong>
-                </div>
-                <div class="reset-login__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
-                  >
-                    {m.resetOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-
-            {actionError.value && (
-              <Panel
-                eyebrow={m.errorEyebrow}
-                title={m.errorTitle}
-                description={actionError.value}
-              >
-                <div class="reset-login__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/reset-login')}
-                  >
-                    {m.resetOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );

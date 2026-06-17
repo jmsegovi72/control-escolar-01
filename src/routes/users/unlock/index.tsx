@@ -16,7 +16,6 @@ import {
   ConfirmAction,
   Panel,
   Toast,
-  Toolbar,
 } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
@@ -120,97 +119,165 @@ export default component$(() => {
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={m.accessDenied}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={goBack$}
-        >
-          {messages.users.common.backLabel}
-        </Button>
-        <Button
-          q:slot="actions"
-          variant="secondary"
-          iconLeft="search"
-          onClick$={async () => await nav('/users/search')}
-        >
-          {messages.users.common.searchUsersAction}
-        </Button>
-      </Toolbar>
-
       <div class="unlock-page">
         <ActionHeader title={m.title} onBack$={goBack$} />
 
-        {loading.value && (
-          <Panel title={m.loadingTitle} description={m.loadingDescription}>
-            <div class="unlock__loading" />
-          </Panel>
-        )}
-
-        {!loading.value && error.value && (
-          <Toast tone="danger" title={m.errorToastTitle}>
-            {error.value}
-          </Toast>
-        )}
-
-        {!loading.value && selectionMode.value && !currentUser && (
-          <UserSearchPanel
-            title={m.selectionTitle}
-            description={m.selectionDescription}
-            fieldHint={m.fieldUserHint}
-            noResultsMessage={m.noResultsCriteria}
-            filters={{ isActive: true, isLocked: true }}
-            onSelect$={openManualUser$}
-          />
-        )}
-
-        {!loading.value && currentUser && (
-          <>
-            <Panel
-              eyebrow={m.selectedEyebrow}
-              title={currentUser.fullName}
-              description={m.selectedDescription}
-            >
-              <Avatar
-                q:slot="leading"
-                src={resolvePhotoUrl(currentUser)}
-                name={currentUser.fullName}
-                size="xl"
-              />
-              <div class="unlock__summary">
-                <dl>
-                  <div>
-                    <dt>{m.fieldId}</dt>
-                    <dd>{currentUser.id}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldUser}</dt>
-                    <dd>{currentUser.username}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldRole}</dt>
-                    <dd>{currentUser.roleName}</dd>
-                  </div>
-                  <div>
-                    <dt>{messages.users.detail.resultActive}</dt>
-                    <dd>
-                      <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
-                        {currentUser.isActive
-                          ? messages.users.detail.resultActive
-                          : messages.users.detail.resultInactive}
-                      </Badge>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+        <div class="unlock-page__content">
+          {loading.value && (
+            <Panel title={m.loadingTitle} description={m.loadingDescription}>
+              <div class="unlock__loading" />
             </Panel>
+          )}
 
-            {!unlockResult.value && !actionError.value && (
-              <>
+          {!loading.value && error.value && (
+            <Toast tone="danger" title={m.errorToastTitle}>
+              {error.value}
+            </Toast>
+          )}
+
+          {!loading.value && selectionMode.value && !currentUser && (
+            <UserSearchPanel
+              title={m.selectionTitle}
+              description={m.selectionDescription}
+              fieldHint={m.fieldUserHint}
+              noResultsMessage={m.noResultsCriteria}
+              filters={{ isActive: true, isLocked: true }}
+              onSelect$={openManualUser$}
+            />
+          )}
+
+          {!loading.value && currentUser && (
+            <>
+              <Panel
+                eyebrow={m.selectedEyebrow}
+                title={currentUser.fullName}
+                description={m.selectedDescription}
+              >
+                <Avatar
+                  q:slot="leading"
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="xl"
+                />
+                <div class="unlock__summary">
+                  <dl>
+                    <div>
+                      <dt>{m.fieldId}</dt>
+                      <dd>{currentUser.id}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldUser}</dt>
+                      <dd>{currentUser.username}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldRole}</dt>
+                      <dd>{currentUser.roleName}</dd>
+                    </div>
+                    <div>
+                      <dt>{messages.users.detail.resultActive}</dt>
+                      <dd>
+                        <Badge
+                          tone={currentUser.isActive ? 'success' : 'danger'}
+                        >
+                          {currentUser.isActive
+                            ? messages.users.detail.resultActive
+                            : messages.users.detail.resultInactive}
+                        </Badge>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </Panel>
+
+              {!unlockResult.value && !actionError.value && (
+                <>
+                  <Panel
+                    title={m.confirmTitle}
+                    description={m.confirmDescription}
+                  >
+                    <div class="unlock__actions">
+                      <Button
+                        variant="secondary"
+                        iconLeft="search"
+                        onClick$={async () => await nav('/users/unlock')}
+                      >
+                        {m.changeUser}
+                      </Button>
+                      <Button
+                        variant="primary"
+                        iconLeft="unlock"
+                        disabled={saving.value}
+                        onClick$={() => {
+                          confirmOpen.value = true;
+                        }}
+                      >
+                        {m.unlockButton}
+                      </Button>
+                    </div>
+                  </Panel>
+
+                  <ConfirmAction
+                    open={confirmOpen.value}
+                    tone="neutral"
+                    icon="unlock"
+                    title={m.confirmDialogTitle}
+                    description={m.confirmDialogDescription.replace(
+                      '{fullName}',
+                      currentUser.fullName,
+                    )}
+                    details={m.confirmDialogDetails}
+                    confirmLabel={m.confirmDialogLabel}
+                    loading={saving.value}
+                    onCancel$={() => {
+                      confirmOpen.value = false;
+                    }}
+                    onConfirm$={unlockUser$}
+                  />
+                </>
+              )}
+
+              {unlockResult.value && (
                 <Panel
-                  title={m.confirmTitle}
-                  description={m.confirmDescription}
+                  eyebrow={m.resultEyebrow}
+                  title={unlockResult.value.message || m.resultTitle}
+                  description={m.resultDescription.replace(
+                    '{fullName}',
+                    currentUser.fullName,
+                  )}
+                >
+                  <div class="unlock__result-data">
+                    <dl>
+                      <div>
+                        <dt>{m.resultAttemptsLabel}</dt>
+                        <dd>{unlockResult.value.loginAttempts}</dd>
+                      </div>
+                      <div>
+                        <dt>{m.resultLockedUntilLabel}</dt>
+                        <dd>
+                          {unlockResult.value.lockedUntil
+                            ? unlockResult.value.lockedUntil
+                            : m.resultLockedUntilNone}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <div class="unlock__actions">
+                    <Button
+                      variant="secondary"
+                      iconLeft="search"
+                      onClick$={async () => await nav('/users/unlock')}
+                    >
+                      {m.unlockOther}
+                    </Button>
+                  </div>
+                </Panel>
+              )}
+
+              {actionError.value && (
+                <Panel
+                  eyebrow={m.errorEyebrow}
+                  title={m.errorTitle}
+                  description={actionError.value}
                 >
                   <div class="unlock__actions">
                     <Button
@@ -218,97 +285,14 @@ export default component$(() => {
                       iconLeft="search"
                       onClick$={async () => await nav('/users/unlock')}
                     >
-                      {m.changeUser}
-                    </Button>
-                    <Button
-                      variant="primary"
-                      iconLeft="unlock"
-                      disabled={saving.value}
-                      onClick$={() => {
-                        confirmOpen.value = true;
-                      }}
-                    >
-                      {m.unlockButton}
+                      {m.unlockOther}
                     </Button>
                   </div>
                 </Panel>
-
-                <ConfirmAction
-                  open={confirmOpen.value}
-                  tone="neutral"
-                  icon="unlock"
-                  title={m.confirmDialogTitle}
-                  description={m.confirmDialogDescription.replace(
-                    '{fullName}',
-                    currentUser.fullName,
-                  )}
-                  details={m.confirmDialogDetails}
-                  confirmLabel={m.confirmDialogLabel}
-                  loading={saving.value}
-                  onCancel$={() => {
-                    confirmOpen.value = false;
-                  }}
-                  onConfirm$={unlockUser$}
-                />
-              </>
-            )}
-
-            {unlockResult.value && (
-              <Panel
-                eyebrow={m.resultEyebrow}
-                title={unlockResult.value.message || m.resultTitle}
-                description={m.resultDescription.replace(
-                  '{fullName}',
-                  currentUser.fullName,
-                )}
-              >
-                <div class="unlock__result-data">
-                  <dl>
-                    <div>
-                      <dt>{m.resultAttemptsLabel}</dt>
-                      <dd>{unlockResult.value.loginAttempts}</dd>
-                    </div>
-                    <div>
-                      <dt>{m.resultLockedUntilLabel}</dt>
-                      <dd>
-                        {unlockResult.value.lockedUntil
-                          ? unlockResult.value.lockedUntil
-                          : m.resultLockedUntilNone}
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-                <div class="unlock__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/unlock')}
-                  >
-                    {m.unlockOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-
-            {actionError.value && (
-              <Panel
-                eyebrow={m.errorEyebrow}
-                title={m.errorTitle}
-                description={actionError.value}
-              >
-                <div class="unlock__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/unlock')}
-                  >
-                    {m.unlockOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );

@@ -16,7 +16,6 @@ import {
   ConfirmAction,
   Panel,
   Toast,
-  Toolbar,
 } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
@@ -122,107 +121,183 @@ export default component$(() => {
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={m.accessDenied}
     >
-      <Toolbar q:slot="toolbar">
-        <Button
-          q:slot="leading"
-          variant="ghost"
-          iconLeft="back"
-          onClick$={goBack$}
-        >
-          {messages.users.common.backLabel}
-        </Button>
-        <Button
-          q:slot="actions"
-          variant="secondary"
-          iconLeft="search"
-          onClick$={async () => await nav('/users/search')}
-        >
-          {messages.users.common.searchUsersAction}
-        </Button>
-      </Toolbar>
-
       <div class="toggle-page">
         <ActionHeader title={m.title} onBack$={goBack$} />
 
-        {loading.value && (
-          <Panel title={m.loadingTitle} description={m.loadingDescription}>
-            <div class="toggle__loading" />
-          </Panel>
-        )}
-
-        {!loading.value && error.value && (
-          <Toast tone="danger" title={m.errorToastTitle}>
-            {error.value}
-          </Toast>
-        )}
-
-        {!loading.value && selectionMode.value && !currentUser && (
-          <UserSearchPanel
-            title={m.selectionTitle}
-            description={m.selectionDescription}
-            fieldHint={m.fieldUserHint}
-            noResultsMessage={m.noResultsCriteria}
-            badgeField="isActive"
-            badgeTrueLabel={m.badgeActive}
-            badgeFalseLabel={m.badgeInactive}
-            badgeTrueTone="success"
-            badgeFalseTone="danger"
-            onSelect$={openManualUser$}
-          />
-        )}
-
-        {!loading.value && currentUser && (
-          <>
-            <Panel
-              eyebrow={m.selectedEyebrow}
-              title={currentUser.fullName}
-              description={m.selectedDescription}
-            >
-              <Avatar
-                q:slot="leading"
-                src={resolvePhotoUrl(currentUser)}
-                name={currentUser.fullName}
-                size="xl"
-              />
-              <div class="toggle__summary">
-                <dl>
-                  <div>
-                    <dt>{m.fieldId}</dt>
-                    <dd>{currentUser.id}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldUser}</dt>
-                    <dd>{currentUser.username}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldRole}</dt>
-                    <dd>{currentUser.roleName}</dd>
-                  </div>
-                  <div>
-                    <dt>{m.fieldStatus}</dt>
-                    <dd>
-                      <Badge tone={currentUser.isActive ? 'success' : 'danger'}>
-                        {currentUser.isActive ? m.badgeActive : m.badgeInactive}
-                      </Badge>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+        <div class="toggle-page__content">
+          {loading.value && (
+            <Panel title={m.loadingTitle} description={m.loadingDescription}>
+              <div class="toggle__loading" />
             </Panel>
+          )}
 
-            {!toggleResult.value && !actionError.value && (
-              <>
+          {!loading.value && error.value && (
+            <Toast tone="danger" title={m.errorToastTitle}>
+              {error.value}
+            </Toast>
+          )}
+
+          {!loading.value && selectionMode.value && !currentUser && (
+            <UserSearchPanel
+              title={m.selectionTitle}
+              description={m.selectionDescription}
+              fieldHint={m.fieldUserHint}
+              noResultsMessage={m.noResultsCriteria}
+              badgeField="isActive"
+              badgeTrueLabel={m.badgeActive}
+              badgeFalseLabel={m.badgeInactive}
+              badgeTrueTone="success"
+              badgeFalseTone="danger"
+              onSelect$={openManualUser$}
+            />
+          )}
+
+          {!loading.value && currentUser && (
+            <>
+              <Panel
+                eyebrow={m.selectedEyebrow}
+                title={currentUser.fullName}
+                description={m.selectedDescription}
+              >
+                <Avatar
+                  q:slot="leading"
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="xl"
+                />
+                <div class="toggle__summary">
+                  <dl>
+                    <div>
+                      <dt>{m.fieldId}</dt>
+                      <dd>{currentUser.id}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldUser}</dt>
+                      <dd>{currentUser.username}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldRole}</dt>
+                      <dd>{currentUser.roleName}</dd>
+                    </div>
+                    <div>
+                      <dt>{m.fieldStatus}</dt>
+                      <dd>
+                        <Badge
+                          tone={currentUser.isActive ? 'success' : 'danger'}
+                        >
+                          {currentUser.isActive
+                            ? m.badgeActive
+                            : m.badgeInactive}
+                        </Badge>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </Panel>
+
+              {!toggleResult.value && !actionError.value && (
+                <>
+                  <Panel
+                    title={
+                      willDeactivate
+                        ? m.confirmTitleDeactivate
+                        : m.confirmTitleActivate
+                    }
+                    description={
+                      willDeactivate
+                        ? m.confirmDescriptionDeactivate
+                        : m.confirmDescriptionActivate
+                    }
+                  >
+                    <div class="toggle__actions">
+                      <Button
+                        variant="secondary"
+                        iconLeft="search"
+                        onClick$={async () => await nav('/users/toggle')}
+                      >
+                        {m.changeUser}
+                      </Button>
+                      <Button
+                        variant={willDeactivate ? 'danger' : 'primary'}
+                        iconLeft="toggle"
+                        disabled={saving.value}
+                        onClick$={() => {
+                          confirmOpen.value = true;
+                        }}
+                      >
+                        {willDeactivate ? m.deactivateButton : m.activateButton}
+                      </Button>
+                    </div>
+                  </Panel>
+
+                  <ConfirmAction
+                    open={confirmOpen.value}
+                    tone={willDeactivate ? 'danger' : 'neutral'}
+                    icon="toggle"
+                    title={
+                      willDeactivate
+                        ? m.confirmDialogTitleDeactivate
+                        : m.confirmDialogTitleActivate
+                    }
+                    description={(willDeactivate
+                      ? m.confirmDialogDescriptionDeactivate
+                      : m.confirmDialogDescriptionActivate
+                    ).replace('{fullName}', currentUser.fullName)}
+                    details={m.confirmDialogDetails}
+                    confirmLabel={
+                      willDeactivate
+                        ? m.confirmDialogLabelDeactivate
+                        : m.confirmDialogLabelActivate
+                    }
+                    loading={saving.value}
+                    onCancel$={() => {
+                      confirmOpen.value = false;
+                    }}
+                    onConfirm$={toggleUser$}
+                  />
+                </>
+              )}
+
+              {toggleResult.value && (
                 <Panel
+                  eyebrow={m.resultEyebrow}
                   title={
-                    willDeactivate
-                      ? m.confirmTitleDeactivate
-                      : m.confirmTitleActivate
+                    toggleResult.value.message ||
+                    (toggleResult.value.isActive
+                      ? m.resultTitleActivated
+                      : m.resultTitleDeactivated)
                   }
-                  description={
-                    willDeactivate
-                      ? m.confirmDescriptionDeactivate
-                      : m.confirmDescriptionActivate
-                  }
+                  description={(toggleResult.value.isActive
+                    ? m.resultDescriptionActivated
+                    : m.resultDescriptionDeactivated
+                  ).replace('{fullName}', currentUser.fullName)}
+                >
+                  <div class="toggle__result-summary">
+                    <Badge
+                      tone={toggleResult.value.isActive ? 'success' : 'danger'}
+                    >
+                      {toggleResult.value.isActive
+                        ? m.badgeActive
+                        : m.badgeInactive}
+                    </Badge>
+                  </div>
+                  <div class="toggle__actions">
+                    <Button
+                      variant="secondary"
+                      iconLeft="search"
+                      onClick$={async () => await nav('/users/toggle')}
+                    >
+                      {m.toggleOther}
+                    </Button>
+                  </div>
+                </Panel>
+              )}
+
+              {actionError.value && (
+                <Panel
+                  eyebrow={m.errorEyebrow}
+                  title={m.errorTitle}
+                  description={actionError.value}
                 >
                   <div class="toggle__actions">
                     <Button
@@ -230,103 +305,14 @@ export default component$(() => {
                       iconLeft="search"
                       onClick$={async () => await nav('/users/toggle')}
                     >
-                      {m.changeUser}
-                    </Button>
-                    <Button
-                      variant={willDeactivate ? 'danger' : 'primary'}
-                      iconLeft="toggle"
-                      disabled={saving.value}
-                      onClick$={() => {
-                        confirmOpen.value = true;
-                      }}
-                    >
-                      {willDeactivate ? m.deactivateButton : m.activateButton}
+                      {m.toggleOther}
                     </Button>
                   </div>
                 </Panel>
-
-                <ConfirmAction
-                  open={confirmOpen.value}
-                  tone={willDeactivate ? 'danger' : 'neutral'}
-                  icon="toggle"
-                  title={
-                    willDeactivate
-                      ? m.confirmDialogTitleDeactivate
-                      : m.confirmDialogTitleActivate
-                  }
-                  description={(willDeactivate
-                    ? m.confirmDialogDescriptionDeactivate
-                    : m.confirmDialogDescriptionActivate
-                  ).replace('{fullName}', currentUser.fullName)}
-                  details={m.confirmDialogDetails}
-                  confirmLabel={
-                    willDeactivate
-                      ? m.confirmDialogLabelDeactivate
-                      : m.confirmDialogLabelActivate
-                  }
-                  loading={saving.value}
-                  onCancel$={() => {
-                    confirmOpen.value = false;
-                  }}
-                  onConfirm$={toggleUser$}
-                />
-              </>
-            )}
-
-            {toggleResult.value && (
-              <Panel
-                eyebrow={m.resultEyebrow}
-                title={
-                  toggleResult.value.message ||
-                  (toggleResult.value.isActive
-                    ? m.resultTitleActivated
-                    : m.resultTitleDeactivated)
-                }
-                description={(toggleResult.value.isActive
-                  ? m.resultDescriptionActivated
-                  : m.resultDescriptionDeactivated
-                ).replace('{fullName}', currentUser.fullName)}
-              >
-                <div class="toggle__result-summary">
-                  <Badge
-                    tone={toggleResult.value.isActive ? 'success' : 'danger'}
-                  >
-                    {toggleResult.value.isActive
-                      ? m.badgeActive
-                      : m.badgeInactive}
-                  </Badge>
-                </div>
-                <div class="toggle__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/toggle')}
-                  >
-                    {m.toggleOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-
-            {actionError.value && (
-              <Panel
-                eyebrow={m.errorEyebrow}
-                title={m.errorTitle}
-                description={actionError.value}
-              >
-                <div class="toggle__actions">
-                  <Button
-                    variant="secondary"
-                    iconLeft="search"
-                    onClick$={async () => await nav('/users/toggle')}
-                  >
-                    {m.toggleOther}
-                  </Button>
-                </div>
-              </Panel>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </div>
     </AuthenticatedShell>
   );
