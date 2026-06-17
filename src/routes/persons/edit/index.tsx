@@ -523,7 +523,7 @@ export default component$(() => {
             <div class="edit-person-actions">
               <Button
                 variant="secondary"
-                onClick$={async () => await nav(ROUTES.PERSONS)}
+                onClick$={async () => await nav(ROUTES.PERSONS_EDIT)}
               >
                 {m.actionCancel}
               </Button>
