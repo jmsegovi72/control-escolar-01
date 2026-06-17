@@ -1,15 +1,6 @@
 .toggle-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin: calc(var(--space-4) * -1);
-  background: var(--color-bg);
-}
-
-.toggle-page__content {
   display: grid;
   gap: var(--space-4);
-  padding: var(--space-8) var(--space-4);
 }
 
 .toggle__result-summary {

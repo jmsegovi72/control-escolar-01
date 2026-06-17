@@ -20,6 +20,7 @@ import {
   Panel,
   Select,
   Toast,
+  Toolbar,
 } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { resolvePhotoUrl } from '~/utils/user-photo';
@@ -189,197 +190,205 @@ export default component$(() => {
       allowedUserTypes={['SUPER']}
       accessDeniedDescription={messages.users.edit.accessDenied}
     >
+      <Toolbar q:slot="toolbar">
+        <Button
+          q:slot="leading"
+          variant="ghost"
+          iconLeft="back"
+          onClick$={goBack$}
+        >
+          {messages.users.common.backLabel}
+        </Button>
+        <span q:slot="center">{messages.users.edit.toolbarCenter}</span>
+      </Toolbar>
+
       <div class="edit-user-page">
         <ActionHeader
           title={messages.users.edit.title}
           onBack$={async () => await nav(ROUTES.USERS)}
         />
 
-        <div class="edit-user-page__content">
-          {error.value && (
-            <Toast tone="danger" title={messages.users.common.errorToastTitle}>
-              {error.value}
-            </Toast>
-          )}
+        {error.value && (
+          <Toast tone="danger" title={messages.users.common.errorToastTitle}>
+            {error.value}
+          </Toast>
+        )}
 
-          {success.value && (
-            <Toast tone="success" title={messages.users.edit.successToastTitle}>
-              {messages.users.edit.successToastDescription}
-            </Toast>
-          )}
+        {success.value && (
+          <Toast tone="success" title={messages.users.edit.successToastTitle}>
+            {messages.users.edit.successToastDescription}
+          </Toast>
+        )}
 
-          {loading.value && (
+        {loading.value && (
+          <Panel
+            title={messages.users.common.loadingTitle}
+            description={messages.users.common.loadingDescription}
+          >
+            <div class="edit-user__loading" />
+          </Panel>
+        )}
+
+        {!loading.value && selectionMode.value && !currentUser && (
+          <UserSearchPanel
+            title={messages.users.edit.selectionTitle}
+            description={messages.users.edit.selectionDescription}
+            fieldHint={messages.users.common.fieldUserHint}
+            noResultsMessage={messages.users.common.noResultsCriteria}
+            badgeField="isActive"
+            badgeTrueLabel={messages.users.detail.resultActive}
+            badgeFalseLabel={messages.users.detail.resultInactive}
+            badgeTrueTone="success"
+            badgeFalseTone="danger"
+            onSelect$={openManualEdit$}
+          />
+        )}
+
+        {!loading.value && currentUser && (
+          <div class="edit-user-layout">
             <Panel
-              title={messages.users.common.loadingTitle}
-              description={messages.users.common.loadingDescription}
+              title={messages.users.edit.panelPersonTitle}
+              description={messages.users.edit.panelPersonDescription}
             >
-              <div class="edit-user__loading" />
-            </Panel>
-          )}
-
-          {!loading.value && selectionMode.value && !currentUser && (
-            <UserSearchPanel
-              title={messages.users.edit.selectionTitle}
-              description={messages.users.edit.selectionDescription}
-              fieldHint={messages.users.common.fieldUserHint}
-              noResultsMessage={messages.users.common.noResultsCriteria}
-              badgeField="isActive"
-              badgeTrueLabel={messages.users.detail.resultActive}
-              badgeFalseLabel={messages.users.detail.resultInactive}
-              badgeTrueTone="success"
-              badgeFalseTone="danger"
-              onSelect$={openManualEdit$}
-            />
-          )}
-
-          {!loading.value && currentUser && (
-            <div class="edit-user-layout">
-              <Panel
-                title={messages.users.edit.panelPersonTitle}
-                description={messages.users.edit.panelPersonDescription}
-              >
-                <div class="edit-user-person">
-                  <Avatar
-                    src={resolvePhotoUrl(currentUser)}
-                    name={currentUser.fullName}
-                    size="sm"
-                  />
-                  <div>
-                    <strong>{currentUser.fullName}</strong>
-                    <span>{currentUser.username}</span>
-                    <small>ID registro: {currentUser.id}</small>
-                  </div>
+              <div class="edit-user-person">
+                <Avatar
+                  src={resolvePhotoUrl(currentUser)}
+                  name={currentUser.fullName}
+                  size="sm"
+                />
+                <div>
+                  <strong>{currentUser.fullName}</strong>
+                  <span>{currentUser.username}</span>
+                  <small>ID registro: {currentUser.id}</small>
                 </div>
-              </Panel>
+              </div>
+            </Panel>
 
-              <Panel
-                title={messages.users.edit.panelAccessTitle}
-                description={messages.users.edit.panelAccessDescription}
-              >
-                <div class="edit-user-form">
+            <Panel
+              title={messages.users.edit.panelAccessTitle}
+              description={messages.users.edit.panelAccessDescription}
+            >
+              <div class="edit-user-form">
+                <Field
+                  label={messages.users.edit.labelUsername}
+                  error={
+                    errorField.value === 'username'
+                      ? messages.users.edit.errorUsernameInvalid
+                      : undefined
+                  }
+                >
+                  <Input
+                    iconLeft="mail"
+                    value={username.value}
+                    invalid={errorField.value === 'username'}
+                    placeholder={messages.users.edit.placeholderUsername}
+                    onInput$={(event) => {
+                      username.value = (event.target as HTMLInputElement).value;
+                    }}
+                  />
+                </Field>
+
+                <div class="edit-user-grid">
                   <Field
-                    label={messages.users.edit.labelUsername}
+                    label={messages.users.edit.labelRole}
                     error={
-                      errorField.value === 'username'
-                        ? messages.users.edit.errorUsernameInvalid
+                      errorField.value === 'roleId'
+                        ? messages.users.edit.errorRoleRequired
                         : undefined
                     }
                   >
-                    <Input
-                      iconLeft="mail"
-                      value={username.value}
-                      invalid={errorField.value === 'username'}
-                      placeholder={messages.users.edit.placeholderUsername}
-                      onInput$={(event) => {
-                        username.value = (
-                          event.target as HTMLInputElement
-                        ).value;
+                    <Select
+                      iconLeft="user-settings"
+                      value={roleId.value ? String(roleId.value) : ''}
+                      options={roleOptions}
+                      placeholder={messages.users.edit.placeholderRole}
+                      invalid={errorField.value === 'roleId'}
+                      onChange$={(value) => {
+                        roleId.value = Number(value);
                       }}
                     />
                   </Field>
 
-                  <div class="edit-user-grid">
-                    <Field
-                      label={messages.users.edit.labelRole}
-                      error={
-                        errorField.value === 'roleId'
-                          ? messages.users.edit.errorRoleRequired
-                          : undefined
-                      }
-                    >
-                      <Select
-                        iconLeft="user-settings"
-                        value={roleId.value ? String(roleId.value) : ''}
-                        options={roleOptions}
-                        placeholder={messages.users.edit.placeholderRole}
-                        invalid={errorField.value === 'roleId'}
-                        onChange$={(value) => {
-                          roleId.value = Number(value);
-                        }}
-                      />
-                    </Field>
-
-                    <Field
-                      label={messages.users.edit.labelUserType}
-                      error={
-                        errorField.value === 'userTypeId'
-                          ? messages.users.edit.errorUserTypeRequired
-                          : undefined
-                      }
-                    >
-                      <Select
-                        iconLeft="person"
-                        value={userTypeId.value ? String(userTypeId.value) : ''}
-                        options={userTypeOptions}
-                        placeholder={messages.users.edit.placeholderUserType}
-                        invalid={errorField.value === 'userTypeId'}
-                        onChange$={(value) => {
-                          userTypeId.value = Number(value);
-                        }}
-                      />
-                    </Field>
-                  </div>
-                </div>
-              </Panel>
-
-              <Panel
-                title={messages.users.edit.panelPhotoTitle}
-                description={messages.users.edit.panelPhotoDescription}
-              >
-                <div class="edit-user-photo">
-                  <div class="edit-user-photo__preview">
-                    <img src={photoPreview.value} alt="Vista previa" />
-                  </div>
-                  <div>
-                    <input
-                      id="user-photo"
-                      class="edit-user-photo__input"
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      onChange$={(event) => {
-                        const file = (event.target as HTMLInputElement)
-                          .files?.[0];
-                        if (!file) return;
-                        photoFile.value = file;
-                        photoPreview.value = URL.createObjectURL(file);
+                  <Field
+                    label={messages.users.edit.labelUserType}
+                    error={
+                      errorField.value === 'userTypeId'
+                        ? messages.users.edit.errorUserTypeRequired
+                        : undefined
+                    }
+                  >
+                    <Select
+                      iconLeft="person"
+                      value={userTypeId.value ? String(userTypeId.value) : ''}
+                      options={userTypeOptions}
+                      placeholder={messages.users.edit.placeholderUserType}
+                      invalid={errorField.value === 'userTypeId'}
+                      onChange$={(value) => {
+                        userTypeId.value = Number(value);
                       }}
                     />
-                    <label class="edit-user-photo__button" for="user-photo">
-                      {photoPreview.value
-                        ? messages.users.edit.photoChange
-                        : messages.users.edit.photoUpload}
-                    </label>
-                    {photoFile.value && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick$={() => {
-                          photoFile.value = null;
-                          photoPreview.value = resolvePhotoUrl(currentUser);
-                        }}
-                      >
-                        {messages.users.edit.photoRestore}
-                      </Button>
-                    )}
-                  </div>
+                  </Field>
                 </div>
-              </Panel>
-
-              <div class="edit-user-actions">
-                <Button variant="secondary" onClick$={goBack$}>
-                  {messages.users.edit.actionCancel}
-                </Button>
-                <Button
-                  iconLeft="save"
-                  loading={saving.value}
-                  onClick$={saveChanges$}
-                >
-                  {messages.users.edit.actionSave}
-                </Button>
               </div>
+            </Panel>
+
+            <Panel
+              title={messages.users.edit.panelPhotoTitle}
+              description={messages.users.edit.panelPhotoDescription}
+            >
+              <div class="edit-user-photo">
+                <div class="edit-user-photo__preview">
+                  <img src={photoPreview.value} alt="Vista previa" />
+                </div>
+                <div>
+                  <input
+                    id="user-photo"
+                    class="edit-user-photo__input"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange$={(event) => {
+                      const file = (event.target as HTMLInputElement)
+                        .files?.[0];
+                      if (!file) return;
+                      photoFile.value = file;
+                      photoPreview.value = URL.createObjectURL(file);
+                    }}
+                  />
+                  <label class="edit-user-photo__button" for="user-photo">
+                    {photoPreview.value
+                      ? messages.users.edit.photoChange
+                      : messages.users.edit.photoUpload}
+                  </label>
+                  {photoFile.value && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick$={() => {
+                        photoFile.value = null;
+                        photoPreview.value = resolvePhotoUrl(currentUser);
+                      }}
+                    >
+                      {messages.users.edit.photoRestore}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Panel>
+
+            <div class="edit-user-actions">
+              <Button variant="secondary" onClick$={goBack$}>
+                {messages.users.edit.actionCancel}
+              </Button>
+              <Button
+                iconLeft="save"
+                loading={saving.value}
+                onClick$={saveChanges$}
+              >
+                {messages.users.edit.actionSave}
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </AuthenticatedShell>
   );

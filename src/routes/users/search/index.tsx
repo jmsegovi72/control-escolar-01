@@ -22,6 +22,7 @@ import {
   Input,
   Panel,
   Select,
+  Toolbar,
 } from '~/ui';
 import type {
   DataTableAction,
@@ -373,180 +374,196 @@ export default component$(() => {
       accessDeniedDescription={messages.users.search.accessDenied}
       fullWidth
     >
+      <Toolbar q:slot="toolbar">
+        <Button
+          q:slot="leading"
+          variant="ghost"
+          iconLeft="back"
+          onClick$={async () => await nav(ROUTES.USERS)}
+        >
+          {messages.users.search.toolbarBack}
+        </Button>
+        <span q:slot="center">{messages.users.search.toolbarCenter}</span>
+        {canWriteUsers.value && (
+          <Button
+            q:slot="actions"
+            iconLeft="add"
+            onClick$={async () => await nav(ROUTES.USERS_CREATE)}
+          >
+            {messages.users.search.newUser}
+          </Button>
+        )}
+      </Toolbar>
+
       <div class="users-search">
         <ActionHeader
           title={messages.users.search.title}
           onBack$={async () => await nav(ROUTES.USERS)}
         />
 
-        <div class="users-search__content">
-          <Panel
-            title={messages.users.search.filterPanelTitle}
-            description={messages.users.search.filterPanelDescription}
-            density="compact"
+        <Panel
+          title={messages.users.search.filterPanelTitle}
+          description={messages.users.search.filterPanelDescription}
+          density="compact"
+        >
+          <form
+            preventdefault:submit
+            onSubmit$={async () => {
+              if (loading.value) return;
+              page.value = 1;
+              await searchUsers$();
+            }}
           >
-            <form
-              preventdefault:submit
-              onSubmit$={async () => {
-                if (loading.value) return;
-                page.value = 1;
-                await searchUsers$();
-              }}
-            >
-              <div class="users-search__filters">
-                <Field label={messages.users.search.filterGlobalLabel}>
-                  <Input
-                    iconLeft="search"
-                    placeholder={messages.users.search.filterGlobalPlaceholder}
-                    value={searchTerm.value}
-                    onInput$={(event) => {
-                      searchTerm.value = (
-                        event.target as HTMLInputElement
-                      ).value;
-                    }}
-                  />
-                </Field>
+            <div class="users-search__filters">
+              <Field label={messages.users.search.filterGlobalLabel}>
+                <Input
+                  iconLeft="search"
+                  placeholder={messages.users.search.filterGlobalPlaceholder}
+                  value={searchTerm.value}
+                  onInput$={(event) => {
+                    searchTerm.value = (event.target as HTMLInputElement).value;
+                  }}
+                />
+              </Field>
 
-                <Field label={messages.users.search.filterNameLabel}>
-                  <Input
-                    iconLeft="person"
-                    placeholder={messages.users.search.filterNamePlaceholder}
-                    value={fullName.value}
-                    onInput$={(event) => {
-                      fullName.value = (event.target as HTMLInputElement).value;
-                    }}
-                  />
-                </Field>
+              <Field label={messages.users.search.filterNameLabel}>
+                <Input
+                  iconLeft="person"
+                  placeholder={messages.users.search.filterNamePlaceholder}
+                  value={fullName.value}
+                  onInput$={(event) => {
+                    fullName.value = (event.target as HTMLInputElement).value;
+                  }}
+                />
+              </Field>
 
-                <Field label={messages.users.search.filterRoleLabel}>
-                  <Select
-                    iconLeft="user-settings"
-                    value={roleName.value}
-                    options={[
-                      {
-                        value: '',
-                        label: messages.users.search.filterRolePlaceholder,
-                      },
-                      ...roleOptions.value,
-                    ]}
-                    placeholder={messages.users.search.filterRolePlaceholder}
-                    onChange$={(value) => {
-                      roleName.value = value;
-                    }}
-                  />
-                </Field>
+              <Field label={messages.users.search.filterRoleLabel}>
+                <Select
+                  iconLeft="user-settings"
+                  value={roleName.value}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterRolePlaceholder,
+                    },
+                    ...roleOptions.value,
+                  ]}
+                  placeholder={messages.users.search.filterRolePlaceholder}
+                  onChange$={(value) => {
+                    roleName.value = value;
+                  }}
+                />
+              </Field>
 
-                <Field label={messages.users.search.filterTypeLabel}>
-                  <Select
-                    iconLeft="person"
-                    value={userTypeName.value}
-                    options={[
-                      {
-                        value: '',
-                        label: messages.users.search.filterTypePlaceholder,
-                      },
-                      ...userTypeOptions.value,
-                    ]}
-                    placeholder={messages.users.search.filterTypePlaceholder}
-                    onChange$={(value) => {
-                      userTypeName.value = value;
-                    }}
-                  />
-                </Field>
+              <Field label={messages.users.search.filterTypeLabel}>
+                <Select
+                  iconLeft="person"
+                  value={userTypeName.value}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterTypePlaceholder,
+                    },
+                    ...userTypeOptions.value,
+                  ]}
+                  placeholder={messages.users.search.filterTypePlaceholder}
+                  onChange$={(value) => {
+                    userTypeName.value = value;
+                  }}
+                />
+              </Field>
 
-                <Field label={messages.users.search.filterStatusLabel}>
-                  <Select
-                    iconLeft="toggle"
-                    value={isActive.value}
-                    options={[
-                      {
-                        value: '',
-                        label: messages.users.search.filterStatusPlaceholder,
-                      },
-                      ...activeOptions.value,
-                    ]}
-                    placeholder={messages.users.search.filterStatusPlaceholder}
-                    onChange$={(value) => {
-                      isActive.value = value;
-                    }}
-                  />
-                </Field>
+              <Field label={messages.users.search.filterStatusLabel}>
+                <Select
+                  iconLeft="toggle"
+                  value={isActive.value}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterStatusPlaceholder,
+                    },
+                    ...activeOptions.value,
+                  ]}
+                  placeholder={messages.users.search.filterStatusPlaceholder}
+                  onChange$={(value) => {
+                    isActive.value = value;
+                  }}
+                />
+              </Field>
 
-                <Field label={messages.users.search.filterFirstLoginLabel}>
-                  <Select
-                    iconLeft="lock"
-                    value={isFirstLogin.value}
-                    options={[
-                      {
-                        value: '',
-                        label:
-                          messages.users.search.filterFirstLoginPlaceholder,
-                      },
-                      ...firstLoginOptions.value,
-                    ]}
-                    placeholder={
-                      messages.users.search.filterFirstLoginPlaceholder
-                    }
-                    onChange$={(value) => {
-                      isFirstLogin.value = value;
-                    }}
-                  />
-                </Field>
-              </div>
+              <Field label={messages.users.search.filterFirstLoginLabel}>
+                <Select
+                  iconLeft="lock"
+                  value={isFirstLogin.value}
+                  options={[
+                    {
+                      value: '',
+                      label: messages.users.search.filterFirstLoginPlaceholder,
+                    },
+                    ...firstLoginOptions.value,
+                  ]}
+                  placeholder={
+                    messages.users.search.filterFirstLoginPlaceholder
+                  }
+                  onChange$={(value) => {
+                    isFirstLogin.value = value;
+                  }}
+                />
+              </Field>
+            </div>
 
-              <div class="users-search__actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  iconLeft="cancel"
-                  onClick$={clearFilters$}
-                >
-                  {messages.users.search.clearButton}
-                </Button>
-                <Button type="submit" iconLeft="search" loading={loading.value}>
-                  {messages.users.search.searchButton}
-                </Button>
-              </div>
-            </form>
+            <div class="users-search__actions">
+              <Button
+                type="button"
+                variant="secondary"
+                iconLeft="cancel"
+                onClick$={clearFilters$}
+              >
+                {messages.users.search.clearButton}
+              </Button>
+              <Button type="submit" iconLeft="search" loading={loading.value}>
+                {messages.users.search.searchButton}
+              </Button>
+            </div>
+          </form>
+        </Panel>
+
+        {error.value && (
+          <Panel
+            variant="outlined"
+            title={messages.users.search.errorPanelTitle}
+          >
+            {error.value}
           </Panel>
+        )}
 
-          {error.value && (
-            <Panel
-              variant="outlined"
-              title={messages.users.search.errorPanelTitle}
-            >
-              {error.value}
-            </Panel>
-          )}
-
-          {searched.value && (
-            <DataTable
-              columns={columns}
-              rows={rows.value}
-              actions={actions}
-              actionMode="menu"
-              pagination={{
-                page: page.value,
-                limit: limit.value,
-                total: total.value,
-              }}
-              loading={loading.value}
-              searchable={false}
-              stickyHeader
-              emptyTitle={messages.users.search.tableEmptyTitle}
-              emptyDescription={messages.users.search.tableEmptyDescription}
-              onPage$={$(async (nextPage) => {
-                page.value = nextPage;
-                updateRows$();
-              })}
-              onLimit$={$(async (nextLimit) => {
-                limit.value = nextLimit;
-                page.value = 1;
-                updateRows$();
-              })}
-            />
-          )}
-        </div>
+        {searched.value && (
+          <DataTable
+            columns={columns}
+            rows={rows.value}
+            actions={actions}
+            actionMode="menu"
+            pagination={{
+              page: page.value,
+              limit: limit.value,
+              total: total.value,
+            }}
+            loading={loading.value}
+            searchable={false}
+            stickyHeader
+            emptyTitle={messages.users.search.tableEmptyTitle}
+            emptyDescription={messages.users.search.tableEmptyDescription}
+            onPage$={$(async (nextPage) => {
+              page.value = nextPage;
+              updateRows$();
+            })}
+            onLimit$={$(async (nextLimit) => {
+              limit.value = nextLimit;
+              page.value = 1;
+              updateRows$();
+            })}
+          />
+        )}
       </div>
     </AuthenticatedShell>
   );

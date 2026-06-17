@@ -31,6 +31,7 @@ import {
   Select,
   SelectionStep,
   Toast,
+  Toolbar,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
@@ -241,301 +242,307 @@ export default component$(() => {
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
     >
+      <Toolbar q:slot="toolbar">
+        <Button
+          q:slot="leading"
+          variant="ghost"
+          iconLeft="back"
+          onClick$={goBack$}
+        >
+          {m.toolbarBack}
+        </Button>
+        <span q:slot="center">{m.toolbarCenter}</span>
+      </Toolbar>
+
       <div class="edit-address-page">
         <ActionHeader title={m.title} onBack$={goBack$} />
 
-        <div class="edit-address-page__content">
-          {error.value && !errorField.value && (
-            <Toast tone="danger" title="Error">
-              {error.value}
-            </Toast>
-          )}
+        {error.value && !errorField.value && (
+          <Toast tone="danger" title="Error">
+            {error.value}
+          </Toast>
+        )}
 
-          {success.value && (
-            <Toast tone="success" title={m.successToastTitle}>
-              {m.successToastDescription}
-            </Toast>
-          )}
+        {success.value && (
+          <Toast tone="success" title={m.successToastTitle}>
+            {m.successToastDescription}
+          </Toast>
+        )}
 
-          {/* ── Cargando ── */}
-          {loading.value && (
-            <Panel title={m.loadingTitle} description={m.loadingDescription}>
-              <div class="edit-address__loading" />
-            </Panel>
-          )}
+        {/* ── Cargando ── */}
+        {loading.value && (
+          <Panel title={m.loadingTitle} description={m.loadingDescription}>
+            <div class="edit-address__loading" />
+          </Panel>
+        )}
 
-          {/* ── Modo selección: buscar persona ── */}
-          {!loading.value && selectionMode.value && (
-            <>
-              <SelectionStep
-                title={m.selectionTitle}
-                description={m.selectionDescription}
-                fieldLabel={mc.personSearchLabel}
-                fieldHint={m.fieldPersonHint}
-                placeholder={m.personSearchPlaceholder}
-                emptyMessage={m.noResultsCriteria}
-                query={personQuery.value}
-                options={personResults.value.map((p) => ({
-                  value: String(p.id),
-                  label: p.fullName,
-                  description: p.curp,
-                }))}
-                loading={searchingPerson.value}
-                onQueryChange$={(q) => {
-                  personQuery.value = q;
-                  noAddressForPerson.value = '';
-                }}
-                onSelect$={$(async (option) => {
-                  const person = personResults.value.find(
-                    (p) => p.id === Number(option.value),
-                  );
-                  if (!person) return;
-                  const found = await addressService.findOne(person.curp);
-                  if (found) {
-                    await nav(`${ROUTES.ADDRESSES_EDIT}?id=${found.id}`);
-                  } else {
-                    noAddressForPerson.value = person.fullName;
-                  }
-                })}
-              />
+        {/* ── Modo selección: buscar persona ── */}
+        {!loading.value && selectionMode.value && (
+          <>
+            <SelectionStep
+              title={m.selectionTitle}
+              description={m.selectionDescription}
+              fieldLabel={mc.personSearchLabel}
+              fieldHint={m.fieldPersonHint}
+              placeholder={m.personSearchPlaceholder}
+              emptyMessage={m.noResultsCriteria}
+              query={personQuery.value}
+              options={personResults.value.map((p) => ({
+                value: String(p.id),
+                label: p.fullName,
+                description: p.curp,
+              }))}
+              loading={searchingPerson.value}
+              onQueryChange$={(q) => {
+                personQuery.value = q;
+                noAddressForPerson.value = '';
+              }}
+              onSelect$={$(async (option) => {
+                const person = personResults.value.find(
+                  (p) => p.id === Number(option.value),
+                );
+                if (!person) return;
+                const found = await addressService.findOne(person.curp);
+                if (found) {
+                  await nav(`${ROUTES.ADDRESSES_EDIT}?id=${found.id}`);
+                } else {
+                  noAddressForPerson.value = person.fullName;
+                }
+              })}
+            />
 
-              {noAddressForPerson.value && (
-                <Toast tone="warning" title={noAddressForPerson.value}>
-                  {m.noAddressFound}
-                </Toast>
-              )}
-            </>
-          )}
+            {noAddressForPerson.value && (
+              <Toast tone="warning" title={noAddressForPerson.value}>
+                {m.noAddressFound}
+              </Toast>
+            )}
+          </>
+        )}
 
-          {/* ── Formulario de edición ── */}
-          {!loading.value && currentAddress && (
-            <div class="edit-address-layout">
-              {/* Persona titular */}
-              <Panel
-                title={m.panelPersonTitle}
-                description={m.panelPersonDescription}
-              >
-                <div class="edit-address-person">
-                  <div class="edit-address-person__icon" aria-hidden="true">
-                    <AppIcon intent="person" size="md" />
-                  </div>
-                  <div class="edit-address-person__info">
-                    <strong>{currentAddress.fullName}</strong>
-                    <span>{currentAddress.curp}</span>
-                    <small>ID dirección: {currentAddress.id}</small>
-                  </div>
+        {/* ── Formulario de edición ── */}
+        {!loading.value && currentAddress && (
+          <div class="edit-address-layout">
+            {/* Persona titular */}
+            <Panel
+              title={m.panelPersonTitle}
+              description={m.panelPersonDescription}
+            >
+              <div class="edit-address-person">
+                <div class="edit-address-person__icon" aria-hidden="true">
+                  <AppIcon intent="person" size="md" />
                 </div>
-              </Panel>
+                <div class="edit-address-person__info">
+                  <strong>{currentAddress.fullName}</strong>
+                  <span>{currentAddress.curp}</span>
+                  <small>ID dirección: {currentAddress.id}</small>
+                </div>
+              </div>
+            </Panel>
 
-              {/* Asentamiento */}
-              <Panel
-                title={m.panelLocationTitle}
-                description={m.panelLocationDescription}
-              >
-                {changingSettlement.value ? (
-                  <div class="edit-address-settlement-change">
-                    <SelectionStep
-                      title={mc.panelZipCodeTitle}
-                      description={mc.panelZipCodeDescription}
-                      fieldLabel={m.fieldZipCodeLabel}
-                      fieldHint={m.fieldZipCodeHint}
-                      placeholder={m.fieldZipCodePlaceholder}
-                      emptyMessage={
-                        cpInput.value.length < 5
-                          ? m.fieldZipCodeHint
-                          : m.cpNoResults
+            {/* Asentamiento */}
+            <Panel
+              title={m.panelLocationTitle}
+              description={m.panelLocationDescription}
+            >
+              {changingSettlement.value ? (
+                <div class="edit-address-settlement-change">
+                  <SelectionStep
+                    title={mc.panelZipCodeTitle}
+                    description={mc.panelZipCodeDescription}
+                    fieldLabel={m.fieldZipCodeLabel}
+                    fieldHint={m.fieldZipCodeHint}
+                    placeholder={m.fieldZipCodePlaceholder}
+                    emptyMessage={
+                      cpInput.value.length < 5
+                        ? m.fieldZipCodeHint
+                        : m.cpNoResults
+                    }
+                    query={cpInput.value}
+                    options={settlements.value.map((s) => ({
+                      value: String(s.id),
+                      label: `${s.abbreviation} ${s.settlement}`,
+                      description: `CP ${s.zipCode} · ${s.municipality}, ${s.stateName}`,
+                    }))}
+                    loading={searchingCp.value}
+                    filterMode="external"
+                    onQueryChange$={(q) => {
+                      cpInput.value = q.replace(/\D/g, '').slice(0, 5);
+                    }}
+                    onSelect$={(option) => {
+                      const s = settlements.value.find(
+                        (s) => s.id === Number(option.value),
+                      );
+                      if (s) {
+                        changedSettlement.value = s;
+                        changingSettlement.value = false;
+                        cpInput.value = '';
+                        settlements.value = [];
                       }
-                      query={cpInput.value}
-                      options={settlements.value.map((s) => ({
-                        value: String(s.id),
-                        label: `${s.abbreviation} ${s.settlement}`,
-                        description: `CP ${s.zipCode} · ${s.municipality}, ${s.stateName}`,
-                      }))}
-                      loading={searchingCp.value}
-                      filterMode="external"
-                      onQueryChange$={(q) => {
-                        cpInput.value = q.replace(/\D/g, '').slice(0, 5);
-                      }}
-                      onSelect$={(option) => {
-                        const s = settlements.value.find(
-                          (s) => s.id === Number(option.value),
-                        );
-                        if (s) {
-                          changedSettlement.value = s;
-                          changingSettlement.value = false;
-                          cpInput.value = '';
-                          settlements.value = [];
-                        }
-                      }}
-                    />
-                    <div class="edit-address-settlement-change__cancel">
-                      <Button
-                        variant="ghost"
-                        iconLeft="close"
-                        size="sm"
-                        onClick$={() => {
-                          changingSettlement.value = false;
-                          cpInput.value = '';
-                          settlements.value = [];
-                        }}
-                      >
-                        {m.cancelSettlementChange}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    class={[
-                      'edit-address-settlement-card',
-                      changedSettlement.value ? 'is-changed' : '',
-                    ].join(' ')}
-                  >
-                    <div
-                      class="edit-address-settlement-card__icon"
-                      aria-hidden="true"
-                    >
-                      <AppIcon intent="pin" size="md" />
-                    </div>
-                    <div class="edit-address-settlement-card__info">
-                      <strong>
-                        {changedSettlement.value
-                          ? `${changedSettlement.value.abbreviation} ${changedSettlement.value.settlement}`
-                          : `${currentAddress.settlementType} ${currentAddress.settlement}`}
-                      </strong>
-                      <span>
-                        {changedSettlement.value
-                          ? `CP ${changedSettlement.value.zipCode} · ${changedSettlement.value.municipality}, ${changedSettlement.value.stateName}`
-                          : `CP ${currentAddress.zipCode} · ${currentAddress.municipalityName}, ${currentAddress.stateName}`}
-                      </span>
-                    </div>
+                    }}
+                  />
+                  <div class="edit-address-settlement-change__cancel">
                     <Button
                       variant="ghost"
-                      iconLeft="edit"
+                      iconLeft="close"
                       size="sm"
                       onClick$={() => {
-                        changingSettlement.value = true;
+                        changingSettlement.value = false;
+                        cpInput.value = '';
+                        settlements.value = [];
                       }}
                     >
-                      {m.settlementChangeButton}
+                      {m.cancelSettlementChange}
                     </Button>
                   </div>
-                )}
-              </Panel>
-
-              {/* Datos del domicilio */}
-              <Panel
-                title={m.panelAddressTitle}
-                description={m.panelAddressDescription}
-                density="compact"
-              >
-                <div class="edit-address-form">
-                  <div class="edit-address-grid edit-address-grid--street">
-                    <Field
-                      label={mc.fieldStreetTypeLabel}
-                      error={
-                        errorField.value === 'streetType'
-                          ? error.value
-                          : undefined
-                      }
-                    >
-                      <Select
-                        value={
-                          streetTypeId.value ? String(streetTypeId.value) : ''
-                        }
-                        options={streetTypeOptions.value}
-                        invalid={errorField.value === 'streetType'}
-                        onChange$={(val) => {
-                          streetTypeId.value = Number(val);
-                          errorField.value = '';
-                        }}
-                      />
-                    </Field>
-                    <Field
-                      label={mc.fieldStreetLabel}
-                      error={
-                        errorField.value === 'street' ? error.value : undefined
-                      }
-                    >
-                      <Input
-                        placeholder={mc.fieldStreetPlaceholder}
-                        value={street.value}
-                        invalid={errorField.value === 'street'}
-                        onInput$={(event) => {
-                          street.value = (
-                            event.target as HTMLInputElement
-                          ).value;
-                          errorField.value = '';
-                        }}
-                      />
-                    </Field>
+                </div>
+              ) : (
+                <div
+                  class={[
+                    'edit-address-settlement-card',
+                    changedSettlement.value ? 'is-changed' : '',
+                  ].join(' ')}
+                >
+                  <div
+                    class="edit-address-settlement-card__icon"
+                    aria-hidden="true"
+                  >
+                    <AppIcon intent="pin" size="md" />
                   </div>
-
-                  <div class="edit-address-grid edit-address-grid--numbers">
-                    <Field label={mc.fieldExteriorNumberLabel}>
-                      <Input
-                        placeholder={mc.fieldExteriorNumberPlaceholder}
-                        value={exteriorNumber.value}
-                        onInput$={(event) => {
-                          exteriorNumber.value = (
-                            event.target as HTMLInputElement
-                          ).value;
-                        }}
-                      />
-                    </Field>
-                    <Field label={mc.fieldInteriorNumberLabel}>
-                      <Input
-                        placeholder={mc.fieldInteriorNumberPlaceholder}
-                        value={interiorNumber.value}
-                        onInput$={(event) => {
-                          interiorNumber.value = (
-                            event.target as HTMLInputElement
-                          ).value;
-                        }}
-                      />
-                    </Field>
-                    <Field label={mc.fieldBlockLabel}>
-                      <Input
-                        placeholder={mc.fieldBlockPlaceholder}
-                        value={block.value}
-                        onInput$={(event) => {
-                          block.value = (
-                            event.target as HTMLInputElement
-                          ).value;
-                        }}
-                      />
-                    </Field>
+                  <div class="edit-address-settlement-card__info">
+                    <strong>
+                      {changedSettlement.value
+                        ? `${changedSettlement.value.abbreviation} ${changedSettlement.value.settlement}`
+                        : `${currentAddress.settlementType} ${currentAddress.settlement}`}
+                    </strong>
+                    <span>
+                      {changedSettlement.value
+                        ? `CP ${changedSettlement.value.zipCode} · ${changedSettlement.value.municipality}, ${changedSettlement.value.stateName}`
+                        : `CP ${currentAddress.zipCode} · ${currentAddress.municipalityName}, ${currentAddress.stateName}`}
+                    </span>
                   </div>
+                  <Button
+                    variant="ghost"
+                    iconLeft="edit"
+                    size="sm"
+                    onClick$={() => {
+                      changingSettlement.value = true;
+                    }}
+                  >
+                    {m.settlementChangeButton}
+                  </Button>
+                </div>
+              )}
+            </Panel>
 
-                  <Field label={mc.fieldBetweenStreetsLabel}>
+            {/* Datos del domicilio */}
+            <Panel
+              title={m.panelAddressTitle}
+              description={m.panelAddressDescription}
+              density="compact"
+            >
+              <div class="edit-address-form">
+                <div class="edit-address-grid edit-address-grid--street">
+                  <Field
+                    label={mc.fieldStreetTypeLabel}
+                    error={
+                      errorField.value === 'streetType'
+                        ? error.value
+                        : undefined
+                    }
+                  >
+                    <Select
+                      value={
+                        streetTypeId.value ? String(streetTypeId.value) : ''
+                      }
+                      options={streetTypeOptions.value}
+                      invalid={errorField.value === 'streetType'}
+                      onChange$={(val) => {
+                        streetTypeId.value = Number(val);
+                        errorField.value = '';
+                      }}
+                    />
+                  </Field>
+                  <Field
+                    label={mc.fieldStreetLabel}
+                    error={
+                      errorField.value === 'street' ? error.value : undefined
+                    }
+                  >
                     <Input
-                      placeholder={mc.fieldBetweenStreetsPlaceholder}
-                      value={betweenStreets.value}
+                      placeholder={mc.fieldStreetPlaceholder}
+                      value={street.value}
+                      invalid={errorField.value === 'street'}
                       onInput$={(event) => {
-                        betweenStreets.value = (
+                        street.value = (event.target as HTMLInputElement).value;
+                        errorField.value = '';
+                      }}
+                    />
+                  </Field>
+                </div>
+
+                <div class="edit-address-grid edit-address-grid--numbers">
+                  <Field label={mc.fieldExteriorNumberLabel}>
+                    <Input
+                      placeholder={mc.fieldExteriorNumberPlaceholder}
+                      value={exteriorNumber.value}
+                      onInput$={(event) => {
+                        exteriorNumber.value = (
                           event.target as HTMLInputElement
                         ).value;
                       }}
                     />
                   </Field>
+                  <Field label={mc.fieldInteriorNumberLabel}>
+                    <Input
+                      placeholder={mc.fieldInteriorNumberPlaceholder}
+                      value={interiorNumber.value}
+                      onInput$={(event) => {
+                        interiorNumber.value = (
+                          event.target as HTMLInputElement
+                        ).value;
+                      }}
+                    />
+                  </Field>
+                  <Field label={mc.fieldBlockLabel}>
+                    <Input
+                      placeholder={mc.fieldBlockPlaceholder}
+                      value={block.value}
+                      onInput$={(event) => {
+                        block.value = (event.target as HTMLInputElement).value;
+                      }}
+                    />
+                  </Field>
                 </div>
-              </Panel>
 
-              <div class="edit-address-actions">
-                <Button variant="secondary" onClick$={goBack$}>
-                  {m.actionCancel}
-                </Button>
-                <Button
-                  iconLeft="save"
-                  loading={saving.value}
-                  disabled={saving.value}
-                  onClick$={saveChanges$}
-                >
-                  {saving.value ? m.saving : m.actionSave}
-                </Button>
+                <Field label={mc.fieldBetweenStreetsLabel}>
+                  <Input
+                    placeholder={mc.fieldBetweenStreetsPlaceholder}
+                    value={betweenStreets.value}
+                    onInput$={(event) => {
+                      betweenStreets.value = (
+                        event.target as HTMLInputElement
+                      ).value;
+                    }}
+                  />
+                </Field>
               </div>
+            </Panel>
+
+            <div class="edit-address-actions">
+              <Button variant="secondary" onClick$={goBack$}>
+                {m.actionCancel}
+              </Button>
+              <Button
+                iconLeft="save"
+                loading={saving.value}
+                disabled={saving.value}
+                onClick$={saveChanges$}
+              >
+                {saving.value ? m.saving : m.actionSave}
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </AuthenticatedShell>
   );

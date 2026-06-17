@@ -25,6 +25,7 @@ import {
   Input,
   Panel,
   Select,
+  Toolbar,
 } from '~/ui';
 import type {
   DataTableAction,
@@ -282,151 +283,168 @@ export default component$(() => {
       accessDeniedDescription={m.accessDenied}
       fullWidth
     >
+      <Toolbar q:slot="toolbar">
+        <Button
+          q:slot="leading"
+          variant="ghost"
+          iconLeft="back"
+          onClick$={async () => await nav(ROUTES.PERSONS)}
+        >
+          {m.toolbarBack}
+        </Button>
+        <span q:slot="center">{m.toolbarCenter}</span>
+        {canWrite.value && (
+          <Button
+            q:slot="actions"
+            iconLeft="add"
+            onClick$={async () => await nav(ROUTES.PERSONS_CREATE)}
+          >
+            {m.newPerson}
+          </Button>
+        )}
+      </Toolbar>
+
       <div class="persons-search">
         <ActionHeader
           title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
-        <div class="persons-search__content">
-          <Panel
-            title={m.filterPanelTitle}
-            description={m.filterPanelDescription}
-            density="compact"
+        <Panel
+          title={m.filterPanelTitle}
+          description={m.filterPanelDescription}
+          density="compact"
+        >
+          <form
+            preventdefault:submit
+            onSubmit$={async () => {
+              if (loading.value) return;
+              page.value = 1;
+              resultStates.value = [];
+              resultMunicipalities.value = [];
+              await searchPersons$();
+            }}
           >
-            <form
-              preventdefault:submit
-              onSubmit$={async () => {
-                if (loading.value) return;
-                page.value = 1;
-                resultStates.value = [];
-                resultMunicipalities.value = [];
-                await searchPersons$();
-              }}
-            >
-              <div class="persons-search__filters">
-                <Field label={m.filterGlobalLabel}>
-                  <Input
-                    iconLeft="search"
-                    placeholder={m.filterGlobalPlaceholder}
-                    value={searchTerm.value}
-                    onInput$={(event) => {
-                      searchTerm.value = (
-                        event.target as HTMLInputElement
-                      ).value;
-                    }}
-                  />
-                </Field>
+            <div class="persons-search__filters">
+              <Field label={m.filterGlobalLabel}>
+                <Input
+                  iconLeft="search"
+                  placeholder={m.filterGlobalPlaceholder}
+                  value={searchTerm.value}
+                  onInput$={(event) => {
+                    searchTerm.value = (event.target as HTMLInputElement).value;
+                  }}
+                />
+              </Field>
 
-                <Field label={m.filterNameLabel}>
-                  <Input
-                    iconLeft="person"
-                    placeholder={m.filterNamePlaceholder}
-                    value={fullName.value}
-                    onInput$={(event) => {
-                      fullName.value = (event.target as HTMLInputElement).value;
-                    }}
-                  />
-                </Field>
+              <Field label={m.filterNameLabel}>
+                <Input
+                  iconLeft="person"
+                  placeholder={m.filterNamePlaceholder}
+                  value={fullName.value}
+                  onInput$={(event) => {
+                    fullName.value = (event.target as HTMLInputElement).value;
+                  }}
+                />
+              </Field>
 
-                <Field label={m.filterCurpLabel}>
-                  <Input
-                    iconLeft="person"
-                    placeholder={m.filterCurpPlaceholder}
-                    value={curp.value}
-                    onInput$={(event) => {
-                      curp.value = (
-                        event.target as HTMLInputElement
-                      ).value.toUpperCase();
-                    }}
-                  />
-                </Field>
+              <Field label={m.filterCurpLabel}>
+                <Input
+                  iconLeft="person"
+                  placeholder={m.filterCurpPlaceholder}
+                  value={curp.value}
+                  onInput$={(event) => {
+                    curp.value = (
+                      event.target as HTMLInputElement
+                    ).value.toUpperCase();
+                  }}
+                />
+              </Field>
 
-                <Field label={m.filterGenderLabel}>
-                  <Select
-                    iconLeft="person"
-                    value={gender.value}
-                    options={genderOptions}
-                    onChange$={(value) => {
-                      gender.value = value;
-                    }}
-                  />
-                </Field>
+              <Field label={m.filterGenderLabel}>
+                <Select
+                  iconLeft="person"
+                  value={gender.value}
+                  options={genderOptions}
+                  onChange$={(value) => {
+                    gender.value = value;
+                  }}
+                />
+              </Field>
 
-                <Field label={m.filterBirthStateLabel}>
-                  <Select
-                    iconLeft="pin"
-                    value={birthState.value}
-                    options={stateOptions.value}
-                    onChange$={(value) => {
-                      birthState.value = value;
-                      birthMunicipality.value = '';
-                    }}
-                  />
-                </Field>
+              <Field label={m.filterBirthStateLabel}>
+                <Select
+                  iconLeft="pin"
+                  value={birthState.value}
+                  options={stateOptions.value}
+                  onChange$={(value) => {
+                    birthState.value = value;
+                    birthMunicipality.value = '';
+                  }}
+                />
+              </Field>
 
-                <Field label={m.filterBirthMunicipalityLabel}>
-                  <Select
-                    iconLeft="pin"
-                    value={birthMunicipality.value}
-                    options={municipalityOptions.value}
-                    onChange$={(value) => {
-                      birthMunicipality.value = value;
-                    }}
-                  />
-                </Field>
-              </div>
+              <Field label={m.filterBirthMunicipalityLabel}>
+                <Select
+                  iconLeft="pin"
+                  value={birthMunicipality.value}
+                  options={municipalityOptions.value}
+                  onChange$={(value) => {
+                    birthMunicipality.value = value;
+                  }}
+                />
+              </Field>
+            </div>
 
-              <div class="persons-search__actions">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  iconLeft="cancel"
-                  onClick$={clearFilters$}
-                >
-                  {m.clearButton}
-                </Button>
-                <Button type="submit" iconLeft="search" loading={loading.value}>
-                  {m.searchButton}
-                </Button>
-              </div>
-            </form>
+            <div class="persons-search__actions">
+              <Button
+                type="button"
+                variant="secondary"
+                iconLeft="cancel"
+                onClick$={clearFilters$}
+              >
+                {m.clearButton}
+              </Button>
+              <Button type="submit" iconLeft="search" loading={loading.value}>
+                {m.searchButton}
+              </Button>
+            </div>
+          </form>
+        </Panel>
+
+        {error.value && (
+          <Panel variant="outlined" title={m.errorPanelTitle}>
+            {error.value}
           </Panel>
+        )}
 
-          {error.value && (
-            <Panel variant="outlined" title={m.errorPanelTitle}>
-              {error.value}
-            </Panel>
-          )}
-
-          {searched.value && (
-            <DataTable
-              columns={columns}
-              rows={rows.value}
-              actions={actions}
-              actionMode="menu"
-              pagination={{
-                page: page.value,
-                limit: limit.value,
-                total: total.value,
-              }}
-              loading={loading.value}
-              searchable={false}
-              stickyHeader
-              emptyTitle={m.tableEmptyTitle}
-              emptyDescription={m.tableEmptyDescription}
-              onPage$={$(async (nextPage) => {
-                page.value = nextPage;
-                await searchPersons$();
-              })}
-              onLimit$={$(async (nextLimit) => {
-                limit.value = nextLimit;
-                page.value = 1;
-                await searchPersons$();
-              })}
-            />
-          )}
-        </div>
+        {searched.value && (
+          <DataTable
+            columns={columns}
+            rows={rows.value}
+            actions={actions}
+            actionMode="menu"
+            pagination={{
+              page: page.value,
+              limit: limit.value,
+              total: total.value,
+            }}
+            loading={loading.value}
+            searchable={false}
+            stickyHeader
+            emptyTitle={m.tableEmptyTitle}
+            emptyDescription={m.tableEmptyDescription}
+            onPage$={$(async (nextPage) => {
+              page.value = nextPage;
+              await searchPersons$();
+            })}
+            onLimit$={$(async (nextLimit) => {
+              limit.value = nextLimit;
+              page.value = 1;
+              await searchPersons$();
+            })}
+          />
+        )}
       </div>
     </AuthenticatedShell>
   );

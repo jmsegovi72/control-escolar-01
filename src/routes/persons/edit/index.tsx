@@ -18,6 +18,7 @@ import {
   Input,
   Panel,
   Toast,
+  Toolbar,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
@@ -184,349 +185,358 @@ export default component$(() => {
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
     >
+      <Toolbar q:slot="toolbar">
+        <Button
+          q:slot="leading"
+          variant="ghost"
+          iconLeft="back"
+          onClick$={async () => await nav(ROUTES.PERSONS)}
+        >
+          {m.toolbarBack}
+        </Button>
+        <span q:slot="center">{m.toolbarCenter}</span>
+      </Toolbar>
+
       <div class="edit-person-page">
         <ActionHeader
-          title={messages.persons.edit.title}
+          title={m.title}
           onBack$={async () => await nav(ROUTES.PERSONS)}
         />
 
-        <div class="edit-person-page__content">
-          {error.value && (
-            <Toast
-              tone="danger"
-              title={messages.persons.common.errorToastTitle}
-              description={error.value}
-            />
-          )}
+        {error.value && (
+          <Toast
+            tone="danger"
+            title={messages.persons.common.errorToastTitle}
+            description={error.value}
+          />
+        )}
 
-          {success.value && (
-            <Toast tone="success" title={m.successToastTitle}>
-              {m.successToastDescription}
-            </Toast>
-          )}
+        {success.value && (
+          <Toast tone="success" title={m.successToastTitle}>
+            {m.successToastDescription}
+          </Toast>
+        )}
 
-          {loading.value && (
-            <Panel title={m.loadingTitle} description={m.loadingDescription}>
-              <div class="edit-person__loading" />
-            </Panel>
-          )}
+        {loading.value && (
+          <Panel title={m.loadingTitle} description={m.loadingDescription}>
+            <div class="edit-person__loading" />
+          </Panel>
+        )}
 
-          {!loading.value && noSelection.value && (
-            <PersonSearchPanel
-              title={m.selectionTitle}
-              description={m.selectionDescription}
-              fieldHint={m.fieldPersonHint}
-              noResultsMessage={m.noResultsCriteria}
-              onSelect$={async (personId) => {
-                await nav(`${ROUTES.PERSONS_EDIT}?id=${personId}`);
-              }}
-            />
-          )}
+        {!loading.value && noSelection.value && (
+          <PersonSearchPanel
+            title={m.selectionTitle}
+            description={m.selectionDescription}
+            fieldHint={m.fieldPersonHint}
+            noResultsMessage={m.noResultsCriteria}
+            onSelect$={async (personId) => {
+              await nav(`${ROUTES.PERSONS_EDIT}?id=${personId}`);
+            }}
+          />
+        )}
 
-          {!loading.value && currentPerson && (
-            <div class="edit-person-layout">
-              {/* Resumen */}
-              <Panel title={m.panelSummaryTitle}>
-                <div class="edit-person-summary">
-                  <div class="edit-person-summary__icon" aria-hidden="true">
-                    <AppIcon intent="person" size="md" />
-                  </div>
-                  <div>
-                    <strong>{currentPerson.fullName}</strong>
-                    <span>{currentPerson.curp}</span>
-                    <small>ID: {currentPerson.id}</small>
-                  </div>
+        {!loading.value && currentPerson && (
+          <div class="edit-person-layout">
+            {/* Resumen */}
+            <Panel title={m.panelSummaryTitle}>
+              <div class="edit-person-summary">
+                <div class="edit-person-summary__icon" aria-hidden="true">
+                  <AppIcon intent="person" size="md" />
                 </div>
-              </Panel>
-
-              {/* Panel: Identificación */}
-              <Panel title={m.panelIdTitle} description={m.panelIdDescription}>
-                <div class="edit-person-form">
-                  {/* CURP (derivado, desbloqueable) + Homoclave */}
-                  <div class="edit-person-grid edit-person-grid--curp">
-                    <DerivedField
-                      label={mc.labelCurp}
-                      optional
-                      initialEnabled={false}
-                      onChange$={(v) => {
-                        curpEditable.value = v;
-                      }}
-                    >
-                      <Input
-                        value={curpValue.value}
-                        maxLength={18}
-                        disabled={!curpEditable.value}
-                        onInput$={(e) => {
-                          curpValue.value = (
-                            e.target as HTMLInputElement
-                          ).value.toUpperCase();
-                        }}
-                      />
-                    </DerivedField>
-
-                    <Field label={mc.labelHomoclave} hint={mc.hintHomoclave}>
-                      <Input
-                        value={homoclave.value}
-                        placeholder={mc.placeholderHomoclave}
-                        onInput$={(e) => {
-                          const raw = (e.target as HTMLInputElement).value;
-                          homoclave.value = raw
-                            .toUpperCase()
-                            .replace(/[^A-Z0-9]/g, '')
-                            .slice(0, 3);
-                        }}
-                      />
-                    </Field>
-                  </div>
-
-                  {/* Datos derivados */}
-                  <div class="edit-person-derived">
-                    <p class="edit-person-derived__title">
-                      {mc.derivedSectionTitle}
-                    </p>
-
-                    <div class="edit-person-derived-grid">
-                      {(() => {
-                        const d = deriveCurpDisplay(
-                          currentPerson.curp,
-                          mc.optionMale,
-                          mc.optionFemale,
-                          mc.optionForeigner,
-                          mc.optionMexican,
-                        );
-                        return (
-                          <>
-                            <Field label={mc.labelGender}>
-                              <Input value={d.gender} disabled />
-                            </Field>
-
-                            <Field label={mc.labelBirthDate}>
-                              <Input value={d.birthDate} disabled />
-                            </Field>
-
-                            <Field label={mc.labelNationality}>
-                              <Input value={d.nationality} disabled />
-                            </Field>
-
-                            <Field
-                              label={mc.labelState}
-                              hint={m.hintStateReadonly}
-                            >
-                              <Input value={d.stateName} disabled />
-                            </Field>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
+                <div>
+                  <strong>{currentPerson.fullName}</strong>
+                  <span>{currentPerson.curp}</span>
+                  <small>ID: {currentPerson.id}</small>
                 </div>
-              </Panel>
-
-              {/* Panel: Nombre */}
-              <Panel
-                title={mc.panelNameTitle}
-                description={mc.panelNameDescription}
-              >
-                <div class="edit-person-form">
-                  <div class="edit-person-grid edit-person-grid--thirds">
-                    <Field
-                      label={mc.labelFirstName}
-                      error={
-                        errorField.value === 'firstName'
-                          ? mc.errorFirstNameRequired
-                          : undefined
-                      }
-                    >
-                      <Input
-                        iconLeft="person"
-                        value={firstName.value}
-                        placeholder={mc.placeholderFirstName}
-                        invalid={errorField.value === 'firstName'}
-                        onInput$={(e) => {
-                          firstName.value = (
-                            e.target as HTMLInputElement
-                          ).value.toUpperCase();
-                        }}
-                      />
-                    </Field>
-
-                    <Field
-                      label={mc.labelFirstLastName}
-                      error={
-                        errorField.value === 'firstLastName'
-                          ? mc.errorFirstLastNameRequired
-                          : undefined
-                      }
-                    >
-                      <Input
-                        iconLeft="person"
-                        value={firstLastName.value}
-                        placeholder={mc.placeholderFirstLastName}
-                        invalid={errorField.value === 'firstLastName'}
-                        onInput$={(e) => {
-                          firstLastName.value = (
-                            e.target as HTMLInputElement
-                          ).value.toUpperCase();
-                        }}
-                      />
-                    </Field>
-
-                    <Field
-                      label={mc.labelSecondLastName}
-                      hint={mc.hintSecondLastName}
-                      error={
-                        errorField.value === 'secondLastName'
-                          ? mc.errorSecondLastNameLength
-                          : undefined
-                      }
-                    >
-                      <Input
-                        iconLeft="person"
-                        value={secondLastName.value}
-                        placeholder={mc.placeholderSecondLastName}
-                        invalid={errorField.value === 'secondLastName'}
-                        onInput$={(e) => {
-                          secondLastName.value = (
-                            e.target as HTMLInputElement
-                          ).value.toUpperCase();
-                        }}
-                      />
-                    </Field>
-                  </div>
-                </div>
-              </Panel>
-
-              {/* Panel: Contacto */}
-              <Panel
-                title={mc.panelContactTitle}
-                description={mc.panelContactDescription}
-              >
-                <div class="edit-person-form">
-                  <div class="edit-person-grid">
-                    <Field
-                      label={mc.labelPhone}
-                      hint={mc.hintPhone}
-                      error={
-                        errorField.value === 'phone'
-                          ? phone.value
-                            ? mc.errorPhoneInvalid
-                            : mc.errorPhoneRequired
-                          : undefined
-                      }
-                    >
-                      <Input
-                        iconLeft="phone"
-                        type="tel"
-                        value={phone.value}
-                        placeholder={mc.placeholderPhone}
-                        invalid={errorField.value === 'phone'}
-                        onInput$={(e) => {
-                          phone.value = (e.target as HTMLInputElement).value
-                            .replace(/\D/g, '')
-                            .slice(0, 10);
-                        }}
-                      />
-                    </Field>
-
-                    <Field
-                      label={mc.labelEmail}
-                      error={
-                        errorField.value === 'email'
-                          ? email.value
-                            ? mc.errorEmailInvalid
-                            : mc.errorEmailRequired
-                          : undefined
-                      }
-                    >
-                      <Input
-                        iconLeft="mail"
-                        type="email"
-                        value={email.value}
-                        placeholder={mc.placeholderEmail}
-                        invalid={errorField.value === 'email'}
-                        onInput$={(e) => {
-                          email.value = (e.target as HTMLInputElement).value;
-                        }}
-                      />
-                    </Field>
-                  </div>
-                </div>
-              </Panel>
-
-              {/* Panel: Foto */}
-              <Panel
-                title={m.panelPhotoTitle}
-                description={m.panelPhotoDescription}
-                density="compact"
-              >
-                <div class="edit-person-photo">
-                  <div class="edit-person-photo__preview">
-                    <img
-                      src={
-                        photoPreview.value ||
-                        getPhotoUrl(currentPerson.photoUrl)
-                      }
-                      alt={currentPerson.fullName}
-                    />
-                  </div>
-                  <div class="edit-person-photo__controls">
-                    <input
-                      id="person-photo-edit"
-                      class="edit-person-photo__input"
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      onChange$={(event) => {
-                        const file = (event.target as HTMLInputElement)
-                          .files?.[0];
-                        if (!file) return;
-                        photoFile.value = file;
-                        photoPreview.value = URL.createObjectURL(file);
-                      }}
-                    />
-                    <label
-                      class="edit-person-photo__button"
-                      for="person-photo-edit"
-                    >
-                      {photoFile.value
-                        ? m.photoChange
-                        : currentPerson.photoUrl
-                          ? m.photoChange
-                          : m.photoUpload}
-                    </label>
-                    {photoFile.value && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick$={() => {
-                          photoFile.value = null;
-                          photoPreview.value = '';
-                        }}
-                      >
-                        {m.photoRestore}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </Panel>
-
-              <div class="edit-person-actions">
-                <Button
-                  variant="secondary"
-                  onClick$={async () => await nav(ROUTES.PERSONS)}
-                >
-                  {m.actionCancel}
-                </Button>
-                <Button
-                  iconLeft="save"
-                  loading={saving.value}
-                  onClick$={saveChanges$}
-                >
-                  {m.actionSave}
-                </Button>
               </div>
+            </Panel>
+
+            {/* Panel: Identificación */}
+            <Panel title={m.panelIdTitle} description={m.panelIdDescription}>
+              <div class="edit-person-form">
+                {/* CURP (derivado, desbloqueable) + Homoclave */}
+                <div class="edit-person-grid edit-person-grid--curp">
+                  <DerivedField
+                    label={mc.labelCurp}
+                    optional
+                    initialEnabled={false}
+                    onChange$={(v) => {
+                      curpEditable.value = v;
+                    }}
+                  >
+                    <Input
+                      value={curpValue.value}
+                      maxLength={18}
+                      disabled={!curpEditable.value}
+                      onInput$={(e) => {
+                        curpValue.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
+                      }}
+                    />
+                  </DerivedField>
+
+                  <Field label={mc.labelHomoclave} hint={mc.hintHomoclave}>
+                    <Input
+                      value={homoclave.value}
+                      placeholder={mc.placeholderHomoclave}
+                      onInput$={(e) => {
+                        const raw = (e.target as HTMLInputElement).value;
+                        homoclave.value = raw
+                          .toUpperCase()
+                          .replace(/[^A-Z0-9]/g, '')
+                          .slice(0, 3);
+                      }}
+                    />
+                  </Field>
+                </div>
+
+                {/* Datos derivados */}
+                <div class="edit-person-derived">
+                  <p class="edit-person-derived__title">
+                    {mc.derivedSectionTitle}
+                  </p>
+
+                  <div class="edit-person-derived-grid">
+                    {(() => {
+                      const d = deriveCurpDisplay(
+                        currentPerson.curp,
+                        mc.optionMale,
+                        mc.optionFemale,
+                        mc.optionForeigner,
+                        mc.optionMexican,
+                      );
+                      return (
+                        <>
+                          <Field label={mc.labelGender}>
+                            <Input value={d.gender} disabled />
+                          </Field>
+
+                          <Field label={mc.labelBirthDate}>
+                            <Input value={d.birthDate} disabled />
+                          </Field>
+
+                          <Field label={mc.labelNationality}>
+                            <Input value={d.nationality} disabled />
+                          </Field>
+
+                          <Field
+                            label={mc.labelState}
+                            hint={m.hintStateReadonly}
+                          >
+                            <Input value={d.stateName} disabled />
+                          </Field>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </Panel>
+
+            {/* Panel: Nombre */}
+            <Panel
+              title={mc.panelNameTitle}
+              description={mc.panelNameDescription}
+            >
+              <div class="edit-person-form">
+                <div class="edit-person-grid edit-person-grid--thirds">
+                  <Field
+                    label={mc.labelFirstName}
+                    error={
+                      errorField.value === 'firstName'
+                        ? mc.errorFirstNameRequired
+                        : undefined
+                    }
+                  >
+                    <Input
+                      iconLeft="person"
+                      value={firstName.value}
+                      placeholder={mc.placeholderFirstName}
+                      invalid={errorField.value === 'firstName'}
+                      onInput$={(e) => {
+                        firstName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
+                      }}
+                    />
+                  </Field>
+
+                  <Field
+                    label={mc.labelFirstLastName}
+                    error={
+                      errorField.value === 'firstLastName'
+                        ? mc.errorFirstLastNameRequired
+                        : undefined
+                    }
+                  >
+                    <Input
+                      iconLeft="person"
+                      value={firstLastName.value}
+                      placeholder={mc.placeholderFirstLastName}
+                      invalid={errorField.value === 'firstLastName'}
+                      onInput$={(e) => {
+                        firstLastName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
+                      }}
+                    />
+                  </Field>
+
+                  <Field
+                    label={mc.labelSecondLastName}
+                    hint={mc.hintSecondLastName}
+                    error={
+                      errorField.value === 'secondLastName'
+                        ? mc.errorSecondLastNameLength
+                        : undefined
+                    }
+                  >
+                    <Input
+                      iconLeft="person"
+                      value={secondLastName.value}
+                      placeholder={mc.placeholderSecondLastName}
+                      invalid={errorField.value === 'secondLastName'}
+                      onInput$={(e) => {
+                        secondLastName.value = (
+                          e.target as HTMLInputElement
+                        ).value.toUpperCase();
+                      }}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </Panel>
+
+            {/* Panel: Contacto */}
+            <Panel
+              title={mc.panelContactTitle}
+              description={mc.panelContactDescription}
+            >
+              <div class="edit-person-form">
+                <div class="edit-person-grid">
+                  <Field
+                    label={mc.labelPhone}
+                    hint={mc.hintPhone}
+                    error={
+                      errorField.value === 'phone'
+                        ? phone.value
+                          ? mc.errorPhoneInvalid
+                          : mc.errorPhoneRequired
+                        : undefined
+                    }
+                  >
+                    <Input
+                      iconLeft="phone"
+                      type="tel"
+                      value={phone.value}
+                      placeholder={mc.placeholderPhone}
+                      invalid={errorField.value === 'phone'}
+                      onInput$={(e) => {
+                        phone.value = (e.target as HTMLInputElement).value
+                          .replace(/\D/g, '')
+                          .slice(0, 10);
+                      }}
+                    />
+                  </Field>
+
+                  <Field
+                    label={mc.labelEmail}
+                    error={
+                      errorField.value === 'email'
+                        ? email.value
+                          ? mc.errorEmailInvalid
+                          : mc.errorEmailRequired
+                        : undefined
+                    }
+                  >
+                    <Input
+                      iconLeft="mail"
+                      type="email"
+                      value={email.value}
+                      placeholder={mc.placeholderEmail}
+                      invalid={errorField.value === 'email'}
+                      onInput$={(e) => {
+                        email.value = (e.target as HTMLInputElement).value;
+                      }}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </Panel>
+
+            {/* Panel: Foto */}
+            <Panel
+              title={m.panelPhotoTitle}
+              description={m.panelPhotoDescription}
+              density="compact"
+            >
+              <div class="edit-person-photo">
+                <div class="edit-person-photo__preview">
+                  <img
+                    src={
+                      photoPreview.value || getPhotoUrl(currentPerson.photoUrl)
+                    }
+                    alt={currentPerson.fullName}
+                  />
+                </div>
+                <div class="edit-person-photo__controls">
+                  <input
+                    id="person-photo-edit"
+                    class="edit-person-photo__input"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange$={(event) => {
+                      const file = (event.target as HTMLInputElement)
+                        .files?.[0];
+                      if (!file) return;
+                      photoFile.value = file;
+                      photoPreview.value = URL.createObjectURL(file);
+                    }}
+                  />
+                  <label
+                    class="edit-person-photo__button"
+                    for="person-photo-edit"
+                  >
+                    {photoFile.value
+                      ? m.photoChange
+                      : currentPerson.photoUrl
+                        ? m.photoChange
+                        : m.photoUpload}
+                  </label>
+                  {photoFile.value && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick$={() => {
+                        photoFile.value = null;
+                        photoPreview.value = '';
+                      }}
+                    >
+                      {m.photoRestore}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Panel>
+
+            <div class="edit-person-actions">
+              <Button
+                variant="secondary"
+                onClick$={async () => await nav(ROUTES.PERSONS)}
+              >
+                {m.actionCancel}
+              </Button>
+              <Button
+                iconLeft="save"
+                loading={saving.value}
+                onClick$={saveChanges$}
+              >
+                {m.actionSave}
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </AuthenticatedShell>
   );
