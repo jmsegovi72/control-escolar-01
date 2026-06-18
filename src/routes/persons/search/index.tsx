@@ -27,6 +27,7 @@ import {
   Select,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
+import { DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS } from '~/ui/patterns/DataTable/data-table.config';
 import type {
   DataTableAction,
   DataTableColumn,
@@ -508,6 +509,7 @@ export default component$(() => {
               rows={rows.value}
               actions={actions}
               actionMode="menu"
+              pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
               pagination={{
                 page: page.value,
                 limit: limit.value,

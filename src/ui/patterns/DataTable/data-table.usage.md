@@ -75,9 +75,11 @@ actions={[
 ## Paginacion
 
 ```tsx
+import { DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS } from "~/ui/patterns/DataTable/data-table.config";
+
 <DataTable
   pagination={{ page: 1, limit: 10, total: 32 }}
-  pageSizeOptions={[10, 15, 30, 50]}
+  pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
 />
 ```
 

@@ -8,6 +8,7 @@ import { Checkbox } from '~/ui/primitives/Checkbox/Checkbox';
 import { IconButton } from '~/ui/primitives/IconButton/IconButton';
 import { Input } from '~/ui/primitives/Input/Input';
 import { Select } from '~/ui/primitives/Select/Select';
+import { DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS } from './data-table.config';
 import type { DataTableProps } from './data-table.types';
 import './data-table.css';
 
@@ -36,7 +37,8 @@ export const DataTable = component$(
     const hasActions = !!props.actions?.length;
     const actionMode = props.actionMode ?? 'auto';
     const hasColumnFilters = props.columns.some((column) => column.filter);
-    const pageSizeOptions = props.pageSizeOptions ?? [10, 15, 30, 50];
+    const pageSizeOptions =
+      props.pageSizeOptions ?? DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS;
     const totalPages = props.pagination
       ? Math.max(1, Math.ceil(props.pagination.total / props.pagination.limit))
       : 1;
