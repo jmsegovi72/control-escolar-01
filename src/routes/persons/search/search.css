@@ -1,15 +1,18 @@
 .persons-search {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin: calc(var(--space-4) * -1);
+  display: grid;
+  gap: 0;
   background: var(--color-bg);
+  min-width: 0;
 }
 
 .persons-search__content {
   display: grid;
   gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
   padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
 }
 
 .persons-search .ui-data-table {
@@ -17,32 +20,161 @@
   min-height: 0;
 }
 
-.persons-search__filters {
+.persons-search__filters-panel {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-1);
+}
+
+.persons-search__filters-form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.persons-search__filters-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.persons-search__global {
+  flex: 1 1 auto;
+  max-width: 26.25rem;
+}
+
+.persons-search__top-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.persons-search__toggle-content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.persons-search__active-count {
+  display: inline-grid;
+  width: 1.125rem;
+  height: 1.125rem;
+  place-items: center;
+  border-radius: var(--radius-round);
+  background: var(--color-primary);
+  color: var(--color-inverse);
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.persons-search__toggle-chevron {
+  display: inline-flex;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.persons-search__toggle-chevron[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.persons-search__advanced {
+  display: none;
+  gap: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+}
+
+.persons-search__advanced[data-open="true"] {
+  display: grid;
+}
+
+.persons-search__advanced-grid {
+  display: grid;
   gap: var(--space-4);
 }
 
-.persons-search__actions {
+.persons-search__advanced-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.persons-search__advanced-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.persons-search__advanced .ui-field__label {
+  color: var(--color-text-soft);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.persons-search__advanced .ui-field__message {
+  min-height: 0;
+}
+
+.persons-search__filters-footer {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-2);
-  justify-content: flex-end;
-  margin-top: var(--space-4);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  padding: var(--space-3) var(--space-5);
+}
+
+.persons-search__filters-info {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
 }
 
 @media (max-width: 1100px) {
-  .persons-search__filters {
+  .persons-search__advanced-grid--three {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
-  .persons-search__filters {
+  .persons-search__content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .persons-search__filters-top,
+  .persons-search__advanced,
+  .persons-search__filters-footer {
+    padding-inline: var(--space-4);
+  }
+
+  .persons-search__filters-top,
+  .persons-search__filters-footer {
+    align-items: stretch;
+  }
+
+  .persons-search__filters-top,
+  .persons-search__top-actions {
+    flex-direction: column;
+  }
+
+  .persons-search__global {
+    max-width: none;
+    width: 100%;
+  }
+
+  .persons-search__top-actions .ui-button {
+    width: 100%;
+  }
+
+  .persons-search__advanced-grid--three,
+  .persons-search__advanced-grid--two {
     grid-template-columns: 1fr;
   }
 
-  .persons-search__actions {
+  .persons-search__filters-footer {
     justify-content: flex-start;
   }
 }

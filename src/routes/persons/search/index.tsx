@@ -26,6 +26,7 @@ import {
   Panel,
   Select,
 } from '~/ui';
+import { AppIcon } from '~/ui/icons';
 import type {
   DataTableAction,
   DataTableColumn,
@@ -64,6 +65,7 @@ export default component$(() => {
   const limit = useSignal(10);
   const loading = useSignal(false);
   const searched = useSignal(false);
+  const showAdvanced = useSignal(false);
   const error = useSignal('');
   const searchTerm = useSignal('');
   const fullName = useSignal('');
@@ -110,6 +112,50 @@ export default component$(() => {
         label: item.birthMunicipality,
       })),
     ];
+  });
+
+  const activeAdvancedFilterCount = useComputed$(() => {
+    const values = [
+      fullName.value.trim(),
+      curp.value.trim(),
+      gender.value,
+      birthState.value,
+      birthMunicipality.value,
+    ];
+
+    return values.filter(Boolean).length;
+  });
+
+  const activeFilterCount = useComputed$(() => {
+    return activeAdvancedFilterCount.value + (searchTerm.value.trim() ? 1 : 0);
+  });
+
+  const filtersInfo = useComputed$(() => {
+    const count = activeFilterCount.value;
+    const resultsCount = total.value;
+
+    if (count === 0 && !searched.value) {
+      return m.filtersInfoEmpty;
+    }
+
+    if (count === 0) {
+      const resultWord =
+        resultsCount === 1 ? m.resultWordSingular : m.resultWordPlural;
+      return `Sin filtros activos · ${resultsCount} ${resultWord}`;
+    }
+
+    const filterWord = count === 1 ? m.filterWordSingular : m.filterWordPlural;
+    const activeWord =
+      count === 1 ? m.filtersInfoActiveSingular : m.filtersInfoActive;
+
+    if (!searched.value) {
+      return `${count} ${filterWord} ${activeWord} · ${m.filtersInfoReady}`;
+    }
+
+    const resultWord =
+      resultsCount === 1 ? m.resultWordSingular : m.resultWordPlural;
+
+    return `${count} ${filterWord} ${activeWord} · ${resultsCount} ${resultWord}`;
   });
 
   const searchPersons$ = $(async () => {
@@ -196,6 +242,7 @@ export default component$(() => {
     rows.value = [];
     total.value = 0;
     searched.value = false;
+    showAdvanced.value = false;
     error.value = '';
     resultStates.value = [];
     resultMunicipalities.value = [];
@@ -225,6 +272,13 @@ export default component$(() => {
       birthMunicipality.value = savedState.filters.birthMunicipality;
       limit.value = savedState.filters.limit;
       page.value = savedState.filters.page;
+      showAdvanced.value = Boolean(
+        savedState.filters.fullName ||
+          savedState.filters.curp ||
+          savedState.filters.gender ||
+          savedState.filters.birthState ||
+          savedState.filters.birthMunicipality,
+      );
       await searchPersons$();
     }
   });
@@ -282,19 +336,17 @@ export default component$(() => {
       accessDeniedDescription={m.accessDenied}
       fullWidth
     >
-      <div class="persons-search">
-        <ActionHeader
-          title={m.title}
-          onBack$={async () => await nav(ROUTES.PERSONS)}
-        />
+      <ActionHeader
+        q:slot="hub-header"
+        title={m.title}
+        onBack$={async () => await nav(ROUTES.PERSONS)}
+      />
 
+      <div class="persons-search">
         <div class="persons-search__content">
-          <Panel
-            title={m.filterPanelTitle}
-            description={m.filterPanelDescription}
-            density="compact"
-          >
+          <section class="persons-search__filters-panel">
             <form
+              class="persons-search__filters-form"
               preventdefault:submit
               onSubmit$={async () => {
                 if (loading.value) return;
@@ -304,8 +356,8 @@ export default component$(() => {
                 await searchPersons$();
               }}
             >
-              <div class="persons-search__filters">
-                <Field label={m.filterGlobalLabel}>
+              <div class="persons-search__filters-top">
+                <div class="persons-search__global">
                   <Input
                     iconLeft="search"
                     placeholder={m.filterGlobalPlaceholder}
@@ -316,82 +368,133 @@ export default component$(() => {
                       ).value;
                     }}
                   />
-                </Field>
+                </div>
 
-                <Field label={m.filterNameLabel}>
-                  <Input
-                    iconLeft="person"
-                    placeholder={m.filterNamePlaceholder}
-                    value={fullName.value}
-                    onInput$={(event) => {
-                      fullName.value = (event.target as HTMLInputElement).value;
+                <div class="persons-search__top-actions">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    active={showAdvanced.value}
+                    iconLeft="filter"
+                    onClick$={() => {
+                      showAdvanced.value = !showAdvanced.value;
                     }}
-                  />
-                </Field>
+                  >
+                    <span class="persons-search__toggle-content">
+                      <span>{m.advancedToggle}</span>
+                      {activeAdvancedFilterCount.value > 0 && (
+                        <span class="persons-search__active-count">
+                          {activeAdvancedFilterCount.value}
+                        </span>
+                      )}
+                      <span
+                        class="persons-search__toggle-chevron"
+                        data-open={showAdvanced.value ? 'true' : undefined}
+                        aria-hidden="true"
+                      >
+                        <AppIcon intent="chevron-down" size="xs" />
+                      </span>
+                    </span>
+                  </Button>
 
-                <Field label={m.filterCurpLabel}>
-                  <Input
-                    iconLeft="person"
-                    placeholder={m.filterCurpPlaceholder}
-                    value={curp.value}
-                    onInput$={(event) => {
-                      curp.value = (
-                        event.target as HTMLInputElement
-                      ).value.toUpperCase();
-                    }}
-                  />
-                </Field>
-
-                <Field label={m.filterGenderLabel}>
-                  <Select
-                    iconLeft="person"
-                    value={gender.value}
-                    options={genderOptions}
-                    onChange$={(value) => {
-                      gender.value = value;
-                    }}
-                  />
-                </Field>
-
-                <Field label={m.filterBirthStateLabel}>
-                  <Select
-                    iconLeft="pin"
-                    value={birthState.value}
-                    options={stateOptions.value}
-                    onChange$={(value) => {
-                      birthState.value = value;
-                      birthMunicipality.value = '';
-                    }}
-                  />
-                </Field>
-
-                <Field label={m.filterBirthMunicipalityLabel}>
-                  <Select
-                    iconLeft="pin"
-                    value={birthMunicipality.value}
-                    options={municipalityOptions.value}
-                    onChange$={(value) => {
-                      birthMunicipality.value = value;
-                    }}
-                  />
-                </Field>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    iconLeft="search"
+                    loading={loading.value}
+                  >
+                    {m.searchButton}
+                  </Button>
+                </div>
               </div>
 
-              <div class="persons-search__actions">
+              <div
+                class="persons-search__advanced"
+                data-open={showAdvanced.value ? 'true' : undefined}
+              >
+                <div class="persons-search__advanced-grid persons-search__advanced-grid--three">
+                  <Field label={m.filterNameLabel}>
+                    <Input
+                      iconLeft="person"
+                      placeholder={m.filterNamePlaceholder}
+                      value={fullName.value}
+                      onInput$={(event) => {
+                        fullName.value = (
+                          event.target as HTMLInputElement
+                        ).value;
+                      }}
+                    />
+                  </Field>
+
+                  <Field label={m.filterCurpLabel}>
+                    <Input
+                      iconLeft="person"
+                      placeholder={m.filterCurpPlaceholder}
+                      value={curp.value}
+                      onInput$={(event) => {
+                        curp.value = (
+                          event.target as HTMLInputElement
+                        ).value.toUpperCase();
+                      }}
+                    />
+                  </Field>
+
+                  <Field label={m.filterGenderLabel}>
+                    <Select
+                      iconLeft="person"
+                      value={gender.value}
+                      options={genderOptions}
+                      onChange$={(value) => {
+                        gender.value = value;
+                      }}
+                    />
+                  </Field>
+                </div>
+
+                <div class="persons-search__advanced-grid persons-search__advanced-grid--two">
+                  <Field label={m.filterBirthStateLabel}>
+                    <Select
+                      iconLeft="pin"
+                      value={birthState.value}
+                      options={stateOptions.value}
+                      onChange$={(value) => {
+                        birthState.value = value;
+                        birthMunicipality.value = '';
+                      }}
+                    />
+                  </Field>
+
+                  <Field label={m.filterBirthMunicipalityLabel}>
+                    <Select
+                      iconLeft="pin"
+                      value={birthMunicipality.value}
+                      options={municipalityOptions.value}
+                      disabled={!birthState.value}
+                      onChange$={(value) => {
+                        birthMunicipality.value = value;
+                      }}
+                    />
+                  </Field>
+                </div>
+              </div>
+
+              <div class="persons-search__filters-footer">
+                <span class="persons-search__filters-info">
+                  {filtersInfo.value}
+                </span>
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="ghost"
+                  size="sm"
                   iconLeft="cancel"
                   onClick$={clearFilters$}
                 >
                   {m.clearButton}
                 </Button>
-                <Button type="submit" iconLeft="search" loading={loading.value}>
-                  {m.searchButton}
-                </Button>
               </div>
             </form>
-          </Panel>
+          </section>
 
           {error.value && (
             <Panel variant="outlined" title={m.errorPanelTitle}>
