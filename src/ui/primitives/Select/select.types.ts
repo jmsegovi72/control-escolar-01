@@ -20,6 +20,7 @@ export type SelectProps = {
   fullWidth?: boolean;
   iconLeft?: IconIntent;
   disabled?: boolean;
+  readOnly?: boolean;
   required?: boolean;
   onChange$?: QRL<(value: string) => void>;
 };

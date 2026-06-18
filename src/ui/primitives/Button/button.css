@@ -134,11 +134,15 @@
 
 .ui-button[data-variant="link"] {
   min-height: auto;
+  border: 0;
   background: transparent;
   color: var(--color-primary);
   padding: 0;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-decoration: none;
 }
 
 .ui-button[data-variant="link"]:hover {

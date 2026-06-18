@@ -56,6 +56,41 @@
   cursor: not-allowed;
 }
 
+.ui-input-shell[data-readonly="true"] {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="line"] {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--field-border);
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="line"]:hover {
+  border-bottom-color: var(--field-border);
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="line"]:focus-within::after {
+  transform: scaleX(0);
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="box"],
+.ui-input-shell[data-readonly="true"][data-variant="quiet"] {
+  border-style: dashed;
+  background: var(--color-surface-subtle);
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="box"]:hover,
+.ui-input-shell[data-readonly="true"][data-variant="quiet"]:hover {
+  border-color: var(--field-border);
+}
+
+.ui-input-shell[data-readonly="true"][data-variant="box"]:focus-within,
+.ui-input-shell[data-readonly="true"][data-variant="quiet"]:focus-within {
+  border-color: var(--field-border);
+  box-shadow: none;
+}
+
 .ui-input-shell[data-variant="line"] {
   min-height: var(--field-height-lg);
   border-bottom: 1px solid var(--field-border);

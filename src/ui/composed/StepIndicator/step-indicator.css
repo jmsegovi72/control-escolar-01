@@ -1,5 +1,7 @@
 .ui-step-indicator {
   display: flex;
+  width: 100%;
+  box-sizing: border-box;
   min-height: 4.25rem;
   align-items: center;
   justify-content: flex-start;

@@ -273,22 +273,24 @@ export default component$(() => {
       accessDeniedDescription={m.accessDenied}
       fullWidth
     >
+      <ActionHeader
+        q:slot="hub-header"
+        title={m.title}
+        onBack$={async () => await nav(ROUTES.PERSONS)}
+      />
+
+      <StepIndicator
+        q:slot="toolbar"
+        steps={[
+          { eyebrow: m.step1Eyebrow, label: m.step1Label },
+          { eyebrow: m.step2Eyebrow, label: m.step2Label },
+          { eyebrow: m.step3Eyebrow, label: m.step3Label },
+        ]}
+        current={currentStep}
+        tone={resultTone.value || undefined}
+      />
+
       <div class="create-person-page">
-        <ActionHeader
-          title={m.title}
-          onBack$={async () => await nav(ROUTES.PERSONS)}
-        />
-
-        <StepIndicator
-          steps={[
-            { eyebrow: m.step1Eyebrow, label: m.step1Label },
-            { eyebrow: m.step2Eyebrow, label: m.step2Label },
-            { eyebrow: m.step3Eyebrow, label: m.step3Label },
-          ]}
-          current={currentStep}
-          tone={resultTone.value || undefined}
-        />
-
         <div class="create-person-stage">
           {!showForm.value && !resultTone.value && (
             <div class="create-person-card">
@@ -410,6 +412,7 @@ export default component$(() => {
                             value={gender.value}
                             options={genderOptions}
                             invalid={errorField.value === 'gender'}
+                            readOnly
                             onChange$={(v) => {
                               gender.value = v;
                               clearFieldError$('gender');
@@ -422,6 +425,7 @@ export default component$(() => {
                           <DateInput
                             variant="line"
                             value={birthDate.value}
+                            readOnly
                             onInput$={(e) => {
                               birthDate.value = (
                                 e.target as HTMLInputElement
@@ -436,6 +440,7 @@ export default component$(() => {
                             variant="line"
                             value={nationality.value}
                             options={nationalityOptions}
+                            readOnly
                             onChange$={(v) => {
                               nationality.value = v;
                             }}
@@ -448,6 +453,7 @@ export default component$(() => {
                             variant="line"
                             value={stateCode.value}
                             options={CURP_STATE_OPTIONS}
+                            readOnly
                             onChange$={(v) => {
                               stateCode.value = v;
                             }}

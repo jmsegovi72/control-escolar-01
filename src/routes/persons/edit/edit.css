@@ -1,150 +1,28 @@
 .edit-person-page {
   display: grid;
-  gap: var(--space-4);
+  gap: 0;
+  background: var(--color-bg);
+  min-width: 0;
 }
 
-.edit-person-layout {
+.edit-person__content {
   display: grid;
   gap: var(--space-4);
-}
-
-.edit-person-form {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.edit-person-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-  align-items: start;
-}
-
-.edit-person-grid--curp {
-  grid-template-columns: minmax(0, 380px) minmax(0, 160px) 1fr;
-}
-
-.edit-person-grid--thirds {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.edit-person-derived-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-4);
-  align-items: start;
-}
-
-.edit-person-derived {
-  display: grid;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-subtle);
-}
-
-.edit-person-derived__title {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.edit-person-summary {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-3);
-  align-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2);
-  background: var(--color-surface-subtle);
-  padding: var(--space-3);
-}
-
-.edit-person-summary__icon {
-  display: inline-grid;
-  place-items: center;
-  border-radius: var(--radius-2);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  width: 2.75rem;
-  height: 2.75rem;
-}
-
-.edit-person-summary strong,
-.edit-person-summary span,
-.edit-person-summary small {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.edit-person-summary span,
-.edit-person-summary small {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-}
-
-.edit-person-photo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.edit-person-photo__preview {
-  display: inline-grid;
-  place-items: center;
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: var(--radius-2);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  overflow: hidden;
-}
-
-.edit-person-photo__preview img {
+  align-content: start;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  min-width: 0;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
 }
 
-.edit-person-photo__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
+.edit-person__search-shell {
+  width: min(100%, 40rem);
+  margin: 0 auto;
 }
 
-.edit-person-photo__input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-.edit-person-photo__button {
-  display: inline-flex;
-  min-height: 2.4rem;
-  align-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2);
-  background: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  padding: 0 var(--space-3);
-}
-
-.edit-person-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: flex-end;
+.edit-person__content .create-person-card {
+  width: min(100%, 40rem);
+  margin: 0 auto;
 }
 
 .edit-person__loading {
@@ -158,17 +36,8 @@
   );
 }
 
-@media (max-width: 760px) {
-  .edit-person-grid,
-  .edit-person-grid--thirds,
-  .edit-person-grid--curp,
-  .edit-person-derived-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 761px) and (max-width: 1024px) {
-  .edit-person-derived-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 720px) {
+  .edit-person__content {
+    padding: var(--space-6) var(--space-4);
   }
 }

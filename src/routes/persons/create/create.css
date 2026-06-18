@@ -1,8 +1,8 @@
 .create-person-page {
   display: grid;
   gap: 0;
-  margin: calc(var(--space-4) * -1);
   background: var(--color-bg);
+  min-width: 0;
 }
 
 .create-person-stage {
@@ -11,7 +11,10 @@
   align-content: start;
   justify-items: center;
   gap: var(--space-4);
+  width: 100%;
+  min-width: 0;
   padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
 }
 
 .create-person-card {

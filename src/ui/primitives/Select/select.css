@@ -190,3 +190,38 @@
 .ui-select-shell[data-disabled="true"][data-variant="quiet"] {
   background: var(--field-bg-disabled);
 }
+
+.ui-select-shell[data-readonly="true"] {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="line"] {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--field-border);
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="line"]:hover {
+  border-bottom-color: var(--field-border);
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="line"]:focus-within::after {
+  transform: scaleX(0);
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="box"],
+.ui-select-shell[data-readonly="true"][data-variant="quiet"] {
+  border-style: dashed;
+  background: var(--color-surface-subtle);
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="box"]:hover,
+.ui-select-shell[data-readonly="true"][data-variant="quiet"]:hover {
+  border-color: var(--field-border);
+}
+
+.ui-select-shell[data-readonly="true"][data-variant="box"]:focus-within,
+.ui-select-shell[data-readonly="true"][data-variant="quiet"]:focus-within {
+  border-color: var(--field-border);
+  box-shadow: none;
+}

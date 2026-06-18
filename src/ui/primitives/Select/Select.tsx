@@ -26,6 +26,7 @@ export const Select = component$<SelectProps>(
     fullWidth = true,
     iconLeft,
     disabled,
+    readOnly,
     required,
     onChange$,
   }) => {
@@ -90,6 +91,7 @@ export const Select = component$<SelectProps>(
         data-size={size}
         data-invalid={invalid ? 'true' : undefined}
         data-disabled={disabled ? 'true' : undefined}
+        data-readonly={readOnly ? 'true' : undefined}
         data-full-width={fullWidth ? 'true' : undefined}
         data-open={open.value ? 'true' : undefined}
       >
@@ -109,12 +111,12 @@ export const Select = component$<SelectProps>(
         <button
           type="button"
           class="ui-select"
-          disabled={disabled}
+          disabled={disabled || readOnly}
           aria-invalid={invalid ? 'true' : undefined}
           aria-expanded={open.value ? 'true' : 'false'}
           aria-haspopup="listbox"
           onClick$={() => {
-            if (!disabled) toggleFromRef$();
+            if (!disabled && !readOnly) toggleFromRef$();
           }}
         >
           <span
