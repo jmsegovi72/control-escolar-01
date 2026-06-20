@@ -240,10 +240,11 @@ export default component$(() => {
       meta={m.meta}
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
+      fullWidth
     >
-      <div class="edit-address-page">
-        <ActionHeader title={m.title} onBack$={goBack$} />
+      <ActionHeader q:slot="hub-header" title={m.title} onBack$={goBack$} />
 
+      <div class="edit-address-page">
         <div class="edit-address-page__content">
           {error.value && !errorField.value && (
             <Toast tone="danger" title="Error">
@@ -266,7 +267,7 @@ export default component$(() => {
 
           {/* ── Modo selección: buscar persona ── */}
           {!loading.value && selectionMode.value && (
-            <>
+            <div class="edit-address-search-shell">
               <SelectionStep
                 title={m.selectionTitle}
                 description={m.selectionDescription}
@@ -304,7 +305,7 @@ export default component$(() => {
                   {m.noAddressFound}
                 </Toast>
               )}
-            </>
+            </div>
           )}
 
           {/* ── Formulario de edición ── */}

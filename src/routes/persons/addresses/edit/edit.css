@@ -1,20 +1,31 @@
 .edit-address-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin: calc(var(--space-4) * -1);
+  display: grid;
+  gap: 0;
   background: var(--color-bg);
+  min-width: 0;
 }
 
 .edit-address-page__content {
   display: grid;
   gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
   padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+  justify-items: center;
+}
+
+.edit-address-search-shell {
+  width: min(100%, var(--layout-form-max-width));
+  margin: 0 auto;
 }
 
 .edit-address-layout {
   display: grid;
   gap: var(--space-4);
+  width: min(100%, var(--layout-form-max-width));
+  margin: 0 auto;
 }
 
 /* ── Persona titular ── */

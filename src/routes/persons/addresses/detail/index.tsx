@@ -16,7 +16,15 @@ import { addressService } from '~/services/address/address.service';
 import { personService } from '~/services/person/person.service';
 import type { AddressListItem } from '~/types/address.types';
 import type { PersonListItem } from '~/types/person.types';
-import { ActionHeader, Panel, SelectionStep, Toast } from '~/ui';
+import {
+  ActionHeader,
+  Avatar,
+  Button,
+  EmptyState,
+  Panel,
+  SelectionStep,
+  Toast,
+} from '~/ui';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import './detail.css';
@@ -47,6 +55,9 @@ export default component$(() => {
     address.value = null;
     selectionMode.value = false;
     noAddressForPerson.value = '';
+    personQuery.value = '';
+    personResults.value = [];
+    searchingPerson.value = false;
 
     const id = idParam ? Number(idParam) : 0;
 
@@ -108,15 +119,16 @@ export default component$(() => {
       meta={m.meta}
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
+      fullWidth
     >
-      <div class="detail-address-page">
-        <ActionHeader title={m.title} onBack$={goBack$} />
+      <ActionHeader q:slot="hub-header" title={m.title} onBack$={goBack$} />
 
-        <div class="detail-address-page__content">
+      <div class="address-detail-page">
+        <div class="address-detail__content">
           {/* ── Cargando ── */}
           {loading.value && (
             <Panel title={m.loadingTitle} description={m.loadingDescription}>
-              <div class="detail-address__loading" />
+              <div class="address-detail__loading" />
             </Panel>
           )}
 
@@ -128,195 +140,248 @@ export default component$(() => {
           )}
 
           {/* ── Selección ── */}
-          {!loading.value && selectionMode.value && (
-            <>
-              <SelectionStep
-                title={m.selectionTitle}
-                description={m.selectionDescription}
-                fieldLabel={mc.personSearchLabel}
-                fieldHint={m.fieldPersonHint}
-                placeholder={messages.persons.edit.searchPlaceholder}
-                emptyMessage={m.noResultsCriteria}
-                query={personQuery.value}
-                options={personResults.value.map((p) => ({
-                  value: String(p.id),
-                  label: p.fullName,
-                  description: p.curp,
-                }))}
-                loading={searchingPerson.value}
-                onQueryChange$={(q) => {
-                  personQuery.value = q;
-                  noAddressForPerson.value = '';
+          {!loading.value &&
+            selectionMode.value &&
+            !noAddressForPerson.value && (
+              <div class="address-detail__search-shell">
+                <SelectionStep
+                  title={m.selectionTitle}
+                  description={m.selectionDescription}
+                  fieldLabel={mc.personSearchLabel}
+                  fieldHint={m.fieldPersonHint}
+                  placeholder={messages.persons.edit.searchPlaceholder}
+                  emptyMessage={m.noResultsCriteria}
+                  query={personQuery.value}
+                  options={personResults.value.map((p) => ({
+                    value: String(p.id),
+                    label: p.fullName,
+                    description: p.curp,
+                  }))}
+                  loading={searchingPerson.value}
+                  onQueryChange$={(q) => {
+                    personQuery.value = q;
+                    noAddressForPerson.value = '';
+                  }}
+                  onSelect$={$(async (option) => {
+                    const person = personResults.value.find(
+                      (p) => p.id === Number(option.value),
+                    );
+                    if (!person) return;
+                    const found = await addressService.findOne(person.curp);
+                    if (found) {
+                      await nav(`${ROUTES.ADDRESSES_DETAIL}?id=${found.id}`);
+                    } else {
+                      noAddressForPerson.value = person.fullName;
+                    }
+                  })}
+                />
+              </div>
+            )}
+
+          {/* ── No encontrado ── */}
+          {!loading.value && noAddressForPerson.value && (
+            <div class="address-detail__search-shell">
+              <EmptyState
+                title={m.notFoundTitle}
+                description={m.notFoundDescription.replace(
+                  '{name}',
+                  noAddressForPerson.value,
+                )}
+                tone="warning"
+                actionLabel={m.notFoundCreateAction}
+                onAction$={async () => {
+                  await nav(ROUTES.ADDRESSES_CREATE);
                 }}
-                onSelect$={$(async (option) => {
-                  const person = personResults.value.find(
-                    (p) => p.id === Number(option.value),
-                  );
-                  if (!person) return;
-                  const found = await addressService.findOne(person.curp);
-                  if (found) {
-                    await nav(`${ROUTES.ADDRESSES_DETAIL}?id=${found.id}`);
-                  } else {
-                    noAddressForPerson.value = person.fullName;
-                  }
-                })}
               />
-              {noAddressForPerson.value && (
-                <Toast tone="warning" title={noAddressForPerson.value}>
-                  {m.noAddressFound}
-                </Toast>
-              )}
-            </>
+            </div>
           )}
 
           {/* ── Detalle ── */}
           {!loading.value && current && (
-            <div class="detail-address-layout">
-              {/* ── Ficha 1: Persona ── */}
-              <div class="detail-ficha">
-                <div class="detail-ficha__header">
-                  <div
-                    class="detail-ficha__icon detail-ficha__icon--person"
-                    aria-hidden="true"
-                  >
-                    <AppIcon intent="person" size="sm" />
-                  </div>
-                  <div>
-                    <p class="detail-ficha__title">{m.panelPersonTitle}</p>
-                    <p class="detail-ficha__subtitle">
-                      {m.panelPersonDescription}
-                    </p>
-                  </div>
+            <article class="address-detail__result-card">
+              <header class="address-detail__result-header">
+                <div class="address-detail__icon" aria-hidden="true">
+                  <AppIcon intent="pin" size="md" />
                 </div>
-                <div class="detail-ficha__body">
-                  <div class="detail-field">
-                    <span class="detail-field__label">{m.fieldFullName}</span>
-                    <span class="detail-field__value">{current.fullName}</span>
+                <div class="address-detail__result-identity">
+                  <span class="address-detail__result-eyebrow">
+                    {messages.addresses.detail.eyebrow}
+                  </span>
+                  <h2>{current.fullAddress ?? current.street}</h2>
+                  <div class="address-detail__result-meta">
+                    <span class="address-detail__result-pill">
+                      CP {current.zipCode}
+                    </span>
+                    <span class="address-detail__result-divider">·</span>
+                    <span class="address-detail__result-state">
+                      {current.stateName}
+                    </span>
                   </div>
-                  <div class="detail-fields-row detail-fields-row--2">
-                    <div class="detail-field">
-                      <span class="detail-field__label">{m.fieldCurp}</span>
-                      <span class="detail-field__value detail-field__value--mono">
-                        {current.curp}
+                  <p class="address-detail__result-id">ID: {current.id}</p>
+                </div>
+              </header>
+
+              <div class="address-detail__result-body">
+                {/* ── Propietario ── */}
+                <section class="address-detail__section">
+                  <div class="address-detail__section-title">
+                    {m.sectionOwnerTitle}
+                  </div>
+                  <div class="address-detail__owner-row">
+                    <Avatar name={current.fullName} size="md" />
+                    <div class="address-detail__owner-info">
+                      <strong>{current.fullName}</strong>
+                      <span>{current.curp}</span>
+                    </div>
+                  </div>
+                </section>
+
+                {/* ── Ubicación ── */}
+                <section class="address-detail__section">
+                  <div class="address-detail__section-title">
+                    {m.sectionLocationTitle}
+                  </div>
+                  <div class="address-detail__section-grid">
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldZipCode}
+                      </span>
+                      <span class="address-detail__field-value address-detail__field-value--mono">
+                        {current.zipCode}
                       </span>
                     </div>
-                    <div class="detail-field">
-                      <span class="detail-field__label">{m.fieldId}</span>
-                      <span class="detail-field__value">{current.id}</span>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldSettlement}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.settlementType} {current.settlement}
+                      </span>
+                    </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldLocality}
+                      </span>
+                      <span
+                        class={`address-detail__field-value${current.locality ? '' : ' address-detail__field-value--empty'}`}
+                      >
+                        {current.locality || '—'}
+                      </span>
+                    </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldMunicipality}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.municipalityName}
+                      </span>
+                    </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldMunicipalCapital}
+                      </span>
+                      <span
+                        class={`address-detail__field-value${current.municipalCapital ? '' : ' address-detail__field-value--empty'}`}
+                      >
+                        {current.municipalCapital || '—'}
+                      </span>
+                    </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldState}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.stateName}
+                      </span>
                     </div>
                   </div>
-                </div>
-              </div>
+                </section>
 
-              {/* ── Ficha 2: Dirección ── */}
-              <div class="detail-ficha">
-                <div class="detail-ficha__header">
-                  <div
-                    class="detail-ficha__icon detail-ficha__icon--address"
-                    aria-hidden="true"
-                  >
-                    <AppIcon intent="pin" size="sm" />
+                {/* ── Calle y número ── */}
+                <section class="address-detail__section">
+                  <div class="address-detail__section-title">
+                    {m.sectionStreetTitle}
                   </div>
-                  <div>
-                    <p class="detail-ficha__title">{m.panelAddressTitle}</p>
-                    <p class="detail-ficha__subtitle">
-                      {m.panelAddressDescription}
-                    </p>
-                  </div>
-                </div>
-                <div class="detail-ficha__body">
-                  {/* Sección: Ubicación */}
-                  <div class="detail-ficha__section">
-                    <div class="detail-fields-row detail-fields-row--4">
-                      <div class="detail-field">
-                        <span class="detail-field__label">
-                          {m.fieldZipCode}
-                        </span>
-                        <span class="detail-field__value detail-field__value--mono">
-                          {current.zipCode}
-                        </span>
-                      </div>
-                      <div class="detail-field detail-field--span-2">
-                        <span class="detail-field__label">
-                          {m.fieldSettlement}
-                        </span>
-                        <span class="detail-field__value">
-                          {current.settlementType} {current.settlement}
-                        </span>
-                      </div>
-                      <div class="detail-field">
-                        <span class="detail-field__label">
-                          {m.fieldMunicipality}
-                        </span>
-                        <span class="detail-field__value">
-                          {current.municipalityName}
-                        </span>
-                      </div>
+                  <div class="address-detail__section-grid">
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldStreetType}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.streetType}
+                      </span>
                     </div>
-                    <div class="detail-fields-row detail-fields-row--4">
-                      <div class="detail-field detail-field--span-3">
-                        <span class="detail-field__label">{m.fieldState}</span>
-                        <span class="detail-field__value">
-                          {current.stateName}
-                        </span>
-                      </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldStreet}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.street}
+                      </span>
                     </div>
-                  </div>
-
-                  {/* Sección: Calle y número */}
-                  <div class="detail-ficha__section">
-                    <div class="detail-fields-row detail-fields-row--street">
-                      <div class="detail-field">
-                        <span class="detail-field__label">
-                          {m.fieldStreetType}
-                        </span>
-                        <span class="detail-field__value">
-                          {current.streetType}
-                        </span>
-                      </div>
-                      <div class="detail-field">
-                        <span class="detail-field__label">{m.fieldStreet}</span>
-                        <span class="detail-field__value">
-                          {current.street}
-                        </span>
-                      </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldExteriorNumber}
+                      </span>
+                      <span class="address-detail__field-value">
+                        {current.exteriorNumber}
+                      </span>
                     </div>
-                    <div class="detail-fields-row detail-fields-row--3">
-                      <div class="detail-field">
-                        <span class="detail-field__label">
-                          {m.fieldExteriorNumber}
-                        </span>
-                        <span class="detail-field__value">
-                          {current.exteriorNumber || '—'}
-                        </span>
-                      </div>
-                      <div class="detail-field">
-                        <span class="detail-field__label">
-                          {m.fieldInteriorNumber}
-                        </span>
-                        <span class="detail-field__value">
-                          {current.interiorNumber || '—'}
-                        </span>
-                      </div>
-                      <div class="detail-field">
-                        <span class="detail-field__label">{m.fieldBlock}</span>
-                        <span class="detail-field__value">
-                          {current.block || '—'}
-                        </span>
-                      </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldInteriorNumber}
+                      </span>
+                      <span
+                        class={`address-detail__field-value${current.interiorNumber ? '' : ' address-detail__field-value--empty'}`}
+                      >
+                        {current.interiorNumber || '—'}
+                      </span>
                     </div>
-                    <div class="detail-field">
-                      <span class="detail-field__label">
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
+                        {m.fieldBlock}
+                      </span>
+                      <span
+                        class={`address-detail__field-value${current.block ? '' : ' address-detail__field-value--empty'}`}
+                      >
+                        {current.block || '—'}
+                      </span>
+                    </div>
+                    <div class="address-detail__field">
+                      <span class="address-detail__field-label">
                         {m.fieldBetweenStreets}
                       </span>
-                      <span class="detail-field__value">
+                      <span
+                        class={`address-detail__field-value${current.betweenStreets ? '' : ' address-detail__field-value--empty'}`}
+                      >
                         {current.betweenStreets || '—'}
                       </span>
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
-            </div>
+
+              {/* ── Acciones ── */}
+              <div class="address-detail__result-actions">
+                <Button
+                  variant="ghost"
+                  iconLeft="edit"
+                  onClick$={async () => {
+                    await nav(`${ROUTES.ADDRESSES_EDIT}?id=${current.id}`);
+                  }}
+                >
+                  {m.actionEdit}
+                </Button>
+                <Button
+                  iconLeft="view"
+                  onClick$={async () => {
+                    await nav(ROUTES.ADDRESSES_DETAIL);
+                  }}
+                >
+                  {m.actionViewAnother}
+                </Button>
+              </div>
+            </article>
           )}
         </div>
       </div>
