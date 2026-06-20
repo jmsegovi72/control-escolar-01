@@ -16,6 +16,7 @@ export type IconIntent =
   | 'filter'
   | 'group'
   | 'info'
+  | 'list'
   | 'lock'
   | 'login-reset'
   | 'logout'

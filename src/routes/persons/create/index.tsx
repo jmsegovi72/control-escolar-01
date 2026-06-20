@@ -18,6 +18,7 @@ import {
   StepIndicator,
   Toast,
 } from '~/ui';
+import { CreateResult, CreateResultRow } from '~/ui/composed/CreateResult';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import {
@@ -664,53 +665,51 @@ export default component$(() => {
 
           {resultTone.value && (
             <div class="create-person-card">
-              <section
-                class="create-person-result"
-                data-tone={resultTone.value}
+              <CreateResult
+                tone={resultTone.value}
+                eyebrow={
+                  resultTone.value === 'success'
+                    ? m.successEyebrow
+                    : m.errorResultEyebrow
+                }
+                title={
+                  resultTone.value === 'success'
+                    ? m.successTitle
+                    : m.errorResultTitle
+                }
+                description={
+                  resultTone.value === 'success'
+                    ? m.successDescription
+                    : error.value
+                }
+                onRetry$={
+                  resultTone.value === 'error' ? createPerson$ : undefined
+                }
+                retryLabel={m.errorRetry}
               >
-                <header class="create-person-result__header">
-                  <div class="create-person-result__icon" aria-hidden="true">
-                    <AppIcon
-                      intent={
-                        resultTone.value === 'success' ? 'success' : 'close'
-                      }
-                      size="lg"
-                    />
-                  </div>
-                  <span>
-                    {resultTone.value === 'success'
-                      ? m.successEyebrow
-                      : m.errorResultEyebrow}
-                  </span>
-                  <h2>
-                    {resultTone.value === 'success'
-                      ? m.successTitle
-                      : m.errorResultTitle}
-                  </h2>
-                  <p>
-                    {resultTone.value === 'success'
-                      ? m.successDescription
-                      : error.value}
-                  </p>
-                </header>
+                <CreateResultRow label={m.resultCurp} value={curp.value} />
+                <CreateResultRow
+                  label={m.resultName}
+                  value={completedName}
+                  fallback={m.resultNoData}
+                />
+                <CreateResultRow label={m.resultGender} value={genderLabel} />
+                <CreateResultRow
+                  label={m.resultBirthDate}
+                  value={birthDateLabel}
+                />
+                <CreateResultRow
+                  label={m.resultPhone}
+                  value={phone.value}
+                  fallback={m.resultNoData}
+                />
+                <CreateResultRow
+                  label={m.resultEmail}
+                  value={email.value}
+                  fallback={m.resultNoData}
+                />
 
-                <div class="create-person-result__body">
-                  {[
-                    [m.resultCurp, curp.value],
-                    [m.resultName, completedName || m.resultNoData],
-                    [m.resultGender, genderLabel],
-                    [m.resultBirthDate, birthDateLabel],
-                    [m.resultPhone, phone.value || m.resultNoData],
-                    [m.resultEmail, email.value || m.resultNoData],
-                  ].map(([label, value]) => (
-                    <div class="create-person-result__row" key={label}>
-                      <span>{label}</span>
-                      <strong>{value}</strong>
-                    </div>
-                  ))}
-                </div>
-
-                <div class="create-person-result__actions">
+                <div q:slot="actions">
                   {resultTone.value === 'success' ? (
                     <>
                       <Button variant="secondary" onClick$={resetAll$}>
@@ -718,29 +717,24 @@ export default component$(() => {
                       </Button>
                       <Button
                         iconRight="chevron-right"
-                        onClick$={async () => await nav(ROUTES.PERSONS_SEARCH)}
+                        onClick$={async () => await nav(ROUTES.PERSONS)}
                       >
                         {m.successFinish}
                       </Button>
                     </>
                   ) : (
-                    <>
-                      <Button
-                        variant="secondary"
-                        onClick$={() => {
-                          resultTone.value = '';
-                          error.value = '';
-                        }}
-                      >
-                        {m.errorBackToForm}
-                      </Button>
-                      <Button loading={saving.value} onClick$={createPerson$}>
-                        {m.errorRetry}
-                      </Button>
-                    </>
+                    <Button
+                      variant="secondary"
+                      onClick$={() => {
+                        resultTone.value = '';
+                        error.value = '';
+                      }}
+                    >
+                      {m.errorBackToForm}
+                    </Button>
                   )}
                 </div>
-              </section>
+              </CreateResult>
             </div>
           )}
         </div>

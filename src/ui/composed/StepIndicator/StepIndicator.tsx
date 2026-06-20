@@ -26,6 +26,7 @@ export const StepIndicator = component$<StepIndicatorProps>(
           const stepNum = index + 1;
           const isLast = tone && stepNum === steps.length;
           const done = stepNum < current || (isLast && tone === 'success');
+          const connectorDone = stepNum <= current;
           const active =
             stepNum === current &&
             !(isLast && (tone === 'success' || tone === 'error'));
@@ -37,7 +38,7 @@ export const StepIndicator = component$<StepIndicatorProps>(
               {index > 0 && (
                 <span
                   class="ui-step-indicator__connector"
-                  data-done={done ? 'true' : undefined}
+                  data-done={connectorDone ? 'true' : undefined}
                 />
               )}
               <button

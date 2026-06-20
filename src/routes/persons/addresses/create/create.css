@@ -13,13 +13,18 @@
   min-width: 0;
   padding: var(--space-8) var(--space-4);
   box-sizing: border-box;
+  justify-items: center;
+}
+
+.create-address-card {
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, var(--layout-form-max-width));
 }
 
 .create-address-layout {
   display: grid;
   gap: var(--space-4);
-  width: min(100%, var(--layout-form-max-width));
-  margin: 0 auto;
 }
 
 /* ── Tarjeta de persona/asentamiento seleccionado ── */
@@ -71,6 +76,18 @@
 
 /* ── Formulario del domicilio ── */
 
+.create-address-form-header-icon {
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  min-width: var(--avatar-size-md);
+  border-radius: var(--radius-3);
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  display: grid;
+  place-items: center;
+  color: var(--color-primary);
+  margin-top: 1px;
+}
+
 .create-address-form {
   display: grid;
   gap: var(--space-4);
@@ -83,7 +100,7 @@
 }
 
 .create-address-grid--street {
-  grid-template-columns: 14rem minmax(0, 1fr);
+  grid-template-columns: 1fr 1fr;
 }
 
 .create-address-grid--numbers {
@@ -97,30 +114,6 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   justify-content: flex-end;
-}
-
-/* ── Pantalla de éxito ── */
-
-.create-address-success {
-  display: grid;
-  gap: var(--space-4);
-  justify-items: start;
-}
-
-.create-address-success__icon {
-  display: inline-grid;
-  width: 4rem;
-  height: 4rem;
-  place-items: center;
-  border-radius: var(--radius-2);
-  background: var(--color-success-soft);
-  color: var(--color-success);
-}
-
-.create-address-success__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
 }
 
 /* ── Responsive ── */

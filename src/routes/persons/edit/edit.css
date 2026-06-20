@@ -16,12 +16,12 @@
 }
 
 .edit-person__search-shell {
-  width: min(100%, 40rem);
+  width: min(100%, var(--layout-form-max-width));
   margin: 0 auto;
 }
 
 .edit-person__content .create-person-card {
-  width: min(100%, 40rem);
+  width: min(100%, var(--layout-form-max-width));
   margin: 0 auto;
 }
 

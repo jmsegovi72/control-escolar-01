@@ -544,4 +544,27 @@ A partir de este punto, la regla oficial del proyecto es:
 - si la accion tiene pasos, usa la variante validada en `persons/create`
 - cualquier vista que no siga este patron debe refactorizarse antes de seguir parchando estilos
 
+---
+
+## Componentes UI oficiales (no inventar el patrón)
+
+Estas son las piezas validadas del sistema. Cualquier pantalla de accion **DEBE** usarlas. Si necesitas algo que no esta aqui, primero revisa si ya existe, y si no, crealo en `src/ui/composed/` documentandolo.
+
+| Componente | Doc | Cuando usarlo |
+|---|---|---|
+| `HubHeader` | (en codigo) | Pantalla hub de modulo |
+| `ActionHeader` | (en codigo) | Pantalla de accion (header con back + title) |
+| `ActionCard` / `ActionRow` | (en codigo) | Items dentro del hub |
+| `StepIndicator` | [step-indicator.md](./components/step-indicator.md) | Wizard multi-paso (toolbar) |
+| `CreateResult` | [create-result.md](./components/create-result.md) | Resultado de accion de crear (success/error) |
+| `Panel` | (en codigo) | Contenedor neutro de secciones en forms |
+
+### Regla critica: resultado de accion
+
+Toda pantalla de crear **debe** terminar en `CreateResult` (success o error). Ver [create-result.md](./components/create-result.md) para API, ejemplos y reglas.
+
+### Regla critica: wizard multi-paso
+
+Toda pantalla con pasos **debe** pasar `tone` al `StepIndicator` cuando hay resultado conocido. Sin esto, el ultimo paso queda en azul cuando deberia ser verde (success) o rojo (error). Ver [step-indicator.md](./components/step-indicator.md).
+
 

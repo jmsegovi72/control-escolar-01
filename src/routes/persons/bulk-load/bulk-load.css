@@ -16,7 +16,7 @@
 }
 
 .bulk-load-page__card {
-  width: min(100%, 40rem);
+  width: min(100%, var(--layout-form-max-width));
   margin: 0 auto;
 }
 

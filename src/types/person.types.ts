@@ -78,6 +78,7 @@ export interface FindPersonsParams {
   stateName?: string;
   municipalityName?: string;
   isActive?: boolean;
+  hasAddress?: boolean;
   limit?: number;
   page?: number;
 }

@@ -71,6 +71,16 @@ Alias `~/*` → `./src/*` (mediante `vite-tsconfig-paths`).
 | `src/types/` | Definiciones TypeScript (auth, user, person, address, etc.) |
 | `src/components/` | Componentes específicos de la app (layout, router-head, persons, users) |
 
+## Docs de patrones UI
+
+Estos documentos son **la fuente de verdad** para implementar pantallas. Antes de inventar algo, leerlos.
+
+| Doc | Cubre |
+|---|---|
+| [`docs/action-and-hub-structure.md`](./docs/action-and-hub-structure.md) | Estructura oficial de hubs y pantallas de acción |
+| [`docs/components/create-result.md`](./docs/components/create-result.md) | `CreateResult` — ficha de resultado de crear (success/error) |
+| [`docs/components/step-indicator.md`](./docs/components/step-indicator.md) | `StepIndicator` — wizard multi-paso, regla obligatoria de `tone` |
+
 ## Entorno
 
 - `PUBLIC_API_URL` o `VITE_API_URL` — defaults a `http://localhost:3000/sices/v3`

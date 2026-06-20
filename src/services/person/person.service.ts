@@ -30,6 +30,8 @@ export const personService = {
     if (params.gender) query.set('gender', params.gender);
     if (params.isActive !== undefined)
       query.set('isActive', String(params.isActive));
+    if (params.hasAddress !== undefined)
+      query.set('hasAddress', String(params.hasAddress));
 
     const response = await apiClient.get<ApiResponse<PersonListItem[]>>(
       `/persons/query?${query.toString()}`,
