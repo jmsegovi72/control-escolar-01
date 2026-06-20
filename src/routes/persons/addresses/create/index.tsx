@@ -195,12 +195,13 @@ export default component$(() => {
       allowedUserTypes={['SUPER', 'CE']}
       accessDeniedDescription={m.accessDenied}
     >
-      <div class="create-address-page">
-        <ActionHeader
-          title={m.title}
-          onBack$={async () => await nav(ROUTES.ADDRESSES)}
-        />
+      <ActionHeader
+        q:slot="hub-header"
+        title={m.title}
+        onBack$={async () => await nav(ROUTES.ADDRESSES)}
+      />
 
+      <div class="create-address-page">
         <div class="create-address-page__content">
           {error.value && errorField.value === '' && (
             <Toast tone="danger" title="Error">

@@ -208,6 +208,31 @@ Como `persons/create`:
 
 ## Reglas de CSS
 
+### Regla sobre valores hardcodeados
+
+Todos los valores visuales (colores, espacios, radios, anchos) deben venir de tokens definidos en `src/ui/styles/tokens.css`.
+
+**Nunca** escribir valores literales como:
+- Colores: `color: #3060CC` ❌
+- Espacios: `padding: 16px 22px` ❌
+- Radios: `border-radius: 14px` ❌
+- Anchos: `width: 600px` ❌
+- Bordes: `border: 1.5px solid` ❌
+
+Usar siempre tokens:
+- `color: var(--color-primary)` ✓
+- `padding: var(--space-4) var(--space-5)` ✓
+- `border-radius: var(--radius-5)` ✓
+- `width: min(100%, var(--layout-form-max-width))` ✓
+- `border: var(--border-width-2) solid var(--color-primary)` ✓
+
+Si el valor no existe como token, agregarlo a `tokens.css` primero. No agregar un `:root { --x: 37.5rem; }` local en el archivo de la ruta — eso es un valor hardcodeado disfrazado de variable.
+
+**Para los anchos de formulario**, el token es:
+```css
+--layout-form-max-width: 37.5rem; /* 600px */
+```
+
 ### Wrapper raiz de pagina
 
 Usar un wrapper simple y limpio:
@@ -249,10 +274,17 @@ Solo las tarjetas o paneles internos pueden limitar ancho.
 
 ```css
 .page-card {
-  width: min(100%, 40rem);
+  width: min(100%, var(--layout-form-max-width));
   margin: 0 auto;
 }
 ```
+
+**Token:**
+```css
+--layout-form-max-width: 37.5rem; /* 600px */
+```
+
+Este token esta en `src/ui/styles/tokens.css`. Si en el futuro cambia el ancho de los formularios (por ejemplo a 720px), solo se modifica el token en un lugar y todos los formularios se actualizan.
 
 Nunca debe centrarse:
 - `HubHeader`
@@ -264,7 +296,7 @@ Nunca debe centrarse:
 
 En una misma pantalla de accion pueden coexistir dos reglas de ancho distintas.
 
-Los siguientes bloques si pueden ir en un contenedor interno de `640px`:
+Los siguientes bloques si pueden ir en un contenedor interno con `var(--layout-form-max-width)` (600px):
 - formularios cortos
 - loaders
 - estados vacios
