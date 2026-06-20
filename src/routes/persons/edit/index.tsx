@@ -26,6 +26,7 @@ import {
   Select,
   Toast,
 } from '~/ui';
+import { EditResult, EditResultRow } from '~/ui/composed/EditResult';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import {
@@ -97,6 +98,7 @@ export default component$(() => {
 
   const photoFile = useSignal<File | null>(null);
   const photoPreview = useSignal('');
+  const removePhoto = useSignal(false);
 
   const genderOptions = [
     { value: 'H', label: mc.optionMale },
@@ -193,6 +195,7 @@ export default component$(() => {
 
       photoFile.value = null;
       photoPreview.value = '';
+      removePhoto.value = false;
     } catch (err) {
       person.value = null;
       error.value = normalizeError(
@@ -329,9 +332,10 @@ export default component$(() => {
         ...(homoclave.value.trim() && {
           homoclave: homoclave.value.trim().toUpperCase(),
         }),
+        ...(removePhoto.value && { photoUrl: null }),
       });
 
-      if (photoFile.value) {
+      if (!removePhoto.value && photoFile.value) {
         try {
           await personService.uploadPhoto(person.value.id, photoFile.value);
         } catch {
@@ -356,7 +360,9 @@ export default component$(() => {
         nationality: nationality.value || undefined,
         phone: p,
         personalEmail: em,
-        photoUrl: photoPreview.value || person.value.photoUrl,
+        photoUrl: removePhoto.value
+          ? null
+          : photoPreview.value || person.value.photoUrl,
       };
 
       success.value = true;
@@ -373,8 +379,9 @@ export default component$(() => {
   });
 
   const currentPerson = person.value;
-  const currentPhoto =
-    photoPreview.value || getPhotoUrl(currentPerson?.photoUrl);
+  const currentPhoto = removePhoto.value
+    ? DEFAULT_PERSON_AVATAR
+    : photoPreview.value || getPhotoUrl(currentPerson?.photoUrl);
 
   return (
     <AuthenticatedShell
@@ -410,7 +417,68 @@ export default component$(() => {
             </div>
           )}
 
-          {!loading.value && currentPerson && (
+          {!loading.value && success.value && currentPerson && (
+            <div class="create-person-card">
+              <EditResult
+                eyebrow={m.successResultEyebrow}
+                title={m.successResultTitle}
+                description={m.successResultDescription}
+              >
+                <EditResultRow
+                  label={messages.persons.create.resultCurp}
+                  value={currentPerson.curp}
+                />
+                <EditResultRow
+                  label={messages.persons.create.resultName}
+                  value={currentPerson.fullName}
+                />
+                <EditResultRow
+                  label={messages.persons.create.resultGender}
+                  value={
+                    currentPerson.gender === 'H'
+                      ? messages.persons.detail.genderMale
+                      : currentPerson.gender === 'M'
+                        ? messages.persons.detail.genderFemale
+                        : null
+                  }
+                />
+                <EditResultRow
+                  label={messages.persons.create.resultBirthDate}
+                  value={currentPerson.birthDate ?? null}
+                />
+                <EditResultRow
+                  label={messages.persons.create.resultPhone}
+                  value={currentPerson.phone}
+                  fallback={messages.persons.create.resultNoData}
+                />
+                <EditResultRow
+                  label={messages.persons.create.resultEmail}
+                  value={currentPerson.personalEmail}
+                  fallback={messages.persons.create.resultNoData}
+                />
+
+                <div q:slot="actions">
+                  <Button
+                    variant="ghost"
+                    iconLeft="view"
+                    onClick$={async () => {
+                      await nav(ROUTES.PERSONS_EDIT);
+                    }}
+                  >
+                    {m.successResultViewAnother}
+                  </Button>
+                  <Button
+                    iconRight="chevron-right"
+                    onClick$={async () => await nav(ROUTES.PERSONS)}
+                  >
+                    {m.successResultFinish}
+                  </Button>
+                </div>
+              </EditResult>
+            </div>
+          )}
+
+          {!loading.value && !success.value && currentPerson && (
             <div class="create-person-card">
               <div class="create-person-layout">
                 {error.value && (
@@ -418,14 +486,6 @@ export default component$(() => {
                     tone="danger"
                     title={messages.persons.common.errorToastTitle}
                     description={error.value}
-                  />
-                )}
-
-                {success.value && (
-                  <Toast
-                    tone="success"
-                    title={m.successToastTitle}
-                    description={m.successToastDescription}
                   />
                 )}
 
@@ -743,6 +803,34 @@ export default component$(() => {
                           onClick$={() => {
                             photoFile.value = null;
                             photoPreview.value = '';
+                            removePhoto.value = false;
+                          }}
+                        >
+                          {m.photoRestore}
+                        </Button>
+                      )}
+                      {!photoFile.value &&
+                        !removePhoto.value &&
+                        currentPerson?.photoUrl &&
+                        getPhotoUrl(currentPerson.photoUrl) !==
+                          DEFAULT_PERSON_AVATAR && (
+                          <Button
+                            variant="link"
+                            size="sm"
+                            onClick$={() => {
+                              removePhoto.value = true;
+                              photoPreview.value = '';
+                            }}
+                          >
+                            {m.photoRemove}
+                          </Button>
+                        )}
+                      {removePhoto.value && (
+                        <Button
+                          variant="link"
+                          size="sm"
+                          onClick$={() => {
+                            removePhoto.value = false;
                           }}
                         >
                           {m.photoRestore}

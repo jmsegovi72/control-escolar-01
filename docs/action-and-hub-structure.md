@@ -557,6 +557,7 @@ Estas son las piezas validadas del sistema. Cualquier pantalla de accion **DEBE*
 | `ActionCard` / `ActionRow` | (en codigo) | Items dentro del hub |
 | `StepIndicator` | [step-indicator.md](./components/step-indicator.md) | Wizard multi-paso (toolbar) |
 | `CreateResult` | [create-result.md](./components/create-result.md) | Resultado de accion de crear (success/error) |
+| `EditResult` | [edit-result.md](./components/edit-result.md) | Resultado de accion de editar (success/error) |
 | `Panel` | (en codigo) | Contenedor neutro de secciones en forms |
 
 ### Regla critica: resultado de accion

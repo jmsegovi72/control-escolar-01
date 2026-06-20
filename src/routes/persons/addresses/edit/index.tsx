@@ -32,6 +32,7 @@ import {
   SelectionStep,
   Toast,
 } from '~/ui';
+import { EditResult, EditResultRow } from '~/ui/composed/EditResult';
 import { AppIcon } from '~/ui/icons';
 import { normalizeError } from '~/utils/api-error';
 import './edit.css';
@@ -252,10 +253,62 @@ export default component$(() => {
             </Toast>
           )}
 
-          {success.value && (
-            <Toast tone="success" title={m.successToastTitle}>
-              {m.successToastDescription}
-            </Toast>
+          {!loading.value && success.value && currentAddress && (
+            <div class="edit-address-layout">
+              <EditResult
+                eyebrow={m.successResultEyebrow}
+                title={m.successResultTitle}
+                description={m.successResultDescription}
+              >
+                <EditResultRow
+                  label={mc.successResultStreetLabel}
+                  value={`${currentAddress.streetType} ${currentAddress.street}`}
+                />
+                <EditResultRow
+                  label={mc.successResultExteriorLabel}
+                  value={currentAddress.exteriorNumber}
+                />
+                <EditResultRow
+                  label={mc.successResultInteriorLabel}
+                  value={currentAddress.interiorNumber}
+                  fallback={mc.successResultNoData}
+                />
+                <EditResultRow
+                  label={mc.successResultZipCodeLabel}
+                  value={currentAddress.zipCode}
+                />
+                <EditResultRow
+                  label={mc.successResultSettlementLabel}
+                  value={`${currentAddress.settlementType} ${currentAddress.settlement}`}
+                />
+                <EditResultRow
+                  label={mc.successResultMunicipalityLabel}
+                  value={currentAddress.municipalityName}
+                />
+                <EditResultRow
+                  label={mc.successResultStateLabel}
+                  value={currentAddress.stateName}
+                />
+
+                <div q:slot="actions">
+                  <Button
+                    variant="ghost"
+                    iconLeft="view"
+                    onClick$={async () => {
+                      await nav(ROUTES.ADDRESSES_EDIT);
+                    }}
+                  >
+                    {m.successResultViewAnother}
+                  </Button>
+                  <Button
+                    iconRight="chevron-right"
+                    onClick$={async () => await nav(ROUTES.ADDRESSES)}
+                  >
+                    {m.successResultFinish}
+                  </Button>
+                </div>
+              </EditResult>
+            </div>
           )}
 
           {/* ── Cargando ── */}
@@ -309,7 +362,7 @@ export default component$(() => {
           )}
 
           {/* ── Formulario de edición ── */}
-          {!loading.value && currentAddress && (
+          {!loading.value && !success.value && currentAddress && (
             <div class="edit-address-layout">
               {/* Persona titular */}
               <Panel
