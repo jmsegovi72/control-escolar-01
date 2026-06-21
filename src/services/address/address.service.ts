@@ -34,4 +34,8 @@ export const addressService = {
     );
     return response.data.data;
   },
+
+  async createMany(dto: { addresses: CreateAddressDto[] }): Promise<void> {
+    await apiClient.post('/addresses/batch', dto);
+  },
 };
