@@ -15,7 +15,11 @@ import { ROUTES } from '~/config/routes';
 import { addressService } from '~/services/address/address.service';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { personService } from '~/services/person/person.service';
-import type { Settlement, StreetType } from '~/types/address.types';
+import type {
+  AddressInfo,
+  Settlement,
+  StreetType,
+} from '~/types/address.types';
 import type { PersonListItem } from '~/types/person.types';
 import {
   ActionHeader,
@@ -38,6 +42,9 @@ const CP_REGEX = /^\d{5}$/;
 
 export default component$(() => {
   const nav = useNavigate();
+
+  // Resultado
+  const address = useSignal<AddressInfo | null>(null);
 
   // Fase 1 — Persona
   const personQuery = useSignal('');
@@ -86,14 +93,6 @@ export default component$(() => {
       label: t.abbreviation ? `${t.abbreviation} — ${t.name}` : t.name,
     })),
   ]);
-
-  const streetTypeLabel = useComputed$(() => {
-    const found = streetTypes.value.find((t) => t.id === streetTypeId.value);
-    if (!found) return '';
-    return found.abbreviation
-      ? `${found.abbreviation} ${found.name}`
-      : found.name;
-  });
 
   // Auto-búsqueda de personas (mínimo 3 caracteres)
   useTask$(async ({ track }) => {
@@ -177,7 +176,7 @@ export default component$(() => {
 
     saving.value = true;
     try {
-      await addressService.create({
+      const created = await addressService.create({
         personId: selectedPerson.value!.id,
         zipCodeId: selectedSettlement.value.id,
         streetTypeId: streetTypeId.value,
@@ -187,6 +186,7 @@ export default component$(() => {
         block: block.value.trim() || undefined,
         betweenStreets: betweenStreets.value.trim() || undefined,
       });
+      address.value = created;
       success.value = true;
     } catch (err) {
       const normalized = normalizeError(
@@ -236,7 +236,7 @@ export default component$(() => {
             )}
 
             {/* ── ÉXITO ── */}
-            {success.value ? (
+            {success.value && address.value ? (
               <CreateResult
                 eyebrow={m.successEyebrow}
                 title={m.successTitle}
@@ -244,65 +244,66 @@ export default component$(() => {
               >
                 <CreateResultRow
                   label={m.successResultPersonLabel}
-                  value={selectedPerson.value?.fullName}
-                  fallback={m.successResultNoData}
+                  value={address.value.fullName}
                 />
                 <CreateResultRow
                   label={m.successResultStreetLabel}
-                  value={streetTypeLabel.value}
-                  fallback={m.successResultNoData}
-                />
-                <CreateResultRow
-                  label={m.fieldStreetLabel}
-                  value={street.value}
-                  fallback={m.successResultNoData}
+                  value={`${address.value.streetType} ${address.value.street}`}
                 />
                 <CreateResultRow
                   label={m.successResultExteriorLabel}
-                  value={exteriorNumber.value}
+                  value={address.value.exteriorNumber}
                   fallback={m.successResultNoData}
                 />
-                {interiorNumber.value && (
+                {address.value.interiorNumber && (
                   <CreateResultRow
                     label={m.successResultInteriorLabel}
-                    value={interiorNumber.value}
+                    value={address.value.interiorNumber}
                   />
                 )}
-                {block.value && (
+                {address.value.block && (
                   <CreateResultRow
                     label={m.successResultBlockLabel}
-                    value={block.value}
+                    value={address.value.block}
                   />
                 )}
-                {betweenStreets.value && (
+                {address.value.betweenStreets && (
                   <CreateResultRow
                     label={m.successResultBetweenStreetsLabel}
-                    value={betweenStreets.value}
+                    value={address.value.betweenStreets}
                   />
                 )}
                 <CreateResultRow
                   label={m.successResultZipCodeLabel}
-                  value={selectedSettlement.value?.zipCode}
-                  fallback={m.successResultNoData}
+                  value={address.value.zipCode}
                 />
                 <CreateResultRow
                   label={m.successResultSettlementLabel}
-                  value={
-                    selectedSettlement.value
-                      ? `${selectedSettlement.value.abbreviation} ${selectedSettlement.value.settlement}`
-                      : null
-                  }
-                  fallback={m.successResultNoData}
+                  value={address.value.settlement}
                 />
+                <CreateResultRow
+                  label={m.successResultSettlementTypeLabel}
+                  value={address.value.settlementType}
+                />
+                {address.value.locality && (
+                  <CreateResultRow
+                    label={m.successResultLocalityLabel}
+                    value={address.value.locality}
+                  />
+                )}
                 <CreateResultRow
                   label={m.successResultMunicipalityLabel}
-                  value={selectedSettlement.value?.municipality}
-                  fallback={m.successResultNoData}
+                  value={address.value.municipalityName}
                 />
+                {address.value.municipalCapital && (
+                  <CreateResultRow
+                    label={m.successResultMunicipalCapitalLabel}
+                    value={address.value.municipalCapital}
+                  />
+                )}
                 <CreateResultRow
                   label={m.successResultStateLabel}
-                  value={selectedSettlement.value?.stateName}
-                  fallback={m.successResultNoData}
+                  value={address.value.stateName}
                 />
 
                 <div q:slot="actions">

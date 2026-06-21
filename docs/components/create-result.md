@@ -175,3 +175,10 @@ import { CreateResult, CreateResultRow } from '~/ui/composed/CreateResult';
 - [ ] Slot `actions` con botón secundario ("Crear otro") + botón principal ("Ir a [módulo]")
 - [ ] Botón principal navega a `ROUTES.MODULE_HUB`
 - [ ] Verificar `npm run build.types && npm run check`
+
+---
+
+## Ver también
+
+- [submit-and-delta.md](./submit-and-delta.md) — Principios de submit, delta de cambios, comparación inputs vs selects, reset de signals
+- [edit-result.md](./edit-result.md) — Componente paralelo para acciones de editar

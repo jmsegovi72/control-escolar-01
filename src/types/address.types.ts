@@ -32,11 +32,33 @@ export interface CreateAddressDto {
 export interface UpdateAddressDto {
   streetTypeId?: number;
   street?: string;
-  exteriorNumber?: string;
-  interiorNumber?: string;
-  block?: string;
-  betweenStreets?: string;
+  exteriorNumber?: string | null;
+  interiorNumber?: string | null;
+  block?: string | null;
+  betweenStreets?: string | null;
   zipCodeId?: number;
+}
+
+export interface AddressInfo {
+  id: number;
+  streetType: string;
+  street: string;
+  exteriorNumber: string;
+  interiorNumber: string;
+  block: string;
+  betweenStreets: string;
+  curp: string;
+  fullName: string;
+  zipCode: string;
+  settlement: string;
+  settlementType: string;
+  locality: string;
+  municipalityName: string;
+  municipalCapital: string;
+  municipalityId: number;
+  stateId: number;
+  stateName: string;
+  fullAddress: string | null;
 }
 
 export interface AddressListItem {

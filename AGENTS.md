@@ -81,6 +81,7 @@ Estos documentos son **la fuente de verdad** para implementar pantallas. Antes d
 | [`docs/components/create-result.md`](./docs/components/create-result.md) | `CreateResult` — ficha de resultado de crear (success/error) |
 | [`docs/components/edit-result.md`](./docs/components/edit-result.md) | `EditResult` — ficha de resultado de editar (success/error) |
 | [`docs/components/step-indicator.md`](./docs/components/step-indicator.md) | `StepIndicator` — wizard multi-paso, regla obligatoria de `tone` |
+| [`docs/components/submit-and-delta.md`](./docs/components/submit-and-delta.md) | Submit y delta de cambios — inputs vs selects, hasChanges, reset signals |
 
 ## Entorno
 

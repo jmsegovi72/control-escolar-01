@@ -17,7 +17,7 @@ import { addressService } from '~/services/address/address.service';
 import { catalogService } from '~/services/catalog/catalog.service';
 import { personService } from '~/services/person/person.service';
 import type {
-  AddressListItem,
+  AddressInfo,
   Settlement,
   StreetType,
 } from '~/types/address.types';
@@ -46,7 +46,7 @@ export default component$(() => {
   const location = useLocation();
 
   // Estado de carga / modo
-  const address = useSignal<AddressListItem | null>(null);
+  const address = useSignal<AddressInfo | null>(null);
   const loading = useSignal(true);
   const saving = useSignal(false);
   const error = useSignal('');
@@ -89,24 +89,45 @@ export default component$(() => {
     noAddressForPerson.value = '';
     changedSettlement.value = null;
     changingSettlement.value = false;
+    success.value = false;
+    personQuery.value = '';
+    personResults.value = [];
+    searchingPerson.value = false;
+    street.value = '';
+    streetTypeId.value = 0;
+    exteriorNumber.value = '';
+    interiorNumber.value = '';
+    block.value = '';
+    betweenStreets.value = '';
+    cpInput.value = '';
+    settlements.value = [];
+    searchingCp.value = false;
 
     const id = idParam ? Number(idParam) : 0;
 
     if (!id) {
       selectionMode.value = true;
-      try {
-        streetTypes.value = await catalogService.getStreetTypes();
-      } catch {
-        streetTypes.value = [];
+      if (streetTypes.value.length === 0) {
+        try {
+          streetTypes.value = await catalogService.getStreetTypes();
+        } catch {
+          streetTypes.value = [];
+        }
       }
       loading.value = false;
       return;
     }
 
     try {
+      const foundPromise = addressService.findOne(id);
+      const streetTypesPromise =
+        streetTypes.value.length === 0
+          ? catalogService.getStreetTypes()
+          : Promise.resolve(streetTypes.value);
+
       const [found, streetTypesData] = await Promise.all([
-        addressService.findOne(id),
-        catalogService.getStreetTypes(),
+        foundPromise,
+        streetTypesPromise,
       ]);
 
       streetTypes.value = streetTypesData;
@@ -202,17 +223,68 @@ export default component$(() => {
 
     saving.value = true;
     try {
-      await addressService.update(address.value.id, {
-        streetTypeId: streetTypeId.value,
-        street: street.value.trim(),
-        exteriorNumber: exteriorNumber.value.trim() || undefined,
-        interiorNumber: interiorNumber.value.trim() || undefined,
-        block: block.value.trim() || undefined,
-        betweenStreets: betweenStreets.value.trim() || undefined,
-        ...(changedSettlement.value
-          ? { zipCodeId: changedSettlement.value.id }
-          : {}),
-      });
+      const currentAddress = address.value;
+      if (!currentAddress) return;
+
+      const changes: Record<string, unknown> = {};
+
+      const streetChanged =
+        street.value.trim() !== (currentAddress.street ?? '').trim();
+      const exteriorChanged =
+        exteriorNumber.value.trim() !==
+        (currentAddress.exteriorNumber ?? '').trim();
+      const interiorChanged =
+        interiorNumber.value.trim() !==
+        (currentAddress.interiorNumber ?? '').trim();
+      const blockChanged =
+        block.value.trim() !== (currentAddress.block ?? '').trim();
+      const betweenChanged =
+        betweenStreets.value.trim() !==
+        (currentAddress.betweenStreets ?? '').trim();
+      const originalStreetTypeId =
+        streetTypes.value.find(
+          (t) =>
+            t.name === currentAddress.streetType ||
+            t.abbreviation === currentAddress.streetType,
+        )?.id ?? 0;
+      const streetTypeChanged = streetTypeId.value !== originalStreetTypeId;
+      const settlementChanged = changedSettlement.value !== null;
+
+      if (streetTypeChanged) {
+        changes.streetTypeId = streetTypeId.value;
+      }
+      if (streetChanged) {
+        changes.street = street.value.trim();
+      }
+      if (exteriorChanged) {
+        const v = exteriorNumber.value.trim();
+        changes.exteriorNumber = v === '' ? null : v;
+      }
+      if (interiorChanged) {
+        const v = interiorNumber.value.trim();
+        changes.interiorNumber = v === '' ? null : v;
+      }
+      if (blockChanged) {
+        const v = block.value.trim();
+        changes.block = v === '' ? null : v;
+      }
+      if (betweenChanged) {
+        const v = betweenStreets.value.trim();
+        changes.betweenStreets = v === '' ? null : v;
+      }
+      if (settlementChanged && changedSettlement.value) {
+        changes.zipCodeId = changedSettlement.value.id;
+      }
+
+      if (Object.keys(changes).length === 0) {
+        error.value = 'No hay cambios para guardar.';
+        errorField.value = '';
+        saving.value = false;
+        return;
+      }
+
+      const updated = await addressService.update(currentAddress.id, changes);
+      address.value = updated;
       success.value = true;
     } catch (err) {
       const normalized = normalizeError(err, messages.errors.saveChangesFailed);
@@ -232,6 +304,37 @@ export default component$(() => {
   ]);
 
   const currentAddress = address.value;
+
+  const hasChanges = useComputed$(() => {
+    const ca = address.value;
+    if (!ca) return false;
+
+    const streetChanged = street.value.trim() !== (ca.street ?? '').trim();
+    const exteriorChanged =
+      exteriorNumber.value.trim() !== (ca.exteriorNumber ?? '').trim();
+    const interiorChanged =
+      interiorNumber.value.trim() !== (ca.interiorNumber ?? '').trim();
+    const blockChanged = block.value.trim() !== (ca.block ?? '').trim();
+    const betweenChanged =
+      betweenStreets.value.trim() !== (ca.betweenStreets ?? '').trim();
+    const originalStreetTypeId =
+      streetTypes.value.find(
+        (t) => t.name === ca.streetType || t.abbreviation === ca.streetType,
+      )?.id ?? 0;
+    const streetTypeChanged = streetTypeId.value !== originalStreetTypeId;
+    const settlementChanged = changedSettlement.value !== null;
+
+    const result =
+      streetChanged ||
+      exteriorChanged ||
+      interiorChanged ||
+      blockChanged ||
+      betweenChanged ||
+      streetTypeChanged ||
+      settlementChanged;
+
+    return result;
+  });
 
   return (
     <AuthenticatedShell
@@ -261,16 +364,31 @@ export default component$(() => {
                 description={m.successResultDescription}
               >
                 <EditResultRow
+                  label={mc.successResultPersonLabel}
+                  value={currentAddress.fullName}
+                />
+                <EditResultRow
                   label={mc.successResultStreetLabel}
                   value={`${currentAddress.streetType} ${currentAddress.street}`}
                 />
                 <EditResultRow
                   label={mc.successResultExteriorLabel}
                   value={currentAddress.exteriorNumber}
+                  fallback={mc.successResultNoData}
                 />
                 <EditResultRow
                   label={mc.successResultInteriorLabel}
                   value={currentAddress.interiorNumber}
+                  fallback={mc.successResultNoData}
+                />
+                <EditResultRow
+                  label={mc.successResultBlockLabel}
+                  value={currentAddress.block}
+                  fallback={mc.successResultNoData}
+                />
+                <EditResultRow
+                  label={mc.successResultBetweenStreetsLabel}
+                  value={currentAddress.betweenStreets}
                   fallback={mc.successResultNoData}
                 />
                 <EditResultRow
@@ -279,11 +397,25 @@ export default component$(() => {
                 />
                 <EditResultRow
                   label={mc.successResultSettlementLabel}
-                  value={`${currentAddress.settlementType} ${currentAddress.settlement}`}
+                  value={currentAddress.settlement}
+                />
+                <EditResultRow
+                  label={mc.successResultSettlementTypeLabel}
+                  value={currentAddress.settlementType}
+                />
+                <EditResultRow
+                  label={mc.successResultLocalityLabel}
+                  value={currentAddress.locality}
+                  fallback={mc.successResultNoData}
                 />
                 <EditResultRow
                   label={mc.successResultMunicipalityLabel}
                   value={currentAddress.municipalityName}
+                />
+                <EditResultRow
+                  label={mc.successResultMunicipalCapitalLabel}
+                  value={currentAddress.municipalCapital}
+                  fallback={mc.successResultNoData}
                 />
                 <EditResultRow
                   label={mc.successResultStateLabel}
@@ -581,7 +713,7 @@ export default component$(() => {
                 <Button
                   iconLeft="save"
                   loading={saving.value}
-                  disabled={saving.value}
+                  disabled={saving.value || !hasChanges.value}
                   onClick$={saveChanges$}
                 >
                   {saving.value ? m.saving : m.actionSave}

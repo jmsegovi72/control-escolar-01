@@ -1,4 +1,5 @@
 import type {
+  AddressInfo,
   AddressListItem,
   CreateAddressDto,
   UpdateAddressDto,
@@ -7,8 +8,12 @@ import type { ApiResponse } from '~/types/api.types';
 import { apiClient } from '../api.client';
 
 export const addressService = {
-  async create(dto: CreateAddressDto): Promise<void> {
-    await apiClient.post('/addresses', dto);
+  async create(dto: CreateAddressDto): Promise<AddressInfo> {
+    const response = await apiClient.post<ApiResponse<AddressInfo>>(
+      '/addresses',
+      dto,
+    );
+    return response.data.data;
   },
 
   async findOne(search: string | number): Promise<AddressListItem | null> {
@@ -22,7 +27,11 @@ export const addressService = {
     }
   },
 
-  async update(id: number, dto: UpdateAddressDto): Promise<void> {
-    await apiClient.patch(`/addresses/${id}`, dto);
+  async update(id: number, dto: UpdateAddressDto): Promise<AddressInfo> {
+    const response = await apiClient.patch<ApiResponse<AddressInfo>>(
+      `/addresses/${id}`,
+      dto,
+    );
+    return response.data.data;
   },
 };

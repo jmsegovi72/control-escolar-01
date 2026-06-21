@@ -1118,7 +1118,10 @@ export const messages = {
       successResultBetweenStreetsLabel: 'Entre calles',
       successResultZipCodeLabel: 'Código postal',
       successResultSettlementLabel: 'Asentamiento',
+      successResultSettlementTypeLabel: 'Tipo de asentamiento',
+      successResultLocalityLabel: 'Localidad',
       successResultMunicipalityLabel: 'Municipio',
+      successResultMunicipalCapitalLabel: 'Cabecera municipal',
       successResultStateLabel: 'Estado',
 
       panelPersonTitle: 'Persona',

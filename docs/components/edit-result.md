@@ -146,7 +146,7 @@ import { EditResult, EditResultRow } from '~/ui/composed/EditResult';
 1. **Toda pantalla de editar debe terminar en `EditResult`** (en éxito o en error), nunca en un `<Toast>` verde que se queda en el formulario.
 2. **El slot `actions` debe tener al menos un botón** que saque al usuario de la pantalla (ir al hub) o le permita editar otro registro.
 3. **El botón principal del slot `actions` debe navegar al hub del módulo** (no a la búsqueda, no al detalle), usando `ROUTES.MODULE_HUB`.
-4. **El botón secundario del slot `actions` debe navegar al modo selección del módulo** (ej: `ROUTES.MODULE_DETAIL` sin `?id`), permitiendo "editar otro registro".
+4. **El botón secundario del slot `actions` debe navegar al modo selección del módulo** (ej: `ROUTES.MODULE_EDIT` sin `?id`), permitiendo "editar otro registro".
 5. **El resumen (slot default) es opcional** pero recomendado: siempre que haya datos del registro editado, mostrarlos con `EditResultRow`.
 6. **Los textos vienen de `src/config/messages.ts`** — nunca hardcodear strings en el JSX.
 7. **Cuando `success.value === true`, ocultar el formulario** y mostrar el `EditResult`. Revertir con un nuevo track o reset explícito.
@@ -233,6 +233,13 @@ return (
 - [ ] Renderizar `EditResult` cuando `success.value === true`
 - [ ] **Ocultar el formulario** cuando `success.value === true` (`!success.value && currentItem`)
 - [ ] Slot `actions` con botón secundario ("Editar otra [módulo]") + botón principal ("Ir a [módulo]")
-- [ ] Botón secundario navega a `ROUTES.MODULE_DETAIL` (modo selección)
+- [ ] Botón secundario navega a `ROUTES.MODULE_EDIT` (modo selección)
 - [ ] Botón principal navega a `ROUTES.MODULE_HUB`
 - [ ] Verificar `npm run build.types && npm run check`
+
+---
+
+## Ver también
+
+- [submit-and-delta.md](./submit-and-delta.md) — Principios de submit, delta de cambios, comparación inputs vs selects, reset de signals, `hasChanges` para deshabilitar botón
+- [create-result.md](./create-result.md) — Componente paralelo para acciones de crear
