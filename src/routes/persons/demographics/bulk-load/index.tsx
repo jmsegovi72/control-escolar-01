@@ -16,7 +16,7 @@ import {
   standardizeRow,
   validateCSVHeaders,
 } from '~/utils/csv.utils';
-import '../../../bulk-load/bulk-load.css';
+import '../../bulk-load/bulk-load.css';
 
 const CURP_REGEX = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/;
 
