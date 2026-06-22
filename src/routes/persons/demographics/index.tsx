@@ -66,7 +66,7 @@ const operationalActions = [
     icon: 'upload' as const,
     tone: 'violet' as const,
     badge: m.operationalActions.bulkLoad.badge,
-    disabled: true,
+    disabled: false,
   },
 ];
 

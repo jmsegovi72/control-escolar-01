@@ -16,6 +16,12 @@ export const demographicService = {
     return response.data.data;
   },
 
+  async createMany(dto: {
+    demographics: CreateDemographicDto[];
+  }): Promise<void> {
+    await apiClient.post('/demographics/batch', dto);
+  },
+
   async findOne(search: string | number): Promise<ViewDemographic | null> {
     try {
       const response = await apiClient.get<ApiResponse<ViewDemographic>>(
