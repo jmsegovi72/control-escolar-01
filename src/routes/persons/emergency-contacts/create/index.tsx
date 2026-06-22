@@ -425,6 +425,10 @@ export default component$(() => {
                                 fullName.value = (
                                   event.target as HTMLInputElement
                                 ).value.slice(0, MAX_NAME_LENGTH);
+                                if (errorField.value === 'fullName') {
+                                  error.value = '';
+                                  errorField.value = '';
+                                }
                               }}
                             />
                             <span class="create-emergency-contact-char-count">
@@ -460,6 +464,10 @@ export default component$(() => {
                               ).value
                                 .replace(/\D/g, '')
                                 .slice(0, 10);
+                              if (errorField.value === 'phone') {
+                                error.value = '';
+                                errorField.value = '';
+                              }
                             }}
                           />
                         </Field>
@@ -479,6 +487,10 @@ export default component$(() => {
                             invalid={errorField.value === 'relationshipId'}
                             onChange$={(value) => {
                               relationshipId.value = value;
+                              if (errorField.value === 'relationshipId') {
+                                error.value = '';
+                                errorField.value = '';
+                              }
                             }}
                           />
                         </Field>
