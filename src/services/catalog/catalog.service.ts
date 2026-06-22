@@ -129,4 +129,11 @@ export const catalogService = {
     );
     return normalizeNamedCatalogItems(response.data.data);
   },
+
+  async getContactRelationships(): Promise<NamedCatalogItem[]> {
+    const response = await apiClient.get<ApiResponse<CatalogApiItem[]>>(
+      '/catalog/contact-relationships',
+    );
+    return normalizeNamedCatalogItems(response.data.data);
+  },
 };

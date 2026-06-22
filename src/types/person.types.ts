@@ -100,6 +100,7 @@ export interface FindPersonsParams {
   isActive?: boolean;
   hasAddress?: boolean;
   hasDemographic?: boolean;
+  hasEmergencyContact?: boolean;
   limit?: number;
   page?: number;
 }

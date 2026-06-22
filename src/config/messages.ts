@@ -1824,6 +1824,132 @@ export const messages = {
     },
   },
 
+  emergencyContacts: {
+    hub: {
+      eyebrow: 'Personas',
+      title: 'Contacto de emergencia',
+      description:
+        'Registro, consulta y actualización del contacto de emergencia por persona.',
+      meta: 'Módulo Contacto de emergencia',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden gestionar contactos de emergencia.',
+      toolbarBack: 'Personas',
+      toolbarCenter: 'Centro de contactos de emergencia',
+      toolbarLeading: 'Gestión de contacto de emergencia',
+      newContact: 'Nuevo contacto',
+      openButton: 'Abrir',
+      goButton: 'Ir',
+      panelTitle: 'Acciones operativas',
+      panelDescription:
+        'Flujos para mantenimiento y carga masiva de contactos de emergencia.',
+      relatedPanelTitle: 'Módulos relacionados',
+      relatedPanelDescription:
+        'Navega al módulo de personas para consultar o actualizar el expediente principal.',
+      primaryActions: {
+        create: {
+          title: 'Crear contacto',
+          description:
+            'Registra el contacto de emergencia de una persona seleccionada.',
+          badge: 'Principal',
+        },
+        detail: {
+          title: 'Ver contacto',
+          description:
+            'Consulta el contacto de emergencia de una persona por criterio de búsqueda.',
+          badge: 'Principal',
+        },
+      },
+      operationalActions: {
+        edit: {
+          title: 'Actualizar contacto',
+          description:
+            'Modifica la información del contacto de emergencia registrado.',
+          badge: 'Selección',
+        },
+        bulkLoad: {
+          title: 'Carga masiva',
+          description:
+            'Importa múltiples contactos de emergencia desde un archivo.',
+          badge: 'Importar',
+        },
+      },
+      relatedModules: {
+        persons: {
+          title: 'Gestión de personas',
+          description:
+            'Regresa al hub principal de personas para consultar o editar el expediente base.',
+          badge: 'Módulo',
+        },
+      },
+    },
+    create: {
+      eyebrow: 'Contacto de emergencia',
+      title: 'Nuevo contacto de emergencia',
+      description:
+        'Inicia el registro del contacto de emergencia para una persona.',
+      meta: 'Nuevo contacto de emergencia',
+      accessDenied:
+        'Solo usuarios con acceso al módulo pueden registrar contactos de emergencia.',
+      step1Eyebrow: 'Paso 1',
+      step1Label: 'Buscar persona',
+      step2Eyebrow: 'Paso 2',
+      step2Label: 'Datos del contacto',
+      step3Eyebrow: 'Paso 3',
+      step3Label: 'Resultado',
+      panelPersonTitle: 'Persona',
+      panelPersonDescription:
+        'Busca la persona a la que se le asignará el contacto de emergencia.',
+      personSearchLabel: 'Buscar persona',
+      personSearchPlaceholder: 'ID, CURP o correo',
+      personSearchHint: 'Escribe al menos 3 caracteres.',
+      personNoResults: 'No se encontró ninguna persona con ese criterio.',
+      personChangeButton: 'Cambiar',
+      personFoundTitle: 'Persona encontrada',
+      personFoundDescription:
+        'La persona titular quedó lista para capturar el contacto de emergencia.',
+      existingContactTitle: 'Esta persona ya tiene un contacto registrado',
+      existingContactDescription:
+        'La persona seleccionada ya cuenta con un contacto de emergencia en el sistema. Solo se permite un contacto por persona.',
+      existingContactAction: 'Editar contacto existente',
+      continueButton: 'Continuar',
+      panelHolderTitle: 'Persona titular',
+      panelHolderDescription:
+        'El contacto de emergencia quedará vinculado a esta persona.',
+      panelDataTitle: 'Datos del contacto de emergencia',
+      panelDataDescription: 'Nombre completo, teléfono y tipo de parentesco.',
+      fieldFullNameLabel: 'Nombre completo',
+      fieldFullNamePlaceholder: 'Ej. María López García',
+      fieldFullNameHint: 'Máx. 97 caracteres.',
+      fieldPhoneLabel: 'Teléfono',
+      fieldPhonePlaceholder: 'Ej. 9991234567',
+      fieldPhoneHint: '10 dígitos MX.',
+      fieldRelationshipLabel: 'Parentesco',
+      fieldRelationshipPlaceholder: 'Selecciona el parentesco...',
+      saveButton: 'Guardar contacto',
+      saving: 'Guardando...',
+      cancelButton: 'Cancelar',
+      errorPersonHasContact:
+        'La persona seleccionada ya cuenta con un contacto de emergencia.',
+      errorFullNameRequired: 'Ingresa el nombre completo del contacto.',
+      errorPhoneRequired: 'Ingresa el teléfono del contacto.',
+      errorPhoneInvalid: 'Ingresa un teléfono válido de 10 dígitos.',
+      errorRelationshipRequired: 'Selecciona el parentesco.',
+      saveError: 'No se pudo guardar el contacto de emergencia.',
+      errorToastTitle: 'No se pudo registrar el contacto',
+      successEyebrow: 'Registro exitoso',
+      successTitle: 'Contacto registrado correctamente',
+      successDescription:
+        'El contacto de emergencia fue vinculado a la persona y ya está disponible en el sistema.',
+      resultPersonLabel: 'Persona titular',
+      resultCurpLabel: 'CURP titular',
+      resultContactLabel: 'Contacto de emergencia',
+      resultPhoneLabel: 'Teléfono',
+      resultRelationshipLabel: 'Parentesco',
+      successCreateAnother: 'Registrar otro contacto',
+      successFinish: 'Ir al hub',
+    },
+  },
+
   errors: {
     loginFailed: 'Error al iniciar sesión.',
     searchFailed: 'No se pudo realizar la búsqueda.',

@@ -77,6 +77,11 @@ export default component$(() => {
 
   const currentStep =
     success.value || saving.value ? 3 : selectedPerson.value ? 2 : 1;
+  const stepTone = success.value
+    ? 'success'
+    : error.value
+      ? 'error'
+      : undefined;
 
   useTask$(async () => {
     try {
@@ -223,7 +228,7 @@ export default component$(() => {
           { eyebrow: m.step3Eyebrow, label: m.step3Label },
         ]}
         current={currentStep}
-        tone={success.value ? 'success' : undefined}
+        tone={stepTone}
       />
 
       <div class="create-address-page">

@@ -36,6 +36,12 @@ export const ROUTES = {
   DEMOGRAPHICS_EDIT: '/persons/demographics/edit',
   DEMOGRAPHICS_BULK_LOAD: '/persons/demographics/bulk-load',
 
+  EMERGENCY_CONTACTS: '/persons/emergency-contacts',
+  EMERGENCY_CONTACTS_CREATE: '/persons/emergency-contacts/create',
+  EMERGENCY_CONTACTS_DETAIL: '/persons/emergency-contacts/detail',
+  EMERGENCY_CONTACTS_EDIT: '/persons/emergency-contacts/edit',
+  EMERGENCY_CONTACTS_BULK_LOAD: '/persons/emergency-contacts/bulk-load',
+
   STUDENTS_ADMISSION: '/students/admission',
   STUDENTS_ENROLLMENT: '/students/enrollment',
   STUDENTS_GRADES: '/students/grades',

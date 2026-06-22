@@ -24,13 +24,11 @@ export const StepIndicator = component$<StepIndicatorProps>(
       >
         {steps.map((item, index) => {
           const stepNum = index + 1;
-          const isLast = tone && stepNum === steps.length;
-          const done = stepNum < current || (isLast && tone === 'success');
+          const toneOnCurrent = stepNum === current ? tone : undefined;
+          const done = stepNum < current || toneOnCurrent === 'success';
           const connectorDone = stepNum <= current;
-          const active =
-            stepNum === current &&
-            !(isLast && (tone === 'success' || tone === 'error'));
-          const stepTone = isLast && tone === 'error' ? 'error' : 'default';
+          const active = stepNum === current && !toneOnCurrent;
+          const stepTone = toneOnCurrent ?? 'default';
           const clickable = done && onStepClick$;
 
           return (

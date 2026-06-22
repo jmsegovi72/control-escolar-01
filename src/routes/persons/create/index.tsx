@@ -255,6 +255,18 @@ export default component$(() => {
   ];
 
   const currentStep = resultTone.value ? 3 : showForm.value ? 2 : 1;
+  const stepTone =
+    resultTone.value === 'success'
+      ? 'success'
+      : resultTone.value === 'error'
+        ? 'error'
+        : showForm.value
+          ? error.value
+            ? 'error'
+            : undefined
+          : curpError.value
+            ? 'error'
+            : undefined;
   return (
     <AuthenticatedShell
       eyebrow={m.eyebrow}
@@ -279,7 +291,7 @@ export default component$(() => {
           { eyebrow: m.step3Eyebrow, label: m.step3Label },
         ]}
         current={currentStep}
-        tone={resultTone.value || undefined}
+        tone={stepTone}
       />
 
       <div class="create-person-page">

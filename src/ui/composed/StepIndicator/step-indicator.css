@@ -65,8 +65,7 @@
   color: var(--color-on-success);
 }
 
-.ui-step-indicator__item[data-tone="error"][data-active="true"]
-  .ui-step-indicator__num {
+.ui-step-indicator__item[data-tone="error"] .ui-step-indicator__num {
   border-color: var(--color-danger);
   background: var(--color-danger);
   color: var(--color-inverse);
@@ -104,6 +103,10 @@
 
 .ui-step-indicator__item[data-done="true"] .ui-step-indicator__text strong {
   color: var(--color-text-soft);
+}
+
+.ui-step-indicator__item[data-tone="error"] .ui-step-indicator__text strong {
+  color: var(--color-text);
 }
 
 .ui-step-indicator__connector {

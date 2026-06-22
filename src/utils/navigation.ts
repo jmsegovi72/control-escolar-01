@@ -86,7 +86,7 @@ export const createNavigation = (
               label: messages.layout.shell.nav.personsEmergency,
               icon: 'phone',
               href: ROUTES.PERSONS_EMERGENCY,
-              disabled: true,
+              disabled: false,
             },
           ],
         },

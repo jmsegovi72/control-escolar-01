@@ -95,6 +95,11 @@ export default component$(() => {
   const isAfroDescendant = useSignal(false);
 
   const currentStep = success.value ? 3 : selectedPerson.value ? 2 : 1;
+  const stepTone = success.value
+    ? 'success'
+    : error.value
+      ? 'error'
+      : undefined;
 
   useTask$(async ({ track }) => {
     const query = track(() => personQuery.value.trim());
@@ -203,7 +208,7 @@ export default component$(() => {
           { eyebrow: m.step3Eyebrow, label: m.step3Label },
         ]}
         current={currentStep}
-        tone={success.value ? 'success' : undefined}
+        tone={stepTone}
       />
 
       <div class="create-demographics-page">
