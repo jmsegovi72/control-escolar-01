@@ -2,12 +2,35 @@ import type {
   AddressInfo,
   AddressListItem,
   CreateAddressDto,
+  FindAddressesParams,
   UpdateAddressDto,
 } from '~/types/address.types';
 import type { ApiResponse } from '~/types/api.types';
 import { apiClient } from '../api.client';
 
 export const addressService = {
+  async findMany(
+    params: FindAddressesParams = {},
+  ): Promise<ApiResponse<AddressListItem[]>> {
+    const query = new URLSearchParams();
+
+    if (params.page) query.set('page', String(params.page));
+    if (params.limit) query.set('limit', String(params.limit));
+    if (params.searchTerm) query.set('searchTerm', params.searchTerm);
+    if (params.fullName) query.set('fullName', params.fullName);
+    if (params.stateName) query.set('stateName', params.stateName);
+    if (params.municipalityName)
+      query.set('municipalityName', params.municipalityName);
+    if (params.zipCode) query.set('zipCode', params.zipCode);
+    if (params.street) query.set('street', params.street);
+    if (params.settlement) query.set('settlement', params.settlement);
+
+    const response = await apiClient.get<ApiResponse<AddressListItem[]>>(
+      `/addresses/query?${query.toString()}`,
+    );
+    return response.data;
+  },
+
   async create(dto: CreateAddressDto): Promise<AddressInfo> {
     const response = await apiClient.post<ApiResponse<AddressInfo>>(
       '/addresses',

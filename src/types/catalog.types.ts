@@ -13,11 +13,17 @@ export interface UserType {
 
 export interface Municipality {
   id: number;
-  code: string;
-  inegiNumber: string;
+  code?: string;
+  inegiNumber?: string;
   municipality: string;
-  municipalCapital: string;
+  municipalCapital?: string;
   stateId: number;
+}
+
+export interface State {
+  id: number;
+  code: string;
+  name: string;
 }
 
 export interface QueryMunicipalityDto {

@@ -6,6 +6,7 @@ import type {
   NamedCatalogItem,
   QueryMunicipalityDto,
   Role,
+  State,
   UserType,
 } from '~/types/catalog.types';
 import { apiClient } from '../api.client';
@@ -64,10 +65,28 @@ export const catalogService = {
     if (filters.stateCode) query.set('stateCode', filters.stateCode);
     if (filters.searchTerm) query.set('searchTerm', filters.searchTerm);
 
-    const response = await apiClient.get<ApiResponse<Municipality[]>>(
-      `/municipalities?${query.toString()}`,
-    );
-    return response.data.data;
+    try {
+      const response = await apiClient.get<ApiResponse<Municipality[]>>(
+        `/catalog/municipalities?${query.toString()}`,
+      );
+      return response.data.data;
+    } catch {
+      const response = await apiClient.get<ApiResponse<Municipality[]>>(
+        `/municipalities?${query.toString()}`,
+      );
+      return response.data.data;
+    }
+  },
+
+  async getStates(): Promise<State[]> {
+    try {
+      const response =
+        await apiClient.get<ApiResponse<State[]>>('/catalog/states');
+      return response.data.data;
+    } catch {
+      const response = await apiClient.get<ApiResponse<State[]>>('/states');
+      return response.data.data;
+    }
   },
 
   async getStreetTypes(): Promise<StreetType[]> {

@@ -34,6 +34,7 @@ import {
 } from '~/ui';
 import { EditResult, EditResultRow } from '~/ui/composed/EditResult';
 import { AppIcon } from '~/ui/icons';
+import { addressesWorkflow } from '~/utils/addresses-workflow';
 import { normalizeError } from '~/utils/api-error';
 import './edit.css';
 
@@ -59,6 +60,7 @@ export default component$(() => {
   const personResults = useSignal<PersonListItem[]>([]);
   const searchingPerson = useSignal(false);
   const noAddressForPerson = useSignal('');
+  const returnPath = useSignal<string>(ROUTES.ADDRESSES);
 
   // Catálogo de tipos de vialidad
   const streetTypes = useSignal<StreetType[]>([]);
@@ -87,6 +89,7 @@ export default component$(() => {
     address.value = null;
     selectionMode.value = false;
     noAddressForPerson.value = '';
+    returnPath.value = addressesWorkflow.getReturnPath();
     changedSettlement.value = null;
     changingSettlement.value = false;
     success.value = false;
@@ -201,6 +204,16 @@ export default component$(() => {
   });
 
   const goBack$ = $(async () => {
+    if (returnPath.value !== ROUTES.ADDRESSES) {
+      await nav(returnPath.value);
+      return;
+    }
+
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
     await nav(ROUTES.ADDRESSES);
   });
 
@@ -432,10 +445,7 @@ export default component$(() => {
                   >
                     {m.successResultViewAnother}
                   </Button>
-                  <Button
-                    iconRight="chevron-right"
-                    onClick$={async () => await nav(ROUTES.ADDRESSES)}
-                  >
+                  <Button iconRight="chevron-right" onClick$={goBack$}>
                     {m.successResultFinish}
                   </Button>
                 </div>

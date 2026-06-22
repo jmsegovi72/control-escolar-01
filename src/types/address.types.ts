@@ -82,3 +82,15 @@ export interface AddressListItem {
   stateName: string;
   fullAddress: string | null;
 }
+
+export interface FindAddressesParams {
+  searchTerm?: string;
+  fullName?: string;
+  stateName?: string;
+  municipalityName?: string;
+  zipCode?: string;
+  street?: string;
+  settlement?: string;
+  limit?: number;
+  page?: number;
+}

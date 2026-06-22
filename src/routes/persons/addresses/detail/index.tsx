@@ -26,6 +26,7 @@ import {
   Toast,
 } from '~/ui';
 import { AppIcon } from '~/ui/icons';
+import { addressesWorkflow } from '~/utils/addresses-workflow';
 import { normalizeError } from '~/utils/api-error';
 import './detail.css';
 
@@ -39,7 +40,7 @@ export default component$(() => {
   const address = useSignal<AddressListItem | null>(null);
   const loading = useSignal(true);
   const error = useSignal('');
-  const returnPath = useSignal(ROUTES.ADDRESSES);
+  const returnPath = useSignal<string>(ROUTES.ADDRESSES);
   const selectionMode = useSignal(false);
   const noAddressForPerson = useSignal('');
 
@@ -53,6 +54,7 @@ export default component$(() => {
     loading.value = true;
     error.value = '';
     address.value = null;
+    returnPath.value = ROUTES.ADDRESSES;
     selectionMode.value = false;
     noAddressForPerson.value = '';
     personQuery.value = '';
@@ -60,6 +62,7 @@ export default component$(() => {
     searchingPerson.value = false;
 
     const id = idParam ? Number(idParam) : 0;
+    returnPath.value = addressesWorkflow.getReturnPath();
 
     if (!id) {
       selectionMode.value = true;
@@ -106,7 +109,17 @@ export default component$(() => {
   });
 
   const goBack$ = $(async () => {
-    await nav(returnPath.value);
+    if (returnPath.value !== ROUTES.ADDRESSES) {
+      await nav(returnPath.value);
+      return;
+    }
+
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    await nav(ROUTES.ADDRESSES);
   });
 
   const current = address.value;

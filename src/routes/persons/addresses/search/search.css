@@ -1,0 +1,245 @@
+.addresses-search-page {
+  display: grid;
+  gap: 0;
+  background: var(--color-bg);
+  min-width: 0;
+}
+
+.addresses-search-page__content {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+}
+
+.addresses-search__filters-panel {
+  overflow: hidden;
+  width: min(100%, var(--layout-form-max-width));
+  margin: 0 auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-1);
+}
+
+.addresses-search__filters-form {
+  display: grid;
+}
+
+.addresses-search__filters-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.addresses-search__global {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.addresses-search__top-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.addresses-search__toggle-content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.addresses-search__active-count {
+  display: inline-grid;
+  width: 1.125rem;
+  height: 1.125rem;
+  place-items: center;
+  border-radius: var(--radius-round);
+  background: var(--color-primary);
+  color: var(--color-inverse);
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.addresses-search__toggle-chevron {
+  display: inline-flex;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.addresses-search__toggle-chevron[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.addresses-search__chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+.addresses-search__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+  border-radius: var(--radius-round);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary-hover);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.addresses-search__chip button {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  border: none;
+  border-radius: var(--radius-round);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+  padding: 0;
+  cursor: pointer;
+}
+
+.addresses-search__advanced {
+  display: none;
+  gap: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+}
+
+.addresses-search__advanced[data-open="true"] {
+  display: grid;
+}
+
+.addresses-search__advanced-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.addresses-search__advanced-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.addresses-search__advanced .ui-field__label {
+  color: var(--color-text-soft);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.addresses-search__advanced .ui-field__message {
+  min-height: 0;
+}
+
+.addresses-search__filters-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  padding: var(--space-3) var(--space-5);
+}
+
+.addresses-search__filters-info {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.addresses-search__table-card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-5);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+}
+
+.addresses-search__table-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.addresses-search__table-meta strong {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-semibold);
+}
+
+.addresses-search__table-meta span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.addresses-search__table-card :global(.ui-data-table) {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.addresses-search__table-card :global(.ui-data-table__table thead th) {
+  background: color-mix(in srgb, var(--color-surface) 94%, var(--color-bg));
+}
+
+@media (max-width: 1100px) {
+  .addresses-search__advanced-grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .addresses-search-page__content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .addresses-search__filters-top,
+  .addresses-search__advanced,
+  .addresses-search__filters-footer,
+  .addresses-search__chips {
+    padding-inline: var(--space-4);
+  }
+
+  .addresses-search__filters-top,
+  .addresses-search__filters-footer {
+    align-items: stretch;
+  }
+
+  .addresses-search__filters-top,
+  .addresses-search__top-actions {
+    flex-direction: column;
+  }
+
+  .addresses-search__global,
+  .addresses-search__top-actions .ui-button {
+    width: 100%;
+  }
+
+  .addresses-search__advanced-grid--three {
+    grid-template-columns: 1fr;
+  }
+
+  .addresses-search__filters-footer,
+  .addresses-search__table-meta {
+    justify-content: flex-start;
+  }
+}
