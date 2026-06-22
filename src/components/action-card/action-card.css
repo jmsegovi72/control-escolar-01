@@ -34,6 +34,16 @@
   );
 }
 
+.ui-action-card--disabled {
+  opacity: 0.62;
+}
+
+.ui-action-card--disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+}
+
 .ui-action-card--primary::before {
   background: var(--color-primary);
 }
@@ -206,6 +216,11 @@
 
 .ui-action-card__button--gray:hover {
   background: var(--color-text);
+}
+
+.ui-action-card__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 @media (max-width: 1080px) {

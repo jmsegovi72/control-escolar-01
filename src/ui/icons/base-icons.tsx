@@ -129,6 +129,47 @@ export const IconUser = component$<IconProps>(
   ),
 );
 
+export const IconGenderMale = component$<IconProps>(
+  ({ size = 24, color = 'currentColor' }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="6" r="3" />
+      <path d="M12 9v12" />
+      <path d="M9 14h6" />
+      <path d="M10 21h4" />
+    </svg>
+  ),
+);
+
+export const IconGenderFemale = component$<IconProps>(
+  ({ size = 24, color = 'currentColor' }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="8" r="4" />
+      <path d="M12 12v9" />
+      <path d="M9 18h6" />
+    </svg>
+  ),
+);
+
 export const IconPencil = component$<IconProps>(
   ({ size = 24, color = 'currentColor' }) => (
     <svg

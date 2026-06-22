@@ -1,6 +1,7 @@
 import {
   $,
   component$,
+  useComputed$,
   useSignal,
   useTask$,
   useVisibleTask$,
@@ -15,7 +16,7 @@ import { ENV } from '~/config/env';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
-import type { PersonDetail } from '~/types/person.types';
+import type { ViewPerson } from '~/types/person.types';
 import {
   ActionHeader,
   Button,
@@ -63,8 +64,9 @@ const getDerivedValuesFromCurp = (value: string) => {
   };
 };
 
-const normalizeBirthDate = (value?: string) => {
+const normalizeBirthDate = (value?: string | null) => {
   if (!value) return '';
+  if (value.includes('T')) return value.split('T')[0];
   return value.includes('/') ? value.split('/').reverse().join('-') : value;
 };
 
@@ -72,7 +74,7 @@ export default component$(() => {
   const nav = useNavigate();
   const location = useLocation();
 
-  const person = useSignal<PersonDetail | null>(null);
+  const person = useSignal<ViewPerson | null>(null);
   const loading = useSignal(true);
   const noSelection = useSignal(false);
   const saving = useSignal(false);
@@ -159,6 +161,24 @@ export default component$(() => {
     loading.value = true;
     error.value = '';
     success.value = false;
+    person.value = null;
+    curp.value = '';
+    originalCurp.value = '';
+    curpEditable.value = false;
+    curpError.value = '';
+    firstName.value = '';
+    firstLastName.value = '';
+    secondLastName.value = '';
+    homoclave.value = '';
+    gender.value = '';
+    birthDate.value = '';
+    nationality.value = '';
+    stateCode.value = '';
+    phone.value = '';
+    email.value = '';
+    photoFile.value = null;
+    photoPreview.value = '';
+    removePhoto.value = false;
 
     const id = idParam ? Number(idParam) : 0;
 
@@ -319,7 +339,7 @@ export default component$(() => {
         }
       }
 
-      await personService.update(person.value.id, {
+      const updated = await personService.update(person.value.id, {
         ...(trimmedCurp !== originalCurp.value && { curp: trimmedCurp }),
         firstName: fn,
         firstLastName: fln,
@@ -348,22 +368,7 @@ export default component$(() => {
       curpEditable.value = false;
       curpError.value = '';
 
-      person.value = {
-        ...person.value,
-        curp: trimmedCurp,
-        firstName: fn,
-        firstLastName: fln,
-        secondLastName: sln || undefined,
-        fullName: [fn, fln, sln].filter(Boolean).join(' '),
-        gender: gender.value as 'H' | 'M',
-        birthDate: birthDate.value || undefined,
-        nationality: nationality.value || undefined,
-        phone: p,
-        personalEmail: em,
-        photoUrl: removePhoto.value
-          ? null
-          : photoPreview.value || person.value.photoUrl,
-      };
+      person.value = updated;
 
       success.value = true;
     } catch (err) {
@@ -382,6 +387,37 @@ export default component$(() => {
   const currentPhoto = removePhoto.value
     ? DEFAULT_PERSON_AVATAR
     : photoPreview.value || getPhotoUrl(currentPerson?.photoUrl);
+
+  const hasChanges = useComputed$(() => {
+    const cp = person.value;
+    if (!cp) return false;
+
+    const curpChanged = curp.value.trim() !== (cp.curp ?? '').trim();
+    const firstNameChanged =
+      firstName.value.trim() !== (cp.firstName ?? '').trim();
+    const firstLastNameChanged =
+      firstLastName.value.trim() !== (cp.firstLastName ?? '').trim();
+    const secondLastNameChanged =
+      secondLastName.value.trim() !== (cp.secondLastName ?? '').trim();
+    const genderChanged = gender.value !== cp.gender;
+    const birthDateChanged =
+      birthDate.value.trim() !== (cp.birthDate ?? '').trim().slice(0, 10);
+    const phoneChanged = phone.value.trim() !== (cp.phone ?? '').trim();
+    const emailChanged = email.value.trim() !== (cp.personalEmail ?? '').trim();
+    const photoChanged = removePhoto.value || photoFile.value !== null;
+
+    return (
+      curpChanged ||
+      firstNameChanged ||
+      firstLastNameChanged ||
+      secondLastNameChanged ||
+      genderChanged ||
+      birthDateChanged ||
+      phoneChanged ||
+      emailChanged ||
+      photoChanged
+    );
+  });
 
   return (
     <AuthenticatedShell
@@ -444,7 +480,7 @@ export default component$(() => {
                 />
                 <EditResultRow
                   label={messages.persons.create.resultBirthDate}
-                  value={currentPerson.birthDate ?? null}
+                  value={normalizeBirthDate(currentPerson.birthDate) || null}
                 />
                 <EditResultRow
                   label={messages.persons.create.resultPhone}
@@ -847,6 +883,7 @@ export default component$(() => {
                   <Button
                     iconRight="chevron-right"
                     loading={saving.value}
+                    disabled={saving.value || !hasChanges.value}
                     onClick$={saveChanges$}
                   >
                     {m.actionSave}

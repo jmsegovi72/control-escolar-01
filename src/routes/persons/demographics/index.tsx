@@ -10,28 +10,30 @@ import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { Panel } from '~/ui';
-import './persons.css';
+import './demographics.css';
 
-const m = messages.persons.hub;
+const m = messages.demographics.hub;
 
 const primaryActions = [
   {
     id: 'search',
     title: m.primaryActions.search.title,
     description: m.primaryActions.search.description,
-    href: ROUTES.PERSONS_SEARCH,
+    href: ROUTES.DEMOGRAPHICS_SEARCH,
     icon: 'search' as const,
     tone: 'primary' as const,
     badge: m.primaryActions.search.badge,
+    disabled: false,
   },
   {
     id: 'create',
     title: m.primaryActions.create.title,
     description: m.primaryActions.create.description,
-    href: ROUTES.PERSONS_CREATE,
+    href: ROUTES.DEMOGRAPHICS_CREATE,
     icon: 'add' as const,
     tone: 'success' as const,
     badge: m.primaryActions.create.badge,
+    disabled: false,
   },
 ];
 
@@ -40,60 +42,43 @@ const operationalActions = [
     id: 'detail',
     title: m.operationalActions.detail.title,
     description: m.operationalActions.detail.description,
-    href: ROUTES.PERSONS_DETAIL,
+    href: ROUTES.DEMOGRAPHICS_DETAIL,
     icon: 'view' as const,
-    tone: 'warning' as const,
+    tone: 'gray' as const,
     badge: m.operationalActions.detail.badge,
+    disabled: false,
   },
   {
     id: 'edit',
     title: m.operationalActions.edit.title,
     description: m.operationalActions.edit.description,
-    href: ROUTES.PERSONS_EDIT,
+    href: ROUTES.DEMOGRAPHICS_EDIT,
     icon: 'edit' as const,
-    tone: 'primary' as const,
+    tone: 'gray' as const,
     badge: m.operationalActions.edit.badge,
+    disabled: false,
   },
   {
     id: 'bulkLoad',
     title: m.operationalActions.bulkLoad.title,
     description: m.operationalActions.bulkLoad.description,
-    href: ROUTES.PERSONS_BULK_LOAD,
+    href: ROUTES.DEMOGRAPHICS_BULK_LOAD,
     icon: 'upload' as const,
     tone: 'violet' as const,
     badge: m.operationalActions.bulkLoad.badge,
+    disabled: true,
   },
 ];
 
 const relatedModules = [
   {
-    id: 'emergency',
-    title: m.relatedModules.emergency.title,
-    description: m.relatedModules.emergency.description,
-    href: ROUTES.PERSONS_EMERGENCY,
-    icon: 'phone' as const,
+    id: 'persons',
+    title: m.relatedModules.persons.title,
+    description: m.relatedModules.persons.description,
+    href: ROUTES.PERSONS,
+    icon: 'person' as const,
     tone: 'gray' as const,
-    badge: m.relatedModules.emergency.badge,
-    disabled: true,
-  },
-  {
-    id: 'addresses',
-    title: m.relatedModules.addresses.title,
-    description: m.relatedModules.addresses.description,
-    href: ROUTES.PERSONS_ADDRESSES,
-    icon: 'pin' as const,
-    tone: 'teal' as const,
-    badge: m.relatedModules.addresses.badge,
-    disabled: false,
-  },
-  {
-    id: 'demographics',
-    title: m.relatedModules.demographics.title,
-    description: m.relatedModules.demographics.description,
-    href: ROUTES.PERSONS_DEMOGRAPHICS,
-    icon: 'dashboard' as const,
-    tone: 'gray' as const,
-    badge: m.relatedModules.demographics.badge,
+    badge: m.relatedModules.persons.badge,
     disabled: false,
   },
 ];
@@ -113,19 +98,19 @@ export default component$(() => {
       <HubHeader
         q:slot="hub-header"
         eyebrow={m.toolbarLeading}
-        icon="group"
+        icon="dashboard"
         title={m.title}
         description={m.description}
         metaItems={[
-          { label: m.meta, icon: 'group', tone: 'accent' },
+          { label: m.meta, icon: 'dashboard', tone: 'accent' },
           { label: `${totalActions} acciones del módulo`, icon: 'search' },
           { label: 'Acceso SUPER y CE', icon: 'settings' },
         ]}
       />
 
-      <div class="persons-page">
+      <div class="demographics-page">
         <HubSection title="Acciones principales" count={primaryActions.length}>
-          <div class="persons-main-grid">
+          <div class="demographics-main-grid">
             {primaryActions.map((action) => (
               <ActionCard
                 key={action.id}
@@ -135,6 +120,7 @@ export default component$(() => {
                 description={action.description}
                 badge={action.badge}
                 href={action.href}
+                disabled={action.disabled}
                 actionLabel={m.openButton}
               />
             ))}
@@ -146,11 +132,11 @@ export default component$(() => {
           count={operationalActions.length}
         >
           <Panel
-            title="Operaciones sobre personas"
-            description="Requieren seleccionar una persona de la búsqueda"
+            title={m.panelTitle}
+            description={m.panelDescription}
             icon="settings"
           >
-            <div class="persons-panel__rows">
+            <div class="demographics-panel__rows">
               {operationalActions.map((action) => (
                 <ActionRow
                   key={action.id}
@@ -160,6 +146,7 @@ export default component$(() => {
                   description={action.description}
                   badge={action.badge}
                   href={action.href}
+                  disabled={action.disabled}
                   actionLabel={m.goButton}
                 />
               ))}
@@ -169,11 +156,11 @@ export default component$(() => {
 
         <HubSection title="Módulos relacionados" count={relatedModules.length}>
           <Panel
-            title="Extensiones por persona"
-            description="Se ejecutan en contexto de la persona activa"
+            title={m.relatedPanelTitle}
+            description={m.relatedPanelDescription}
             icon="group"
           >
-            <div class="persons-panel__rows">
+            <div class="demographics-panel__rows">
               {relatedModules.map((module) => (
                 <ActionRow
                   key={module.id}
@@ -196,5 +183,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: `${appConfig.name} | Personas`,
+  title: `${appConfig.name} | Demografía`,
 };

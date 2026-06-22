@@ -79,7 +79,7 @@ export const createNavigation = (
               label: messages.layout.shell.nav.personsDemographics,
               icon: 'dashboard',
               href: ROUTES.PERSONS_DEMOGRAPHICS,
-              disabled: true,
+              disabled: false,
             },
             {
               id: 'persons-emergency',

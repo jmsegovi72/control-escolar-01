@@ -14,6 +14,8 @@ export type IconIntent =
   | 'edit'
   | 'empty'
   | 'filter'
+  | 'gender-female'
+  | 'gender-male'
   | 'group'
   | 'info'
   | 'list'

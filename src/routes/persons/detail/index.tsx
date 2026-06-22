@@ -9,7 +9,7 @@ import { ENV } from '~/config/env';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
-import type { PersonDetail } from '~/types/person.types';
+import type { ViewPerson } from '~/types/person.types';
 import { ActionHeader, Avatar, Badge, Button, Panel } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
 import { personsWorkflow } from '~/utils/persons-workflow';
@@ -65,7 +65,7 @@ const m = messages.persons;
 export default component$(() => {
   const nav = useNavigate();
   const location = useLocation();
-  const person = useSignal<PersonDetail | null>(null);
+  const person = useSignal<ViewPerson | null>(null);
   const loading = useSignal(true);
   const error = useSignal('');
   const returnPath = useSignal<string>(ROUTES.PERSONS);
@@ -91,8 +91,20 @@ export default component$(() => {
     ) {
       person.value = {
         ...selectedPerson,
-        isActive: selectedPerson.isActive ?? true,
-      } as PersonDetail;
+        fullName: selectedPerson.fullName,
+        curp: selectedPerson.curp,
+        gender: selectedPerson.gender,
+        birthDate: selectedPerson.birthDate ?? '',
+        age: null,
+        nationality: selectedPerson.nationality ?? '',
+        birthState: selectedPerson.birthState ?? null,
+        municipalityId: null,
+        birthMunicipality: selectedPerson.birthMunicipality ?? null,
+        phone: selectedPerson.phone,
+        personalEmail: selectedPerson.personalEmail,
+        rfc: selectedPerson.rfc ?? null,
+        photoUrl: selectedPerson.photoUrl ?? null,
+      } as ViewPerson;
       returnPath.value = personsWorkflow.getReturnPath();
       loading.value = false;
       return;

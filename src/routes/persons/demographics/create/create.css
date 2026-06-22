@@ -1,0 +1,210 @@
+.create-demographics-page {
+  display: grid;
+  gap: 0;
+  background: var(--color-bg);
+  min-width: 0;
+}
+
+.create-demographics-page__content {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+  justify-items: center;
+}
+
+.create-demographics-card {
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, var(--layout-form-max-width));
+}
+
+.create-demographics-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-demographics-person-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  border: var(--border-width-2) solid var(--color-primary);
+  border-radius: var(--radius-4);
+  background: var(--color-primary-soft);
+  padding: var(--space-3) var(--space-4);
+}
+
+.create-demographics-person-card__icon {
+  display: inline-grid;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  place-items: center;
+  border-radius: var(--radius-3);
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+}
+
+.create-demographics-person-card__info {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.create-demographics-person-card__info strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.create-demographics-person-card__info span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.create-demographics-panel__icon {
+  display: inline-grid;
+  width: calc(var(--space-7) + var(--space-1));
+  height: calc(var(--space-7) + var(--space-1));
+  min-width: calc(var(--space-7) + var(--space-1));
+  place-items: center;
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  margin-top: 1px;
+}
+
+.create-demographics-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-demographics-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.create-demographics-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.create-demographics-divider__label {
+  color: var(--color-text-muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.59375rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.create-demographics-check-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  border: var(--border-width-2) solid var(--color-border);
+  border-radius: var(--radius-2);
+  background: var(--color-surface);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.create-demographics-check-card:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-raised);
+}
+
+.create-demographics-check-card--checked {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.create-demographics-check-card__box {
+  display: inline-grid;
+  width: 1.125rem;
+  height: 1.125rem;
+  min-width: 1.125rem;
+  place-items: center;
+  border: var(--border-width-2) solid var(--color-border);
+  border-radius: var(--radius-1);
+  background: var(--color-surface-raised);
+  color: var(--color-inverse);
+  margin-top: 1px;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.create-demographics-check-card__box :global(svg) {
+  opacity: 0;
+}
+
+.create-demographics-check-card--checked .create-demographics-check-card__box {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.create-demographics-check-card--checked
+  .create-demographics-check-card__box
+  :global(svg) {
+  opacity: 1;
+}
+
+.create-demographics-check-card__content {
+  display: grid;
+  gap: 2px;
+}
+
+.create-demographics-check-card__title {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.create-demographics-check-card__description {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+.create-demographics-check-card--checked
+  .create-demographics-check-card__title {
+  color: var(--color-primary-hover);
+}
+
+.create-demographics-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.create-demographics-actions .ui-button:last-child {
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .create-demographics-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .create-demographics-actions .ui-button:last-child {
+    margin-left: 0;
+  }
+}

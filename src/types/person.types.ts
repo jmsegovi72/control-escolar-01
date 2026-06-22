@@ -67,6 +67,26 @@ export interface CreatePersonDto {
 
 export type UpdatePersonDto = Partial<CreatePersonDto>;
 
+export interface ViewPerson {
+  id: number;
+  curp: string;
+  firstName: string;
+  firstLastName: string;
+  secondLastName: string;
+  fullName: string;
+  gender: 'H' | 'M';
+  birthDate: string;
+  age: number | null;
+  nationality: string;
+  birthState: string | null;
+  municipalityId: number | null;
+  birthMunicipality: string | null;
+  phone: string;
+  personalEmail: string;
+  rfc: string | null;
+  photoUrl: string | null;
+}
+
 export interface FindPersonsParams {
   searchTerm?: string;
   firstName?: string;
@@ -79,6 +99,7 @@ export interface FindPersonsParams {
   municipalityName?: string;
   isActive?: boolean;
   hasAddress?: boolean;
+  hasDemographic?: boolean;
   limit?: number;
   page?: number;
 }

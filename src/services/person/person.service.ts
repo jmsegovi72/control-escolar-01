@@ -2,10 +2,10 @@ import type { ApiResponse } from '~/types/api.types';
 import type {
   CreatePersonDto,
   FindPersonsParams,
-  PersonDetail,
   PersonListItem,
   PersonSearchCatalogs,
   UpdatePersonDto,
+  ViewPerson,
 } from '~/types/person.types';
 import { apiClient } from '../api.client';
 
@@ -32,6 +32,8 @@ export const personService = {
       query.set('isActive', String(params.isActive));
     if (params.hasAddress !== undefined)
       query.set('hasAddress', String(params.hasAddress));
+    if (params.hasDemographic !== undefined)
+      query.set('hasDemographic', String(params.hasDemographic));
 
     const response = await apiClient.get<ApiResponse<PersonListItem[]>>(
       `/persons/query?${query.toString()}`,
@@ -39,28 +41,28 @@ export const personService = {
     return response.data;
   },
 
-  async findOne(search: string | number): Promise<PersonDetail> {
-    const response = await apiClient.get<
-      ApiResponse<PersonDetail> | PersonDetail
-    >(`/persons/${search}`);
+  async findOne(search: string | number): Promise<ViewPerson> {
+    const response = await apiClient.get<ApiResponse<ViewPerson> | ViewPerson>(
+      `/persons/${search}`,
+    );
 
     return 'data' in response.data ? response.data.data : response.data;
   },
 
-  async create(dto: CreatePersonDto): Promise<PersonListItem> {
-    const response = await apiClient.post<PersonListItem>('/persons', dto);
-    return response.data;
+  async create(dto: CreatePersonDto): Promise<ViewPerson> {
+    const response = await apiClient.post<ApiResponse<ViewPerson>>(
+      '/persons',
+      dto,
+    );
+    return response.data.data;
   },
 
-  async update(
-    id: number,
-    dto: UpdatePersonDto,
-  ): Promise<{ success: boolean; message: string }> {
-    const response = await apiClient.patch<{
-      success: boolean;
-      message: string;
-    }>(`/persons/${id}`, dto);
-    return response.data;
+  async update(id: number, dto: UpdatePersonDto): Promise<ViewPerson> {
+    const response = await apiClient.patch<ApiResponse<ViewPerson>>(
+      `/persons/${id}`,
+      dto,
+    );
+    return response.data.data;
   },
 
   async getSearchCatalogs(): Promise<PersonSearchCatalogs> {

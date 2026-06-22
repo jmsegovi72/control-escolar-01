@@ -17,15 +17,27 @@ export interface ActionCardProps {
   description: string;
   badge?: string;
   href: string;
+  disabled?: boolean;
   actionLabel: string;
 }
 
 export const ActionCard = component$<ActionCardProps>(
-  ({ icon, tone, title, description, badge, href, actionLabel }) => {
+  ({
+    icon,
+    tone,
+    title,
+    description,
+    badge,
+    href,
+    disabled = false,
+    actionLabel,
+  }) => {
     const nav = useNavigate();
 
     return (
-      <article class={`ui-action-card ui-action-card--${tone}`}>
+      <article
+        class={`ui-action-card ui-action-card--${tone}${disabled ? ' ui-action-card--disabled' : ''}`}
+      >
         <div class="ui-action-card__top">
           <div class={`ui-action-card__icon ui-action-card__icon--${tone}`}>
             <AppIcon intent={icon} size="lg" />
@@ -44,7 +56,12 @@ export const ActionCard = component$<ActionCardProps>(
           <button
             type="button"
             class={`ui-action-card__button ui-action-card__button--${tone}`}
-            onClick$={async () => await nav(href)}
+            disabled={disabled}
+            onClick$={async () => {
+              if (!disabled) {
+                await nav(href);
+              }
+            }}
           >
             {actionLabel}
             <AppIcon intent="chevron-right" size="sm" />

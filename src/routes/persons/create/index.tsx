@@ -7,6 +7,7 @@ import { appConfig } from '~/config/app.config';
 import { messages } from '~/config/messages';
 import { ROUTES } from '~/config/routes';
 import { personService } from '~/services/person/person.service';
+import type { ViewPerson } from '~/types/person.types';
 import {
   ActionHeader,
   Button,
@@ -36,6 +37,9 @@ const m = messages.persons.create;
 
 export default component$(() => {
   const nav = useNavigate();
+
+  // Resultado del backend
+  const address = useSignal<ViewPerson | null>(null);
 
   const curp = useSignal('');
   const curpValidating = useSignal(false);
@@ -225,6 +229,7 @@ export default component$(() => {
           // La foto es opcional; si falla, no bloquea el registro principal.
         }
       }
+      address.value = created;
       resultTone.value = 'success';
     } catch (err) {
       const normalized = normalizeError(
@@ -250,20 +255,6 @@ export default component$(() => {
   ];
 
   const currentStep = resultTone.value ? 3 : showForm.value ? 2 : 1;
-  const completedName = [
-    firstName.value.trim(),
-    firstLastName.value.trim(),
-    secondLastName.value.trim(),
-  ]
-    .filter(Boolean)
-    .join(' ');
-  const genderLabel =
-    gender.value === 'H'
-      ? m.optionMale
-      : gender.value === 'M'
-        ? m.optionFemale
-        : m.resultNoData;
-  const birthDateLabel = birthDate.value || m.resultNoData;
   return (
     <AuthenticatedShell
       eyebrow={m.eyebrow}
@@ -663,7 +654,7 @@ export default component$(() => {
             </div>
           )}
 
-          {resultTone.value && (
+          {resultTone.value && address.value && (
             <div class="create-person-card">
               <CreateResult
                 tone={resultTone.value}
@@ -687,25 +678,41 @@ export default component$(() => {
                 }
                 retryLabel={m.errorRetry}
               >
-                <CreateResultRow label={m.resultCurp} value={curp.value} />
+                <CreateResultRow
+                  label={m.resultCurp}
+                  value={address.value?.curp}
+                />
                 <CreateResultRow
                   label={m.resultName}
-                  value={completedName}
+                  value={address.value?.fullName}
                   fallback={m.resultNoData}
                 />
-                <CreateResultRow label={m.resultGender} value={genderLabel} />
+                <CreateResultRow
+                  label={m.resultGender}
+                  value={
+                    address.value?.gender === 'H'
+                      ? m.optionMale
+                      : address.value?.gender === 'M'
+                        ? m.optionFemale
+                        : null
+                  }
+                />
                 <CreateResultRow
                   label={m.resultBirthDate}
-                  value={birthDateLabel}
+                  value={
+                    address.value?.birthDate
+                      ? address.value.birthDate.split('T')[0]
+                      : null
+                  }
                 />
                 <CreateResultRow
                   label={m.resultPhone}
-                  value={phone.value}
+                  value={address.value?.phone}
                   fallback={m.resultNoData}
                 />
                 <CreateResultRow
                   label={m.resultEmail}
-                  value={email.value}
+                  value={address.value?.personalEmail}
                   fallback={m.resultNoData}
                 />
 

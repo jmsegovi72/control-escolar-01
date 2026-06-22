@@ -25,3 +25,21 @@ export interface QueryMunicipalityDto {
   stateCode?: string;
   searchTerm?: string;
 }
+
+export interface NamedCatalogItem {
+  id: number;
+  name: string;
+}
+
+export interface CatalogApiItem {
+  id?: number | string;
+  name?: string | null;
+  status?: string | null;
+  label?: string | null;
+  description?: string | null;
+  value?: string | number | null;
+  maritalStatus?: string | null;
+  indigenousLanguage?: string | null;
+  foreignLanguage?: string | null;
+  specialCondition?: string | null;
+}
