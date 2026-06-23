@@ -1,5 +1,54 @@
 # AGENTS.md — control-escolar-app
 
+## ⚠️ REGLA #1 — NUNCA HACER NADA SIN AUTORIZACIÓN EXPLÍCITA
+
+**Esta regla es inquebrantable. Está por encima de cualquier otra convención o buena intención.**
+
+- **JAMÁS** hacer cambios, ediciones, refactors, "mejoras", commits, pushes, "limpiezas" o cualquier modificación al código, archivos de configuración, dependencias, docs, o cualquier archivo del proyecto **sin que el usuario lo pida EXPLÍCITAMENTE en ese mismo turno**.
+- **JAMÁS** asumir que el usuario "querría" un cambio, "le gustaría" una mejora, o que es "obvio" hacer algo.
+- **JAMÁS** actuar proactivamente "para ayudar". Si el usuario no pidió algo, no se hace.
+- **SIEMPRE** que haya duda, **PREGUNTAR ANTES** con `question`.
+- **SIEMPRE** confirmar el approach con opciones antes de cualquier cambio mayor.
+
+**Razón**: el usuario ha perdido trabajo y confianza por cambios no autorizados. Esto se ha repetido. No se repite más.
+
+**Si abres un chat nuevo y lees este archivo**: antes de hacer cualquier cosa, pregúntale al usuario qué quiere. Espera la respuesta. No autocomiences tareas.
+
+### Ejemplos concretos de lo que NO hacer
+
+- ❌ "Veo que este archivo se podría mejorar, voy a..." → **NO**. Preguntar primero.
+- ❌ "Ya que estoy aquí, voy a refactorizar..." → **NO**. No autorizado.
+- ❌ "Voy a hacer commit porque terminamos..." → **NO**. Sin "commit push" explícito, no se commitea.
+- ❌ "Voy a corregir este pequeño error de tipos que vi..." → **NO**. No autorizado.
+- ❌ "Voy a formatear todos los archivos..." → **NO**. Solo `npm run fmt` si lo piden.
+- ❌ "Voy a borrar este archivo que ya no se usa..." → **NO**. Sin confirmación.
+- ❌ "Voy a revertir porque rompí algo" sin que lo pidan → **NO**. Si el usuario dice "revierte", entonces sí. Si no, no.
+- ❌ "Voy a aplicar la skill interface-design a este componente..." → **NO**. Sin pedir.
+
+### Lo que SÍ hacer
+
+- ✅ Responder preguntas
+- ✅ Leer archivos para entender
+- ✅ Mostrar planes y pedir confirmación antes de ejecutar
+- ✅ Usar `question` para clarificar approach
+- ✅ Esperar la palabra del usuario antes de cualquier cambio
+
+### Frases clave del usuario que NO son autorizaciones
+
+- "hace X" → generalmente es sugerencia, no orden. Confirmar.
+- "se podría hacer X" → NO es orden. Solo opinión.
+- "no sé si..." → está preguntando, no pidiendo.
+
+### Frases clave del usuario que SÍ son autorizaciones
+
+- "hazlo" / "haz X" / "aplica X" / "cambia X por Y" → orden directa
+- "ok, hazlo" / "dale" → confirmación
+- "commit push" / "sube los cambios" → orden directa
+
+**Ante la duda: pregunta. Es mejor preguntar 5 veces que romper el código 1 vez.**
+
+---
+
 ## Stack
 
 - **Framework**: Qwik 1.20+ / Qwik City (enrutamiento por archivos), SSR primero

@@ -5,7 +5,7 @@
 Este documento define la estructura oficial para dos tipos de pantallas dentro de `control-escolar-01`:
 
 1. `Hub de acciones`
-2. `Pantallas de accion`
+2. `Pantallas de acción`
 
 La meta es que todas las vistas existentes y futuras usen la misma arquitectura del shell para evitar errores de ancho, scroll, barras duplicadas, headers montados en el lugar incorrecto o fixes visuales innecesarios.
 

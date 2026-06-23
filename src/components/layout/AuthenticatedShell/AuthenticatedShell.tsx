@@ -360,6 +360,24 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
               icon: 'settings',
               children: [
                 {
+                  id: 'theme-light',
+                  label: messages.layout.shell.themeLight,
+                  icon: 'sun',
+                  badge: themeMode.value === 'light' ? '✓' : undefined,
+                },
+                {
+                  id: 'theme-auto',
+                  label: messages.layout.shell.themeAuto,
+                  icon: 'monitor',
+                  badge: themeMode.value === 'auto' ? '✓' : undefined,
+                },
+                {
+                  id: 'theme-dark',
+                  label: messages.layout.shell.themeDark,
+                  icon: 'moon',
+                  badge: themeMode.value === 'dark' ? '✓' : undefined,
+                },
+                {
                   id: 'sidebar-behavior',
                   label:
                     sidebarBehavior.value === 'hover'
@@ -421,6 +439,21 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           onNavigate$={$(async (item: SidebarItem) => {
             if (item.id === 'sidebar-behavior') {
               await toggleSidebarBehavior$();
+              return;
+            }
+
+            if (item.id === 'theme-light') {
+              await setTheme$('light');
+              return;
+            }
+
+            if (item.id === 'theme-auto') {
+              await setTheme$('auto');
+              return;
+            }
+
+            if (item.id === 'theme-dark') {
+              await setTheme$('dark');
               return;
             }
 
