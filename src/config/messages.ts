@@ -860,6 +860,9 @@ export const messages = {
       tableEmptyTitle: 'Sin resultados',
       tableEmptyDescription:
         'No se encontraron personas con los criterios seleccionados.',
+      tableIdleTitle: 'Listo para buscar',
+      tableIdleDescription:
+        'Escribe un nombre o aplica filtros para consultar personas.',
       errorPanelTitle: 'No se pudo buscar',
       columns: {
         fullName: 'Nombre completo',

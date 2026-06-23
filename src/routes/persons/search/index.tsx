@@ -423,6 +423,23 @@ export default component$(() => {
                 await searchPersons$();
               }}
             >
+              {activeChips.value.length > 0 && (
+                <div class="persons-search__chips">
+                  {activeChips.value.map((chip) => (
+                    <span key={chip.key} class="persons-search__chip">
+                      {chip.label}
+                      <button
+                        type="button"
+                        aria-label={m.removeFilter}
+                        onClick$={async () => await removeFilter$(chip.key)}
+                      >
+                        <AppIcon intent="close" size="xs" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <div class="persons-search__filters-top">
                 <div class="persons-search__global">
                   <Input
@@ -546,23 +563,20 @@ export default component$(() => {
                 </div>
               </div>
 
-              {activeChips.value.length > 0 && (
-                <div class="persons-search__chips">
-                  {activeChips.value.map((chip) => (
-                    <span key={chip.key} class="persons-search__chip">
-                      {chip.label}
-                      <button
-                        type="button"
-                        aria-label={m.removeFilter}
-                        onClick$={async () => await removeFilter$(chip.key)}
-                      >
-                        <AppIcon intent="close" size="xs" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-
+              <div class="persons-search__filters-footer">
+                <span class="persons-search__filters-info">
+                  {filtersInfo.value}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  iconLeft="cancel"
+                  onClick$={clearFilters$}
+                >
+                  {m.clearFilters}
+                </Button>
+              </div>
               <div class="persons-search__filters-footer">
                 <span class="persons-search__filters-info">
                   {filtersInfo.value}
@@ -586,42 +600,44 @@ export default component$(() => {
             </Panel>
           )}
 
-          {searched.value && (
-            <section class="persons-search__table-card">
-              <div class="persons-search__table-meta">
-                <strong>Resultados</strong>
-                <span>{filtersInfo.value}</span>
-              </div>
+          <section class="persons-search__table-card">
+            <div class="persons-search__table-meta">
+              <strong>Resultados</strong>
+              <span>{filtersInfo.value}</span>
+            </div>
 
-              <DataTable
-                columns={columns}
-                rows={rows.value}
-                actions={actions}
-                actionMode="menu"
-                pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
-                pagination={{
-                  page: page.value,
-                  limit: limit.value,
-                  total: total.value,
-                }}
-                loading={loading.value}
-                searchable={false}
-                stickyHeader
-                hasActiveFilters={activeFilterCount.value > 0}
-                emptyTitle={m.tableEmptyTitle}
-                emptyDescription={m.tableEmptyDescription}
-                onPage$={$(async (nextPage) => {
-                  page.value = nextPage;
-                  await searchPersons$();
-                })}
-                onLimit$={$(async (nextLimit) => {
-                  limit.value = nextLimit;
-                  page.value = 1;
-                  await searchPersons$();
-                })}
-              />
-            </section>
-          )}
+            <DataTable
+              columns={columns}
+              rows={rows.value}
+              actions={actions}
+              actionMode="menu"
+              pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
+              pagination={{
+                page: page.value,
+                limit: limit.value,
+                total: total.value,
+              }}
+              loading={loading.value}
+              searchable={false}
+              stickyHeader
+              hasActiveFilters={activeFilterCount.value > 0}
+              emptyTitle={searched.value ? m.tableEmptyTitle : m.tableIdleTitle}
+              emptyDescription={
+                searched.value
+                  ? m.tableEmptyDescription
+                  : m.tableIdleDescription
+              }
+              onPage$={$(async (nextPage) => {
+                page.value = nextPage;
+                await searchPersons$();
+              })}
+              onLimit$={$(async (nextLimit) => {
+                limit.value = nextLimit;
+                page.value = 1;
+                await searchPersons$();
+              })}
+            />
+          </section>
         </div>
       </div>
     </AuthenticatedShell>

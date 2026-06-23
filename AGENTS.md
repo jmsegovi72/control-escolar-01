@@ -19,6 +19,8 @@
 - ❌ "Veo que este archivo se podría mejorar, voy a..." → **NO**. Preguntar primero.
 - ❌ "Ya que estoy aquí, voy a refactorizar..." → **NO**. No autorizado.
 - ❌ "Voy a hacer commit porque terminamos..." → **NO**. Sin "commit push" explícito, no se commitea.
+- ❌ "Voy a hacer commit y push después del plan" → **NO**. Aunque el plan esté aprobado, "commit" y "push" son operaciones separadas que requieren orden explícita cada una.
+- ❌ "Voy a pushear porque ya está commiteado" → **NO**. Si el commit no fue autorizado, no se pushea tampoco.
 - ❌ "Voy a corregir este pequeño error de tipos que vi..." → **NO**. No autorizado.
 - ❌ "Voy a formatear todos los archivos..." → **NO**. Solo `npm run fmt` si lo piden.
 - ❌ "Voy a borrar este archivo que ya no se usa..." → **NO**. Sin confirmación.
