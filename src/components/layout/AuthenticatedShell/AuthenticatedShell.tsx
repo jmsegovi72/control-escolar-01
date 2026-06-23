@@ -22,6 +22,7 @@ import {
   Sidebar,
   ToggleSwitch,
 } from '~/ui';
+import { AppIcon } from '~/ui/icons';
 import type {
   SidebarBehavior,
   SidebarItem,
@@ -38,6 +39,14 @@ import {
   getInitials,
   getTokenRemaining,
 } from '~/utils/session-utils';
+import {
+  applyThemeToDocument,
+  readStoredTheme,
+  resolveTheme,
+  type ThemeMode,
+  watchSystemTheme,
+  writeStoredTheme,
+} from '~/utils/theme';
 import { AuthenticatedShellSystemStatusContext } from './authenticated-shell.context';
 
 type AuthenticatedShellProps = {
@@ -71,7 +80,9 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
     const sidebarHovering = useSignal(false);
     const sidebarOpen = useSignal(false);
     const openSettings = useSignal(false);
+    const settingsRef = useSignal<HTMLElement>();
     const openItems = useSignal<string[]>([]);
+    const themeMode = useSignal<ThemeMode>('auto');
     const time = useSignal(formatTime(new Date()));
     const date = useSignal(formatDate(new Date()));
     const sessionRemaining = useSignal(getTokenRemaining().label);
@@ -105,6 +116,30 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
     useContextProvider(AuthenticatedShellSystemStatusContext, systemStatus);
 
+    useVisibleTask$(({ cleanup }) => {
+      const onClickOutside = (event: MouseEvent) => {
+        if (!openSettings.value) {
+          return;
+        }
+        const target = event.target as HTMLElement;
+        if (settingsRef.value?.contains(target)) {
+          return;
+        }
+        openSettings.value = false;
+      };
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          openSettings.value = false;
+        }
+      };
+      document.addEventListener('click', onClickOutside);
+      document.addEventListener('keydown', onKeyDown);
+      cleanup(() => {
+        document.removeEventListener('click', onClickOutside);
+        document.removeEventListener('keydown', onKeyDown);
+      });
+    });
+
     useVisibleTask$(async () => {
       if (authService.requiresPasswordChange()) {
         await nav(ROUTES.CHANGE_PASSWORD);
@@ -123,6 +158,9 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           ? 'hover'
           : 'fixed';
       sidebarHovering.value = false;
+
+      themeMode.value = readStoredTheme();
+      applyThemeToDocument(resolveTheme(themeMode.value));
 
       const user = sessionStore.getUser();
       const isSuper = user?.userTypeCode === 'SUPER';
@@ -183,10 +221,19 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
 
       window.addEventListener('resize', onResize);
 
+      const stopWatchingTheme = watchSystemTheme(
+        $((dark: boolean) => {
+          if (themeMode.value === 'auto') {
+            applyThemeToDocument(dark ? 'dark' : 'light');
+          }
+        }),
+      );
+
       return () => {
         window.clearInterval(interval);
         window.clearInterval(healthInterval);
         window.removeEventListener('resize', onResize);
+        stopWatchingTheme();
       };
     });
 
@@ -208,6 +255,12 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
       sidebarBehavior.value = 'hover';
       sidebarHovering.value = false;
       localStorage.setItem('sidebar-behavior', 'hover');
+    });
+
+    const setTheme$ = $((mode: ThemeMode) => {
+      themeMode.value = mode;
+      writeStoredTheme(mode);
+      applyThemeToDocument(resolveTheme(mode));
     });
 
     return (
@@ -386,7 +439,7 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             items={[]}
             disabled
           />
-          <div class="authenticated-shell__settings-wrap">
+          <div class="authenticated-shell__settings-wrap" ref={settingsRef}>
             <Button
               variant="secondary"
               size="sm"
@@ -399,6 +452,53 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
             />
             {openSettings.value && (
               <div class="authenticated-shell__settings-dropdown">
+                <Panel
+                  title={messages.layout.shell.themeLabel}
+                  density="compact"
+                >
+                  <div
+                    class="theme-toggle"
+                    role="radiogroup"
+                    aria-label={messages.layout.shell.themeLabel}
+                  >
+                    {(
+                      [
+                        {
+                          mode: 'light',
+                          label: messages.layout.shell.themeLight,
+                          icon: 'sun',
+                        },
+                        {
+                          mode: 'auto',
+                          label: messages.layout.shell.themeAuto,
+                          icon: 'monitor',
+                        },
+                        {
+                          mode: 'dark',
+                          label: messages.layout.shell.themeDark,
+                          icon: 'moon',
+                        },
+                      ] as const
+                    ).map((option) => (
+                      <button
+                        key={option.mode}
+                        type="button"
+                        role="radio"
+                        aria-checked={themeMode.value === option.mode}
+                        class="theme-toggle__option"
+                        data-active={
+                          themeMode.value === option.mode ? 'true' : undefined
+                        }
+                        onClick$={() => {
+                          void setTheme$(option.mode);
+                        }}
+                      >
+                        <AppIcon intent={option.icon} size="sm" />
+                        <span>{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </Panel>
                 <Panel
                   title={messages.layout.shell.sidebarLabel}
                   density="compact"
