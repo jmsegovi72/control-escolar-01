@@ -15,6 +15,12 @@ export const emergencyContactService = {
     return response.data.data;
   },
 
+  async createMany(dto: {
+    emergencyContacts: CreateEmergencyContactDto[];
+  }): Promise<void> {
+    await apiClient.post('/emergency-contacts/bulk', dto);
+  },
+
   async findOne(search: string | number): Promise<ViewEmergencyContact | null> {
     try {
       const response = await apiClient.get<ApiResponse<ViewEmergencyContact>>(

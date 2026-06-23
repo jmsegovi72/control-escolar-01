@@ -2003,6 +2003,51 @@ export const messages = {
       errorRelationshipRequired: 'Selecciona el parentesco.',
       errorNoChanges: 'No hay cambios para guardar.',
     },
+    bulkLoad: {
+      eyebrow: 'Contacto de emergencia',
+      title: 'Creación por lotes',
+      description:
+        'Carga y registra contactos de emergencia de forma masiva desde un archivo CSV',
+      meta: 'Contacto de emergencia',
+      accessDenied:
+        'No tienes permisos para realizar cargas masivas de contactos de emergencia.',
+      toolbarBack: 'Contactos de emergencia',
+      toolbarCenter: 'Importación por lotes',
+      tituloModulo: 'Módulo de contacto de emergencia',
+      successEyebrow: 'Importación exitosa',
+      successTitle: '¡Lote importado con éxito!',
+      successDescription:
+        'Se han registrado exitosamente los contactos de emergencia en el sistema.',
+      successFinish: 'Ir a contactos de emergencia',
+      successUploadAnother: 'Cargar otro archivo',
+      errorTitle: 'Error al procesar la importación',
+      errorDetails: 'El servidor rechazó los datos del lote. Detalles:',
+      errorBack: 'Volver a la tabla',
+      errorCancel: 'Cancelar',
+      uploadPanelTitle: 'Cargar Archivo CSV',
+      uploadPanelSubtitle: 'Cargar Archivo CSV de Contactos de Emergencia',
+      uploadZoneTitle: 'Seleccionar archivo CSV',
+      uploadZoneSubtitle: 'Haz clic aquí o arrastra un archivo CSV para cargar',
+      errorCSVRequired:
+        'El archivo CSV está vacío o no contiene filas de datos.',
+      errorCSVFormat:
+        'El archivo CSV no tiene el formato correcto de Contactos de Emergencia. Asegúrate de incluir las columnas obligatorias.',
+      statsValid: 'Válidos (Verde)',
+      statsWarning: 'Advertencias (Amarillo)',
+      statsError: 'Con Error (Rojo)',
+      statsReady: 'Listos para Registrar',
+      actionCancel: 'Cancelar',
+      actionImport: 'Registrar contactos',
+      actionImporting: 'Registrando...',
+      tableEmpty: 'No se encontraron registros en el lote.',
+      columns: {
+        personId: 'ID Persona',
+        fullName: 'Nombre completo',
+        phone: 'Teléfono',
+        relationship: 'Parentesco',
+        observations: 'Observaciones',
+      },
+    },
   },
 
   errors: {
@@ -2019,6 +2064,8 @@ export const messages = {
     createPersonFailed: 'Error al registrar la persona.',
     createAddressFailed: 'Error al registrar las direcciones.',
     createDemographicFailed: 'Error al registrar los datos demográficos.',
+    createEmergencyContactFailed:
+      'Error al registrar los contactos de emergencia.',
     updatePersonFailed: 'Error al actualizar la persona.',
     loadPersonDetailFailed: 'No se pudo cargar el detalle de la persona.',
     uploadPersonPhotoFailed: 'No se pudo subir la fotografía.',
