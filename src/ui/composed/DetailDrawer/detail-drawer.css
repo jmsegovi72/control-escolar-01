@@ -27,6 +27,7 @@
   inset: 0;
   border: 0;
   background: var(--overlay-light);
+  backdrop-filter: blur(2px);
   cursor: pointer;
   pointer-events: auto;
   animation: ui-detail-drawer-backdrop-in 160ms var(--ease-out);
@@ -36,6 +37,7 @@
   position: relative;
   z-index: 1;
   display: grid;
+  color-scheme: inherit;
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: min(100vw, 32rem);
   max-width: 100%;
@@ -179,6 +181,7 @@
 
 .ui-detail-drawer__close:focus-visible {
   outline: 0;
+  border-color: var(--field-border-focus);
   box-shadow: var(--focus-ring);
 }
 

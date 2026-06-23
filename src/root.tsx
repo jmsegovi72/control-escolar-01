@@ -32,6 +32,17 @@ export default component$(() => {
             href={`${import.meta.env.BASE_URL}manifest.json`}
           />
         )}
+        <script
+          dangerouslySetInnerHTML={`
+            (function() {
+              try {
+                var mode = localStorage.getItem('sices-theme') || 'auto';
+                var dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+              } catch (e) {}
+            })();
+          `}
+        />
         <RouterHead />
       </head>
       <body lang="es">

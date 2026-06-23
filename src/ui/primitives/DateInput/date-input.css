@@ -1,5 +1,6 @@
 .ui-input[type="date"] {
   min-height: 1.4rem;
+  color-scheme: inherit;
 }
 
 .ui-input[type="date"]::-webkit-calendar-picker-indicator {
@@ -9,4 +10,19 @@
 
 .ui-input[type="date"]:disabled::-webkit-calendar-picker-indicator {
   cursor: not-allowed;
+}
+
+.ui-input[type="date"]::-webkit-date-and-time-value,
+.ui-input[type="date"]::-webkit-datetime-edit,
+.ui-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.ui-input[type="date"]::-webkit-datetime-edit-text,
+.ui-input[type="date"]::-webkit-datetime-edit-month-field,
+.ui-input[type="date"]::-webkit-datetime-edit-day-field,
+.ui-input[type="date"]::-webkit-datetime-edit-year-field {
+  color: inherit;
+}
+
+[data-theme="dark"] .ui-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.88);
+  opacity: 0.78;
 }

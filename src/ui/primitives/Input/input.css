@@ -1,4 +1,5 @@
 .ui-input-shell {
+  --input-autofill-bg: var(--color-surface);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -41,6 +42,17 @@
   line-height: var(--line-height-base);
   outline: 0;
   padding: 0;
+}
+
+.ui-input:-webkit-autofill,
+.ui-input:-webkit-autofill:hover,
+.ui-input:-webkit-autofill:focus,
+.ui-input:-webkit-autofill:active {
+  -webkit-text-fill-color: currentColor;
+  caret-color: currentColor;
+  -webkit-box-shadow: 0 0 0 1000px var(--input-autofill-bg) inset;
+  box-shadow: 0 0 0 1000px var(--input-autofill-bg) inset;
+  transition: background-color 9999s ease-out 0s;
 }
 
 .ui-input::placeholder {
@@ -126,10 +138,12 @@
 }
 
 .ui-input-shell[data-variant="box"] {
+  --input-autofill-bg: var(--field-bg);
   background: var(--field-bg);
 }
 
 .ui-input-shell[data-variant="quiet"] {
+  --input-autofill-bg: var(--color-muted);
   background: var(--color-muted);
 }
 

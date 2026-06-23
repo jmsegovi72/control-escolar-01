@@ -4,6 +4,7 @@
   align-items: center;
   gap: var(--space-2);
   min-height: var(--field-height-md);
+  color-scheme: inherit;
   color: var(--field-text);
   overflow: visible;
   transition:
@@ -79,6 +80,7 @@
   display: grid;
   max-height: 14rem;
   overflow-y: auto;
+  color-scheme: inherit;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   background: var(--color-surface);

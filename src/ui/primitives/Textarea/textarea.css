@@ -2,6 +2,7 @@
   position: relative;
   display: inline-flex;
   min-height: calc(var(--field-height-md) * 2);
+  color-scheme: inherit;
   color: var(--field-text);
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -25,6 +26,11 @@
   padding: var(--space-3) 0;
 }
 
+.ui-textarea:disabled,
+.ui-textarea:read-only {
+  cursor: not-allowed;
+}
+
 .ui-textarea::placeholder {
   color: var(--field-placeholder);
 }
@@ -39,6 +45,11 @@
 
 .ui-textarea-shell[data-disabled="true"] {
   color: var(--field-text-disabled);
+  cursor: not-allowed;
+}
+
+.ui-textarea-shell[data-readonly="true"] {
+  color: var(--color-text-muted);
   cursor: not-allowed;
 }
 
@@ -110,4 +121,34 @@
 .ui-textarea-shell[data-disabled="true"][data-variant="box"],
 .ui-textarea-shell[data-disabled="true"][data-variant="quiet"] {
   background: var(--field-bg-disabled);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="line"] {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--field-border);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="line"]:hover {
+  border-bottom-color: var(--field-border);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="line"]:focus-within::after {
+  transform: scaleX(0);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="box"],
+.ui-textarea-shell[data-readonly="true"][data-variant="quiet"] {
+  border-style: dashed;
+  background: var(--color-surface-subtle);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="box"]:hover,
+.ui-textarea-shell[data-readonly="true"][data-variant="quiet"]:hover {
+  border-color: var(--field-border);
+}
+
+.ui-textarea-shell[data-readonly="true"][data-variant="box"]:focus-within,
+.ui-textarea-shell[data-readonly="true"][data-variant="quiet"]:focus-within {
+  border-color: var(--field-border);
+  box-shadow: none;
 }

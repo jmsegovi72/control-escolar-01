@@ -254,6 +254,17 @@
   color: var(--field-placeholder);
 }
 
+.login-form .ui-input,
+.login-password-field .ui-input {
+  color: var(--color-text);
+  font-family: var(--font-ui);
+}
+
+.login-form .ui-input::placeholder,
+.login-password-field .ui-input::placeholder {
+  color: var(--field-placeholder);
+}
+
 .login-form .ui-input-shell[data-variant="line"],
 .login-password-field .ui-input-shell[data-variant="line"] {
   min-height: var(--field-height-lg);
