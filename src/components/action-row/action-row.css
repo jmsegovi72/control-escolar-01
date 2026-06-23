@@ -53,6 +53,21 @@
   color: var(--color-success);
 }
 
+.ui-action-row__icon--slate {
+  background: color-mix(in srgb, var(--raw-slate-700) 14%, transparent);
+  color: var(--raw-slate-700);
+}
+
+[data-theme="dark"] .ui-action-row__icon--slate {
+  background: color-mix(in srgb, var(--raw-slate-300) 16%, transparent);
+  color: var(--raw-slate-300);
+}
+
+.ui-action-row__icon--info {
+  background: var(--color-info-soft);
+  color: var(--color-info);
+}
+
 .ui-action-row__icon--gray {
   background: var(--color-surface-subtle);
   color: var(--color-text-muted);

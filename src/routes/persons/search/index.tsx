@@ -577,20 +577,6 @@ export default component$(() => {
                   {m.clearFilters}
                 </Button>
               </div>
-              <div class="persons-search__filters-footer">
-                <span class="persons-search__filters-info">
-                  {filtersInfo.value}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  iconLeft="cancel"
-                  onClick$={clearFilters$}
-                >
-                  {m.clearFilters}
-                </Button>
-              </div>
             </form>
           </section>
 

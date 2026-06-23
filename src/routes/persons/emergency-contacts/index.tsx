@@ -42,7 +42,7 @@ const operationalActions = [
     description: m.operationalActions.edit.description,
     href: ROUTES.EMERGENCY_CONTACTS_EDIT,
     icon: 'edit' as const,
-    tone: 'gray' as const,
+    tone: 'primary' as const,
     badge: m.operationalActions.edit.badge,
   },
   {
@@ -63,7 +63,7 @@ const relatedModules = [
     description: m.relatedModules.persons.description,
     href: ROUTES.PERSONS,
     icon: 'person' as const,
-    tone: 'gray' as const,
+    tone: 'slate' as const,
     badge: m.relatedModules.persons.badge,
     disabled: false,
   },

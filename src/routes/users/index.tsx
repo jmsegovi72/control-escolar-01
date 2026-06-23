@@ -42,7 +42,7 @@ const operationalActions = [
     description: m.operationalActions.detail.description,
     href: ROUTES.USERS_DETAIL,
     icon: 'view' as const,
-    tone: 'gray' as const,
+    tone: 'primary' as const,
     badge: m.operationalActions.detail.badge,
   },
   {
@@ -51,7 +51,7 @@ const operationalActions = [
     description: m.operationalActions.edit.description,
     href: ROUTES.USERS_EDIT,
     icon: 'edit' as const,
-    tone: 'gray' as const,
+    tone: 'primary' as const,
     badge: m.operationalActions.edit.badge,
   },
   {

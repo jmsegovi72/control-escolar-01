@@ -9,6 +9,8 @@ export type ActionRowTone =
   | 'warning'
   | 'violet'
   | 'teal'
+  | 'slate'
+  | 'info'
   | 'gray';
 
 export interface ActionRowProps {
