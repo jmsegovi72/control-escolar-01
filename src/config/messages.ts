@@ -153,6 +153,8 @@ export const messages = {
         personsDemographics: 'Demografía',
         personsEmergency: 'Contactos emergencia',
         students: 'Estudiantes',
+        studentsSearch: 'Búsqueda avanzada',
+        studentsCreate: 'Registrar estudiante',
         studentsAdmission: 'Admisión',
         studentsEnrollment: 'Matrícula',
         studentsGrades: 'Calificaciones',
@@ -1467,6 +1469,97 @@ export const messages = {
         foreignLanguage: 'Idioma ext.',
         specialCondition: 'Cond. especial',
         observations: 'Observaciones',
+      },
+    },
+  },
+
+  students: {
+    hub: {
+      eyebrow: 'Admisión',
+      title: 'Estudiantes',
+      description:
+        'Registra, consulta y gestiona estudiantes y su proceso de admisión.',
+      meta: 'Módulo Estudiantes',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden gestionar estudiantes.',
+      toolbarLeading: 'Módulo de Admisión',
+      openButton: 'Abrir',
+      goButton: 'Ir',
+      primaryActionsTitle: 'Acciones principales',
+      operationalActionsTitle: 'Acciones operativas',
+      relatedModulesTitle: 'Módulos relacionados',
+      primaryActions: {
+        search: {
+          title: 'Búsqueda avanzada',
+          description:
+            'Consulta estudiantes con filtros por programa, generación, estatus y más.',
+          badge: 'Principal',
+        },
+        create: {
+          title: 'Crear estudiante',
+          description:
+            'Vincula una persona existente a un programa educativo y generación.',
+          badge: 'Alta',
+        },
+      },
+      operationalPanel: {
+        title: 'Operaciones sobre estudiantes',
+        description: 'Consulta, edición e importación de registros.',
+      },
+      operationalActions: {
+        detail: {
+          title: 'Ver estudiante',
+          description: 'Consulta datos completos del estudiante por ID o CURP.',
+          badge: 'Consulta',
+        },
+        edit: {
+          title: 'Actualizar estudiante',
+          description:
+            'Modifica programa, generación, estatus u otros datos del estudiante.',
+          badge: 'Edición',
+        },
+        bulkLoad: {
+          title: 'Carga masiva',
+          description:
+            'Importa múltiples estudiantes desde un archivo con validación previa.',
+          badge: 'Importar',
+        },
+        batchEmails: {
+          title: 'Actualizar emails institucionales',
+          description:
+            'Asigna o actualiza correos institucionales en una operación batch.',
+          badge: 'Batch',
+        },
+        batchCodes: {
+          title: 'Actualizar códigos de control',
+          description: 'Asigna o renueva códigos de control escolar en lote.',
+          badge: 'Batch',
+        },
+      },
+      relatedPanel: {
+        title: 'Entidades vinculadas al estudiante',
+        description:
+          'Se gestionan en contexto del estudiante activo y estarán disponibles próximamente.',
+      },
+      relatedModules: {
+        enrollment: {
+          title: 'Inscripciones',
+          description:
+            'Gestiona las inscripciones del estudiante por ciclo escolar.',
+          badge: 'Pronto',
+        },
+        documents: {
+          title: 'Documentos del estudiante',
+          description:
+            'Carga y consulta documentos probatorios del estudiante.',
+          badge: 'Pronto',
+        },
+        academicBackground: {
+          title: 'Antecedentes académicos',
+          description:
+            'Registra estudios previos y certificados del estudiante.',
+          badge: 'Pronto',
+        },
       },
     },
   },

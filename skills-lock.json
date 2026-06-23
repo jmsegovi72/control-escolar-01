@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": ".claude/skills/interface-design/SKILL.md",
       "computedHash": "55a83a96d1e3d161b8c3630dab8ae2dd4547d92636d3d9b4b447d7d59163e084"
+    },
+    "qwik-expert": {
+      "source": "oimiragieo/agent-studio",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/qwik-expert/SKILL.md",
+      "computedHash": "df3774b1d5f3f549144a3732924fd44561e06134373326fe47f1a986c9300b62"
     }
   }
 }
