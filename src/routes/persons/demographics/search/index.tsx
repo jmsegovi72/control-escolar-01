@@ -865,10 +865,7 @@ export default component$(() => {
 
           <section class="demographics-search__table-card">
             <div class="demographics-search__table-meta">
-              <strong>
-                {total.value}{' '}
-                {total.value === 1 ? m.resultWordSingular : m.resultWordPlural}
-              </strong>
+              <strong>Resultados</strong>
               <span>{filtersInfo.value}</span>
             </div>
 
