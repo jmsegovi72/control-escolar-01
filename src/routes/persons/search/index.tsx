@@ -69,6 +69,7 @@ export default component$(() => {
   const showAdvanced = useSignal(false);
   const error = useSignal('');
   const searchTerm = useSignal('');
+  const appliedSearch = useSignal('');
   const fullName = useSignal('');
   const curp = useSignal('');
   const gender = useSignal('');
@@ -128,7 +129,9 @@ export default component$(() => {
   });
 
   const activeFilterCount = useComputed$(() => {
-    return activeAdvancedFilterCount.value + (searchTerm.value.trim() ? 1 : 0);
+    return (
+      activeAdvancedFilterCount.value + (appliedSearch.value.trim() ? 1 : 0)
+    );
   });
 
   const filtersInfo = useComputed$(() => {
@@ -159,13 +162,55 @@ export default component$(() => {
     return `${count} ${filterWord} ${activeWord} · ${resultsCount} ${resultWord}`;
   });
 
+  const activeChips = useComputed$(() => {
+    const chips: Array<{ key: string; label: string }> = [];
+
+    if (appliedSearch.value.trim()) {
+      chips.push({
+        key: 'searchTerm',
+        label: `${m.filterGlobalLabel}: ${appliedSearch.value}`,
+      });
+    }
+    if (fullName.value.trim()) {
+      chips.push({
+        key: 'fullName',
+        label: `${m.filterNameLabel}: ${fullName.value}`,
+      });
+    }
+    if (curp.value.trim()) {
+      chips.push({ key: 'curp', label: `${m.filterCurpLabel}: ${curp.value}` });
+    }
+    if (gender.value) {
+      chips.push({
+        key: 'gender',
+        label: `${m.filterGenderLabel}: ${
+          gender.value === 'H' ? m.genderMale : m.genderFemale
+        }`,
+      });
+    }
+    if (birthState.value) {
+      chips.push({
+        key: 'birthState',
+        label: `${m.filterBirthStateLabel}: ${birthState.value}`,
+      });
+    }
+    if (birthMunicipality.value) {
+      chips.push({
+        key: 'birthMunicipality',
+        label: `${m.filterBirthMunicipalityLabel}: ${birthMunicipality.value}`,
+      });
+    }
+
+    return chips;
+  });
+
   const searchPersons$ = $(async () => {
     loading.value = true;
     searched.value = true;
     error.value = '';
     try {
       const response = await personService.findMany({
-        searchTerm: searchTerm.value.trim() || undefined,
+        searchTerm: appliedSearch.value.trim() || undefined,
         fullName: fullName.value.trim() || undefined,
         curp: curp.value.trim() || undefined,
         gender: gender.value || undefined,
@@ -219,7 +264,7 @@ export default component$(() => {
   const saveWorkContext$ = $((row: PersonRow) => {
     personsWorkflow.save(
       {
-        searchTerm: searchTerm.value,
+        searchTerm: appliedSearch.value,
         fullName: fullName.value,
         curp: curp.value,
         gender: gender.value,
@@ -234,6 +279,7 @@ export default component$(() => {
 
   const clearFilters$ = $(() => {
     searchTerm.value = '';
+    appliedSearch.value = '';
     fullName.value = '';
     curp.value = '';
     gender.value = '';
@@ -248,6 +294,24 @@ export default component$(() => {
     resultStates.value = [];
     resultMunicipalities.value = [];
     personsWorkflow.clear();
+  });
+
+  const removeFilter$ = $(async (key: string) => {
+    if (key === 'searchTerm') {
+      searchTerm.value = '';
+      appliedSearch.value = '';
+    }
+    if (key === 'fullName') fullName.value = '';
+    if (key === 'curp') curp.value = '';
+    if (key === 'gender') gender.value = '';
+    if (key === 'birthState') {
+      birthState.value = '';
+      birthMunicipality.value = '';
+    }
+    if (key === 'birthMunicipality') birthMunicipality.value = '';
+
+    page.value = 1;
+    await searchPersons$();
   });
 
   useVisibleTask$(async () => {
@@ -266,6 +330,7 @@ export default component$(() => {
     const savedState = personsWorkflow.getState();
     if (savedState?.filters) {
       searchTerm.value = savedState.filters.searchTerm;
+      appliedSearch.value = savedState.filters.searchTerm;
       fullName.value = savedState.filters.fullName;
       curp.value = savedState.filters.curp;
       gender.value = savedState.filters.gender;
@@ -351,6 +416,7 @@ export default component$(() => {
               preventdefault:submit
               onSubmit$={async () => {
                 if (loading.value) return;
+                appliedSearch.value = searchTerm.value.trim();
                 page.value = 1;
                 resultStates.value = [];
                 resultMunicipalities.value = [];
@@ -405,7 +471,7 @@ export default component$(() => {
                     iconLeft="search"
                     loading={loading.value}
                   >
-                    {m.searchButton}
+                    {m.applyFilters}
                   </Button>
                 </div>
               </div>
@@ -480,6 +546,23 @@ export default component$(() => {
                 </div>
               </div>
 
+              {activeChips.value.length > 0 && (
+                <div class="persons-search__chips">
+                  {activeChips.value.map((chip) => (
+                    <span key={chip.key} class="persons-search__chip">
+                      {chip.label}
+                      <button
+                        type="button"
+                        aria-label={m.removeFilter}
+                        onClick$={async () => await removeFilter$(chip.key)}
+                      >
+                        <AppIcon intent="close" size="xs" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <div class="persons-search__filters-footer">
                 <span class="persons-search__filters-info">
                   {filtersInfo.value}
@@ -491,7 +574,7 @@ export default component$(() => {
                   iconLeft="cancel"
                   onClick$={clearFilters$}
                 >
-                  {m.clearButton}
+                  {m.clearFilters}
                 </Button>
               </div>
             </form>
@@ -504,32 +587,40 @@ export default component$(() => {
           )}
 
           {searched.value && (
-            <DataTable
-              columns={columns}
-              rows={rows.value}
-              actions={actions}
-              actionMode="menu"
-              pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
-              pagination={{
-                page: page.value,
-                limit: limit.value,
-                total: total.value,
-              }}
-              loading={loading.value}
-              searchable={false}
-              stickyHeader
-              emptyTitle={m.tableEmptyTitle}
-              emptyDescription={m.tableEmptyDescription}
-              onPage$={$(async (nextPage) => {
-                page.value = nextPage;
-                await searchPersons$();
-              })}
-              onLimit$={$(async (nextLimit) => {
-                limit.value = nextLimit;
-                page.value = 1;
-                await searchPersons$();
-              })}
-            />
+            <section class="persons-search__table-card">
+              <div class="persons-search__table-meta">
+                <strong>Resultados</strong>
+                <span>{filtersInfo.value}</span>
+              </div>
+
+              <DataTable
+                columns={columns}
+                rows={rows.value}
+                actions={actions}
+                actionMode="menu"
+                pageSizeOptions={[...DEFAULT_DATA_TABLE_PAGE_SIZE_OPTIONS]}
+                pagination={{
+                  page: page.value,
+                  limit: limit.value,
+                  total: total.value,
+                }}
+                loading={loading.value}
+                searchable={false}
+                stickyHeader
+                hasActiveFilters={activeFilterCount.value > 0}
+                emptyTitle={m.tableEmptyTitle}
+                emptyDescription={m.tableEmptyDescription}
+                onPage$={$(async (nextPage) => {
+                  page.value = nextPage;
+                  await searchPersons$();
+                })}
+                onLimit$={$(async (nextLimit) => {
+                  limit.value = nextLimit;
+                  page.value = 1;
+                  await searchPersons$();
+                })}
+              />
+            </section>
           )}
         </div>
       </div>
