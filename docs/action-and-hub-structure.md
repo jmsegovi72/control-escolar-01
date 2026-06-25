@@ -55,6 +55,43 @@ Importante:
 
 ## Fuente de Verdad
 
+### Regla de modularidad para modulos futuros
+
+La app esta pensada para crecer por modulos hermanos, no por pantallas reinventadas.
+
+Regla obligatoria:
+- si un modulo nuevo comparte el mismo flujo base que otro modulo existente, se debe tomar ese modulo como plantilla funcional
+- primero se copia la logica que ya funciona
+- despues se cambian unicamente campos, textos, endpoints, validaciones y detalles visuales propios del nuevo modulo
+
+Esto aplica especialmente a:
+- pantallas `create`
+- pasos de seleccion de persona
+- cargas de catalogos
+- manejo de estados `loading`, `empty`, `error`, `success`
+- toolbars, headers y resultados
+
+No se debe:
+- reinterpretar el flujo base sin necesidad real
+- cambiar el patron de carga de datos si ya existe uno probado en un modulo hermano
+- agregar consultas extra si el modulo base ya resuelve el paso con los datos actuales
+- inventar una logica nueva solo porque cambian los campos del formulario
+
+Orden correcto de implementacion:
+1. identificar el modulo hermano mas cercano
+2. copiar su estructura funcional
+3. sustituir solo lo especifico del nuevo modulo
+4. validar que el flujo siga comportandose igual antes de refinar UI o reglas nuevas
+
+Ejemplo practico:
+- si `students/create` comparte la misma idea que `addresses/create`, `demographics/create` o `emergency-contacts/create`, la base debe ser el modulo hermano mas cercano y no una implementacion desde cero
+
+La modularidad en este proyecto significa:
+- misma logica base
+- mismos patrones de estado
+- mismos puntos de montaje en shell
+- diferencias solo en datos de negocio
+
 ### Fuente de verdad para pantallas de accion
 
 La referencia principal es:
@@ -567,5 +604,4 @@ Toda pantalla de crear **debe** terminar en `CreateResult` (success o error). Ve
 ### Regla critica: wizard multi-paso
 
 Toda pantalla con pasos **debe** pasar `tone` al `StepIndicator` cuando hay resultado conocido. Sin esto, el ultimo paso queda en azul cuando deberia ser verde (success) o rojo (error). Ver [step-indicator.md](./components/step-indicator.md).
-
 

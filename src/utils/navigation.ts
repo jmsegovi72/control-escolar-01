@@ -114,7 +114,7 @@ export const createNavigation = (
               label: messages.layout.shell.nav.studentsCreate,
               icon: 'add',
               href: ROUTES.STUDENTS_CREATE,
-              disabled: true,
+              disabled: false,
             },
           ],
         },

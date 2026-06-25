@@ -290,19 +290,25 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
           activeItem={
             location.url.pathname.startsWith('/users')
               ? 'users'
-              : location.url.pathname.startsWith('/students')
-                ? 'students-management'
-                : location.url.pathname.startsWith(
-                      '/persons/emergency-contacts',
-                    )
-                  ? 'persons-emergency'
-                  : location.url.pathname.startsWith('/persons/addresses')
-                    ? 'persons-addresses'
-                    : location.url.pathname.startsWith('/persons/demographics')
-                      ? 'persons-demographics'
-                      : location.url.pathname.startsWith('/persons')
-                        ? 'persons-management'
-                        : 'dashboard'
+              : location.url.pathname.startsWith('/students/create')
+                ? 'students-create'
+                : location.url.pathname.startsWith('/students/search')
+                  ? 'students-search'
+                  : location.url.pathname.startsWith('/students')
+                    ? 'students-management'
+                    : location.url.pathname.startsWith(
+                          '/persons/emergency-contacts',
+                        )
+                      ? 'persons-emergency'
+                      : location.url.pathname.startsWith('/persons/addresses')
+                        ? 'persons-addresses'
+                        : location.url.pathname.startsWith(
+                              '/persons/demographics',
+                            )
+                          ? 'persons-demographics'
+                          : location.url.pathname.startsWith('/persons')
+                            ? 'persons-management'
+                            : 'dashboard'
           }
           openItems={openItems.value}
           collapsed={sidebarCollapsed}

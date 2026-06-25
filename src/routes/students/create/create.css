@@ -1,0 +1,195 @@
+.create-student-page {
+  display: grid;
+  gap: 0;
+  background: var(--color-bg);
+  min-width: 0;
+}
+
+.create-student-page__content {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+  justify-items: center;
+}
+
+.create-student-form-card,
+.create-result {
+  width: min(100%, var(--layout-form-max-width));
+}
+
+.create-student-form-card {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-student-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-student-person-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  border: var(--border-width-2) solid var(--color-primary);
+  border-radius: var(--radius-4);
+  background: var(--color-primary-soft);
+  padding: var(--space-3) var(--space-4);
+}
+
+.create-student-person-card__icon {
+  display: inline-grid;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  place-items: center;
+  border-radius: var(--radius-3);
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+}
+
+.create-student-person-card__info {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.create-student-person-card__info strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.create-student-person-card__info span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.create-student-form-header-icon {
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  min-width: var(--avatar-size-md);
+  margin-top: 1px;
+  border-radius: var(--radius-3);
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+}
+
+.create-student-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.create-student-grid {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.create-student-grid--pair {
+  grid-template-columns: 1fr 1fr;
+}
+
+.student-warn-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 14px 16px;
+  border: 1.5px solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-warning) 8%, transparent);
+}
+
+.student-warn-banner__icon {
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--color-warning) 78%, var(--color-text) 22%);
+  margin-top: 1px;
+}
+
+.student-warn-banner__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.student-warn-banner__title {
+  color: color-mix(in srgb, var(--color-warning) 70%, var(--color-text) 30%);
+  font-size: 13.5px;
+  font-weight: var(--font-weight-bold);
+}
+
+.student-warn-banner__description {
+  margin-top: 3px;
+  color: color-mix(in srgb, var(--color-warning) 78%, var(--color-text) 22%);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.student-inline-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-small);
+  line-height: 1.45;
+}
+
+.student-inline-info {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-small);
+  line-height: 1.45;
+}
+
+.create-student-form-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  line-height: 1.4;
+}
+
+.create-student-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.create-student-actions .ui-button:last-child {
+  box-shadow:
+    0 1px 3px color-mix(in srgb, var(--color-primary) 18%, transparent),
+    0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.create-result .create-result__row-value {
+  font-family: var(--font-display);
+}
+
+.create-result .create-result__row:nth-child(2) .create-result__row-value,
+.create-result .create-result__row:nth-child(5) .create-result__row-value {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 640px) {
+  .create-student-page__content {
+    padding: var(--space-5) var(--space-4)
+      calc(var(--space-12) + var(--space-1));
+  }
+
+  .create-student-grid--pair {
+    grid-template-columns: 1fr;
+  }
+
+  .create-student-person-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .create-student-person-card .ui-button {
+    grid-column: 1 / -1;
+    justify-self: flex-end;
+  }
+}

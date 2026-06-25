@@ -1,0 +1,16 @@
+.edit-student-loading {
+  min-height: 4.5rem;
+  border-radius: var(--radius-4);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-muted) 84%, transparent) 0%,
+    color-mix(in srgb, var(--color-surface) 96%, transparent) 48%,
+    color-mix(in srgb, var(--color-muted) 84%, transparent) 100%
+  );
+}
+
+.edit-student-search-shell {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+}

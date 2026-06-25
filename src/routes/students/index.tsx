@@ -23,7 +23,7 @@ const primaryActions = [
     icon: 'search' as const,
     tone: 'primary' as const,
     badge: m.primaryActions.search.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'create',
@@ -33,7 +33,7 @@ const primaryActions = [
     icon: 'student' as const,
     tone: 'success' as const,
     badge: m.primaryActions.create.badge,
-    disabled: true,
+    disabled: false,
   },
 ];
 
@@ -46,7 +46,7 @@ const operationalActions = [
     icon: 'view' as const,
     tone: 'warning' as const,
     badge: m.operationalActions.detail.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'edit',
@@ -56,7 +56,7 @@ const operationalActions = [
     icon: 'edit' as const,
     tone: 'primary' as const,
     badge: m.operationalActions.edit.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'bulkLoad',
