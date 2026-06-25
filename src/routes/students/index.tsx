@@ -66,7 +66,7 @@ const operationalActions = [
     icon: 'upload' as const,
     tone: 'violet' as const,
     badge: m.operationalActions.bulkLoad.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'batchEmails',
@@ -76,7 +76,7 @@ const operationalActions = [
     icon: 'mail' as const,
     tone: 'teal' as const,
     badge: m.operationalActions.batchEmails.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'batchCodes',
@@ -86,7 +86,7 @@ const operationalActions = [
     icon: 'class' as const,
     tone: 'teal' as const,
     badge: m.operationalActions.batchCodes.badge,
-    disabled: true,
+    disabled: false,
   },
 ];
 

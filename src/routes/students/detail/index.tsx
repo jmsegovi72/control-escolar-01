@@ -16,9 +16,6 @@ import { ROUTES } from '~/config/routes';
 import { studentService } from '~/services/student/student.service';
 import type { StudentListItem, ViewStudent } from '~/types/student.types';
 import {
-  studentsWorkflow,
-} from '~/utils/students-workflow';
-import {
   ActionHeader,
   Avatar,
   Badge,
@@ -29,6 +26,7 @@ import {
   Toast,
 } from '~/ui';
 import { normalizeError } from '~/utils/api-error';
+import { studentsWorkflow } from '~/utils/students-workflow';
 import './detail.css';
 
 const m = messages.students.detail;

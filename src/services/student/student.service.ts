@@ -65,6 +65,22 @@ export const studentService = {
     return response.data.data;
   },
 
+  async createMany(dto: { students: CreateStudentDto[] }): Promise<void> {
+    await apiClient.post('/students/bulk', dto);
+  },
+
+  async updateEmailsBatch(dto: {
+    updatesMails: { id: number; institutionalMail: string }[];
+  }): Promise<void> {
+    await apiClient.patch('/students/batch/emails', dto);
+  },
+
+  async updateCodesBatch(dto: {
+    updatesCodes: { id: number; codeNumber: string }[];
+  }): Promise<void> {
+    await apiClient.patch('/students/batch/codes', dto);
+  },
+
   async findOne(search: string | number): Promise<ViewStudent> {
     const response = await apiClient.get<
       ApiResponse<ViewStudent> | ViewStudent
