@@ -107,9 +107,9 @@ const relatedModules = [
     description: m.relatedModules.documents.description,
     href: ROUTES.STUDENTS_DOCUMENTS,
     icon: 'download' as const,
-    tone: 'gray' as const,
+    tone: 'slate' as const,
     badge: m.relatedModules.documents.badge,
-    disabled: true,
+    disabled: false,
   },
   {
     id: 'academicBackground',

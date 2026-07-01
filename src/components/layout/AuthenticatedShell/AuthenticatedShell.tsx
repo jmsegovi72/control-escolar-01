@@ -296,19 +296,21 @@ export const AuthenticatedShell = component$<AuthenticatedShellProps>(
                   ? 'students-search'
                   : location.url.pathname.startsWith('/students')
                     ? 'students-management'
-                    : location.url.pathname.startsWith(
-                          '/persons/emergency-contacts',
-                        )
-                      ? 'persons-emergency'
-                      : location.url.pathname.startsWith('/persons/addresses')
-                        ? 'persons-addresses'
-                        : location.url.pathname.startsWith(
-                              '/persons/demographics',
-                            )
-                          ? 'persons-demographics'
-                          : location.url.pathname.startsWith('/persons')
-                            ? 'persons-management'
-                            : 'dashboard'
+                    : location.url.pathname.startsWith('/persons/documents')
+                      ? 'persons-documents'
+                      : location.url.pathname.startsWith(
+                            '/persons/emergency-contacts',
+                          )
+                        ? 'persons-emergency'
+                        : location.url.pathname.startsWith('/persons/addresses')
+                          ? 'persons-addresses'
+                          : location.url.pathname.startsWith(
+                                '/persons/demographics',
+                              )
+                            ? 'persons-demographics'
+                            : location.url.pathname.startsWith('/persons')
+                              ? 'persons-management'
+                              : 'dashboard'
           }
           openItems={openItems.value}
           collapsed={sidebarCollapsed}

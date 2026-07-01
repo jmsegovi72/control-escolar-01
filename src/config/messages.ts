@@ -150,6 +150,7 @@ export const messages = {
         persons: 'Personas',
         personsManagement: 'Gestión',
         personsAddresses: 'Dirección',
+        personsDocuments: 'Documentos',
         personsDemographics: 'Demografía',
         personsEmergency: 'Contactos emergencia',
         students: 'Estudiantes',
@@ -1035,6 +1036,120 @@ export const messages = {
         observations: 'Observaciones',
       },
     },
+    documentsUpload: {
+      eyebrow: 'Personas',
+      title: 'Subir documento',
+      description:
+        'Carga un documento para una persona y, si aplica, vinculalo con un contexto adicional.',
+      meta: 'Documentos de personas',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden cargar documentos de personas.',
+      step1Eyebrow: 'Paso 1',
+      step1Label: 'Seleccion de persona',
+      step2Eyebrow: 'Paso 2',
+      step2Label: 'Datos del documento',
+      step3Eyebrow: 'Paso 3',
+      step3Label: 'Resultado',
+      searchPanelTitle: 'Selecciona la persona',
+      searchPanelDescription:
+        'Busca por ID, CURP, nombre o correo. La persona es el titular obligatorio del documento.',
+      personSearchLabel: 'Buscar persona',
+      personSearchHint: 'Escribe al menos 3 caracteres, una CURP o un ID.',
+      personSearchPlaceholder: 'ID, CURP o nombre completo',
+      personNoResults: 'No se encontro ninguna persona con ese criterio.',
+      personChangeButton: 'Cambiar',
+      continueButton: 'Continuar',
+      selectedPersonPanelTitle: 'Persona titular',
+      selectedPersonPanelDescription:
+        'El documento quedara asociado a esta persona.',
+      contextPanelTitle: 'Contexto opcional',
+      contextPanelDescription:
+        'Vincula el documento a un rol adicional de la persona. Solo se permite un contexto adicional a la vez.',
+      contextNoneTitle: 'Solo persona',
+      contextNoneDescription: 'Sin contexto adicional',
+      contextStudentTitle: 'Estudiante',
+      contextStudentDescription: 'Relacionarlo con un expediente academico',
+      contextStaffTitle: 'Personal',
+      contextStaffDescription: 'Relacionarlo con un expediente laboral',
+      studentSearchLabel: 'Estudiante',
+      studentSearchHint:
+        'Busca por nombre, matricula, CURP o correo institucional.',
+      studentSearchPlaceholder: 'Nombre, matricula, CURP o correo',
+      studentNoResults: 'No se encontro ningun estudiante con ese criterio.',
+      studentChangeButton: 'Quitar',
+      staffSearchLabel: 'Personal',
+      staffSearchHint:
+        'Busca por ID, nombre, CURP, correo institucional, categoria o tipo de personal.',
+      staffSearchPlaceholder:
+        'ID, nombre, CURP, correo, categoria o tipo de personal',
+      staffNoResults: 'No se encontro ningun personal con ese criterio.',
+      staffChangeButton: 'Quitar',
+      documentPanelTitle: 'Datos del documento',
+      documentPanelDescription: 'Tipo, fecha, notas y archivo a subir.',
+      fieldDocumentTypeLabel: 'Tipo de documento',
+      fieldDocumentTypePlaceholder: 'Selecciona un tipo de documento',
+      fieldDeliveryDateLabel: 'Fecha de entrega',
+      fieldDeliveryDatePlaceholder: 'Selecciona la fecha',
+      fieldNotesLabel: 'Notas',
+      fieldNotesPlaceholder: 'Original, version 2026...',
+      generatedNameLabel: 'Nombre generado',
+      generatedNameHint:
+        'El sistema construye el archivo final con la CURP y el tipo de documento.',
+      replaceTitle: 'Reemplazo automatico',
+      replaceDescription:
+        'Si la persona ya tiene un documento del mismo tipo, el archivo anterior sera sustituido.',
+      formatsTitle: 'Formatos permitidos',
+      formatsDescription: 'En este flujo solo se permite cargar archivos PDF.',
+      uploadLabel: 'Archivo',
+      uploadDescription:
+        'Selecciona un archivo PDF desde tu equipo para enviarlo al expediente documental.',
+      uploadHelpText: 'Tamano maximo por archivo: 20 MB.',
+      uploadMaxSize: 'Max 20 MB',
+      saveButton: 'Subir documento',
+      savingButton: 'Subiendo documento...',
+      cancelButton: 'Cancelar',
+      successEyebrow: 'Documento cargado',
+      successReplaceEyebrow: 'Documento reemplazado',
+      successTitle: 'Documento cargado correctamente',
+      successReplaceTitle: 'Documento reemplazado correctamente',
+      successDescription:
+        'El archivo quedo asociado a la persona y ya forma parte del expediente documental.',
+      successReplaceDescription:
+        'El archivo anterior fue sustituido y la nueva version ya forma parte del expediente documental.',
+      resultPersonLabel: 'Persona',
+      resultTypeLabel: 'Tipo de documento',
+      resultFileLabel: 'Archivo generado',
+      resultContextLabel: 'Contexto',
+      resultDateLabel: 'Fecha de entrega',
+      resultNotesLabel: 'Notas',
+      successCreateAnother: 'Subir otro documento',
+      successFinish: 'Ir a documentos',
+      errorEyebrow: 'No se pudo cargar el documento',
+      errorTitle: 'Revisa la informacion del envio',
+      errorDescription:
+        'El servidor no pudo completar la carga documental con los datos enviados.',
+      errorBackToForm: 'Volver al formulario',
+      errorRetry: 'Reintentar',
+      errorPersonRequired: 'Selecciona una persona titular.',
+      errorStudentContextRequired: 'Selecciona un estudiante para continuar.',
+      errorStaffContextRequired: 'Selecciona un personal para continuar.',
+      errorDocumentTypeRequired: 'Selecciona el tipo de documento.',
+      errorFileRequired: 'Selecciona un archivo para continuar.',
+      errorFileInvalidType: 'Solo se permiten archivos PDF en este modulo.',
+      errorFileTooLarge:
+        'El archivo supera el tamano maximo permitido de 20 MB.',
+      loadDocumentTypesError:
+        'No se pudieron cargar los tipos de documento disponibles.',
+      saveErrorFallback: 'No se pudo cargar el documento.',
+      formatsGroups: {
+        document: 'Documentos',
+        images: 'Imagenes',
+        spreadsheets: 'Hojas',
+        presentations: 'Presentaciones',
+        compressed: 'Comprimidos',
+        structured: 'Estructurados',
+      },
+    },
   },
 
   demographics: {
@@ -1560,6 +1675,76 @@ export const messages = {
             'Registra estudios previos y certificados del estudiante.',
           badge: 'Pronto',
         },
+      },
+    },
+    documentsHub: {
+      eyebrow: 'Personas',
+      title: 'Documentos de la persona',
+      description:
+        'Gestiona los documentos probatorios de la persona. Sube archivos, consulta detalle y administra metadatos.',
+      meta: 'Modulo de documentos',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden gestionar documentos de personas del sistema.',
+      toolbarLeading: 'Modulo de documentos',
+      openButton: 'Abrir',
+      goButton: 'Ir',
+      primaryActionsTitle: 'Acciones principales',
+      operationalActionsTitle: 'Acciones operativas',
+      notesTitle: 'Notas del modulo',
+      operationalPanel: {
+        title: 'Operaciones sobre documentos',
+        description: 'Detalle, descarga inline y actualizacion de metadatos.',
+      },
+      notesPanel: {
+        title: 'Restricciones importantes',
+        description:
+          'Reglas tecnicas y de negocio que rigen la carga y consulta documental.',
+      },
+      primaryActions: {
+        upload: {
+          title: 'Subir / Reemplazar documento',
+          description:
+            'Carga un archivo documental para un tipo especifico de la persona. Si ya existe, reemplaza el archivo anterior.',
+          badge: 'Subir',
+        },
+        detail: {
+          title: 'Ver detalle de documento',
+          description:
+            'Consulta los metadatos del documento: tipo, nombre de archivo, fecha de carga y estado.',
+          badge: 'Consulta',
+        },
+      },
+      operationalActions: {
+        list: {
+          title: 'Ver documentos de la persona',
+          description:
+            'Lista todos los documentos cargados de una persona especifica por su ID.',
+          badge: 'Listado',
+        },
+        file: {
+          title: 'Descargar / Visualizar PDF',
+          description:
+            'Abre el PDF inline en el navegador con el nombre generado automaticamente.',
+          badge: 'PDF',
+        },
+        edit: {
+          title: 'Actualizar metadatos',
+          description:
+            'Modifica el tipo de documento u otros campos del registro sin reemplazar el archivo PDF.',
+          badge: 'Edicion',
+        },
+      },
+      notes: {
+        pdfOnly:
+          'Acepta multiples formatos documentales y el tamano maximo por archivo es de 20 MB.',
+        upsert:
+          'Si ya existe un documento del mismo tipo para la misma persona, el archivo anterior se reemplaza.',
+        fileName:
+          'El nombre del archivo se genera automaticamente con el patron {CURP}-{tipo-documento}.{ext}.',
+        inlineView:
+          'La visualizacion del archivo PDF es inline en el navegador y no fuerza descarga.',
+        noBulkDelete:
+          'Este modulo no cuenta con eliminacion ni con carga masiva.',
       },
     },
     search: {

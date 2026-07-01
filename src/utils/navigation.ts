@@ -75,6 +75,13 @@ export const createNavigation = (
               href: ROUTES.PERSONS_ADDRESSES,
             },
             {
+              id: 'persons-documents',
+              label: messages.layout.shell.nav.personsDocuments,
+              icon: 'download',
+              href: ROUTES.PERSONS_DOCUMENTS,
+              disabled: false,
+            },
+            {
               id: 'persons-demographics',
               label: messages.layout.shell.nav.personsDemographics,
               icon: 'dashboard',
