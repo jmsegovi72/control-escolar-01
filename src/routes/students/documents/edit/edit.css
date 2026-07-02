@@ -1,0 +1,250 @@
+.document-edit-page {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--color-primary) 8%, transparent) 0%,
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 92%, var(--color-bg) 8%) 0%,
+      var(--color-bg) 100%
+    );
+}
+
+.document-edit-page__content {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-8) var(--space-4) var(--space-10);
+  box-sizing: border-box;
+  justify-items: center;
+}
+
+.document-edit-page__stage,
+.document-edit-page .edit-result {
+  width: min(100%, 720px);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.document-edit-page__panel-icon {
+  display: inline-grid;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  border-radius: var(--radius-3);
+  place-items: center;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+
+.document-edit-page__panel-icon--amber {
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  color: color-mix(in srgb, var(--color-warning) 70%, var(--color-text) 30%);
+}
+
+.document-edit-page__person-card,
+.document-edit-page__summary-card,
+.document-edit-page__context-card,
+.document-edit-page__doc-card,
+.document-edit-page__hint-card {
+  border-radius: 18px;
+}
+
+.document-edit-page__person-card,
+.document-edit-page__summary-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 16px 18px;
+}
+
+.document-edit-page__person-card {
+  border: 1px solid
+    color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 8%, var(--color-surface)) 0%,
+    color-mix(in srgb, var(--color-primary) 3%, var(--color-surface)) 100%
+  );
+}
+
+.document-edit-page__person-copy,
+.document-edit-page__summary-copy,
+.document-edit-page__context-copy,
+.document-edit-page__doc-card-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.document-edit-page__person-copy strong,
+.document-edit-page__summary-type,
+.document-edit-page__doc-card-copy strong {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+.document-edit-page__person-copy span,
+.document-edit-page__person-copy small,
+.document-edit-page__summary-file,
+.document-edit-page__summary-meta,
+.document-edit-page__context-copy small,
+.document-edit-page__doc-card-copy span,
+.document-edit-page__doc-card-copy small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.document-edit-page__summary-card {
+  border: 1px solid var(--color-border-subtle);
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface) 45%);
+}
+
+.document-edit-page__summary-icon,
+.document-edit-page__context-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 11%, transparent);
+  color: var(--color-primary);
+}
+
+.document-edit-page__summary-file {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+
+.document-edit-page__summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.document-edit-page__loading,
+.document-edit-page__loading-block {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+}
+
+.document-edit-page__document-list,
+.document-edit-page__form-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.document-edit-page__doc-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  padding: 14px 16px;
+  background: var(--color-surface);
+}
+
+.document-edit-page__field-stack {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.document-edit-page__field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-soft);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.document-edit-page__changed-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-warning);
+}
+
+.document-edit-page__context-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-subtle);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+
+.document-edit-page__context-copy strong {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.document-edit-page__context-actions,
+.document-edit-page__actions,
+.document-edit-page__result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.document-edit-page__context-actions {
+  justify-content: flex-end;
+}
+
+.document-edit-page__hint-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-subtle);
+  background: color-mix(in srgb, var(--color-bg) 60%, var(--color-surface) 40%);
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.document-edit-page__actions,
+.document-edit-page__result-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .document-edit-page__person-card,
+  .document-edit-page__summary-card,
+  .document-edit-page__context-card,
+  .document-edit-page__doc-card {
+    grid-template-columns: 1fr;
+  }
+
+  .document-edit-page__context-actions,
+  .document-edit-page__actions,
+  .document-edit-page__result-actions {
+    justify-content: stretch;
+  }
+
+  .document-edit-page__context-actions .ui-button,
+  .document-edit-page__actions .ui-button,
+  .document-edit-page__result-actions .ui-button,
+  .document-edit-page__doc-card .ui-button,
+  .document-edit-page__person-card .ui-button {
+    width: 100%;
+  }
+}

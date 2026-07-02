@@ -41,10 +41,10 @@
 .upload-person-document-steps {
   display: flex;
   align-items: center;
-  gap: 14px;
-  width: min(100%, 860px);
+  gap: 0;
+  width: min(100%, 920px);
   margin: 0 auto;
-  padding: 2px 0;
+  padding: 6px 0 4px;
 }
 
 .upload-person-document-step {
@@ -57,13 +57,14 @@
 .upload-person-document-step__num {
   display: inline-grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid color-mix(in srgb, var(--color-border) 82%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--color-surface) 92%, var(--color-bg) 8%);
   color: var(--color-text-soft);
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
   font-weight: var(--font-weight-bold);
   transition:
     background 160ms ease,
@@ -73,25 +74,17 @@
 }
 
 .upload-person-document-step__num.is-active {
-  border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
-  background: color-mix(
-    in srgb,
-    var(--color-primary) 14%,
-    var(--color-surface)
-  );
-  color: var(--color-primary);
+  border-color: transparent;
+  background: var(--color-primary);
+  color: #fff;
   box-shadow: 0 0 0 4px
     color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .upload-person-document-step__num.is-done {
-  border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
-  background: color-mix(
-    in srgb,
-    var(--color-success) 15%,
-    var(--color-surface)
-  );
-  color: color-mix(in srgb, var(--color-success) 72%, var(--color-text) 28%);
+  border-color: transparent;
+  background: var(--color-success);
+  color: #fff;
 }
 
 .upload-person-document-step__copy {
@@ -102,25 +95,40 @@
 
 .upload-person-document-step__copy span {
   color: var(--color-text-soft);
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 9px;
   font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .upload-person-document-step__copy strong {
-  color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: 15px;
+  color: var(--color-text-soft);
+  font-size: 13px;
   font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+}
+
+.upload-person-document-step:has(.upload-person-document-step__num.is-active)
+  .upload-person-document-step__copy
+  strong {
+  color: var(--color-text);
+}
+
+.upload-person-document-step:has(.upload-person-document-step__num.is-done)
+  .upload-person-document-step__copy
+  strong {
+  color: color-mix(in srgb, var(--color-text) 82%, var(--color-text-soft) 18%);
 }
 
 .upload-person-document-step__connector {
   flex: 1;
+  max-width: 64px;
   min-width: 40px;
-  height: 1px;
+  height: 2px;
   background: color-mix(in srgb, var(--color-border) 86%, transparent);
+  margin: 0 14px;
+  border-radius: 999px;
 }
 
 .upload-person-document-step__connector.is-done {
@@ -147,7 +155,6 @@
   color: color-mix(in srgb, var(--color-warning) 68%, var(--color-text) 32%);
 }
 
-.upload-person-document-person-found,
 .upload-person-document-person-card,
 .upload-person-document-context-found {
   display: grid;
@@ -158,7 +165,6 @@
   padding: 16px 18px;
 }
 
-.upload-person-document-person-found,
 .upload-person-document-person-card {
   border: 1px solid
     color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
@@ -179,7 +185,6 @@
   );
 }
 
-.upload-person-document-person-found__info,
 .upload-person-document-person-card__info,
 .upload-person-document-context-found__copy {
   display: grid;
@@ -187,7 +192,6 @@
   min-width: 0;
 }
 
-.upload-person-document-person-found__info strong,
 .upload-person-document-person-card__info strong,
 .upload-person-document-context-found__copy strong {
   color: var(--color-text);
@@ -197,7 +201,6 @@
   letter-spacing: -0.01em;
 }
 
-.upload-person-document-person-found__meta,
 .upload-person-document-context-found__copy span,
 .upload-person-document-person-card__info span,
 .upload-person-document-person-card__info small {
@@ -379,7 +382,6 @@
   line-height: 1.45;
 }
 
-.upload-person-document-step-actions,
 .upload-person-document-actions {
   display: flex;
   flex-wrap: wrap;
@@ -388,11 +390,17 @@
   gap: var(--space-2);
 }
 
-.upload-person-document-actions .ui-button:last-child,
-.upload-person-document-step-actions .ui-button:last-child {
+.upload-person-document-actions .ui-button:last-child {
   box-shadow:
     0 1px 3px color-mix(in srgb, var(--color-primary) 16%, transparent),
     0 6px 18px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.upload-person-document-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
 }
 
 .upload-person-document-file-input {
@@ -433,6 +441,114 @@
   font-family: var(--font-display);
 }
 
+.upload-person-document-page .create-result {
+  border-radius: 16px;
+  border-color: color-mix(
+    in srgb,
+    var(--color-success) 28%,
+    var(--color-border)
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-person-document-page .create-result[data-tone="error"] {
+  border-color: color-mix(
+    in srgb,
+    var(--color-danger) 24%,
+    var(--color-border)
+  );
+}
+
+.upload-person-document-page .create-result__header {
+  gap: 14px;
+  padding: 32px 32px 24px;
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--color-success) 16%,
+    var(--color-border)
+  );
+  background: color-mix(in srgb, var(--color-success) 6%, var(--color-surface));
+}
+
+.upload-person-document-page
+  .create-result[data-tone="error"]
+  .create-result__header {
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--color-danger) 14%,
+    var(--color-border)
+  );
+  background: color-mix(in srgb, var(--color-danger) 4%, var(--color-surface));
+}
+
+.upload-person-document-page .create-result__icon {
+  width: 64px;
+  height: 64px;
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--color-success) 34%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-success) 12%,
+    var(--color-surface)
+  );
+}
+
+.upload-person-document-page
+  .create-result[data-tone="error"]
+  .create-result__icon {
+  border-color: color-mix(in srgb, var(--color-danger) 26%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 9%, var(--color-surface));
+}
+
+.upload-person-document-page .create-result__eyebrow {
+  color: color-mix(in srgb, var(--color-success) 76%, var(--color-text) 24%);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.upload-person-document-page
+  .create-result[data-tone="error"]
+  .create-result__eyebrow {
+  color: color-mix(in srgb, var(--color-danger) 72%, var(--color-text) 28%);
+}
+
+.upload-person-document-page .create-result__title {
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.upload-person-document-page .create-result__description {
+  max-width: 38ch;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.upload-person-document-page .create-result__body {
+  padding: 18px 28px;
+}
+
+.upload-person-document-page .create-result__row {
+  grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.upload-person-document-page .create-result__row-label {
+  color: var(--color-text-muted);
+  font-size: 13.5px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.upload-person-document-page .create-result__row-value {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
 .upload-person-document-page
   .create-result
   .create-result__row:nth-child(3)
@@ -441,9 +557,23 @@
   letter-spacing: 0.03em;
 }
 
+.upload-person-document-page .create-result__actions {
+  padding: 16px 28px 22px;
+  border-top-color: var(--color-border-subtle);
+}
+
 @media (max-width: 860px) {
   .upload-person-document-steps {
     width: 100%;
+  }
+
+  .upload-person-document-step__connector {
+    max-width: 28px;
+    margin: 0 8px;
+  }
+
+  .upload-person-document-step__copy span {
+    display: none;
   }
 
   .upload-person-document-context-row {
@@ -458,7 +588,7 @@
   }
 
   .upload-person-document-steps {
-    gap: 10px;
+    gap: 0;
     overflow-x: auto;
     padding-bottom: 2px;
   }
@@ -475,16 +605,24 @@
     grid-template-columns: 1fr;
   }
 
-  .upload-person-document-person-found,
   .upload-person-document-person-card,
   .upload-person-document-context-found {
     grid-template-columns: auto 1fr;
   }
 
-  .upload-person-document-person-found .ui-button,
   .upload-person-document-person-card .ui-button,
   .upload-person-document-context-found .ui-button {
     grid-column: 1 / -1;
     justify-self: flex-end;
+  }
+
+  .upload-person-document-page .create-result__header {
+    padding: 26px 20px 20px;
+  }
+
+  .upload-person-document-page .create-result__body,
+  .upload-person-document-page .create-result__actions {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }

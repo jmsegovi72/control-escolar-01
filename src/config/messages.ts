@@ -1058,7 +1058,6 @@ export const messages = {
       personSearchPlaceholder: 'ID, CURP o nombre completo',
       personNoResults: 'No se encontro ninguna persona con ese criterio.',
       personChangeButton: 'Cambiar',
-      continueButton: 'Continuar',
       selectedPersonPanelTitle: 'Persona titular',
       selectedPersonPanelDescription:
         'El documento quedara asociado a esta persona.',
@@ -1088,6 +1087,8 @@ export const messages = {
       documentPanelDescription: 'Tipo, fecha, notas y archivo a subir.',
       fieldDocumentTypeLabel: 'Tipo de documento',
       fieldDocumentTypePlaceholder: 'Selecciona un tipo de documento',
+      fieldDocumentTypeEmpty: 'No hay tipos de documento disponibles',
+      fieldDocumentTypeLoading: 'Cargando tipos de documento...',
       fieldDeliveryDateLabel: 'Fecha de entrega',
       fieldDeliveryDatePlaceholder: 'Selecciona la fecha',
       fieldNotesLabel: 'Notas',
@@ -1140,6 +1141,8 @@ export const messages = {
         'El archivo supera el tamano maximo permitido de 20 MB.',
       loadDocumentTypesError:
         'No se pudieron cargar los tipos de documento disponibles.',
+      loadDocumentTypesEmpty:
+        'No hay tipos de documento disponibles en el catalogo.',
       saveErrorFallback: 'No se pudo cargar el documento.',
       formatsGroups: {
         document: 'Documentos',
@@ -1149,6 +1152,129 @@ export const messages = {
         compressed: 'Comprimidos',
         structured: 'Estructurados',
       },
+    },
+    documentsBulkUpload: {
+      eyebrow: 'Personas',
+      title: 'Carga masiva de documentos',
+      description:
+        'Prepara varios documentos para una persona y envialos en una sola operacion.',
+      meta: 'Documentos de personas',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden cargar documentos de personas.',
+      step1Eyebrow: 'Paso 1',
+      step1Label: 'Seleccion de persona',
+      step2Eyebrow: 'Paso 2',
+      step2Label: 'Preparar documentos',
+      step3Eyebrow: 'Paso 3',
+      step3Label: 'Resultado',
+      searchPanelTitle: 'Selecciona la persona',
+      searchPanelDescription:
+        'Busca por ID, CURP, nombre o correo. Todos los documentos se asociaran a esta persona.',
+      personSearchLabel: 'Buscar persona',
+      personSearchHint: 'Escribe al menos 3 caracteres, una CURP o un ID.',
+      personSearchPlaceholder: 'ID, CURP o nombre completo',
+      personNoResults: 'No se encontro ninguna persona con ese criterio.',
+      personChangeButton: 'Cambiar',
+      selectedPersonPanelTitle: 'Persona titular',
+      selectedPersonPanelDescription:
+        'Los documentos se enviaran al expediente de esta persona.',
+      deliveryPanelTitle: 'Datos generales de la carga',
+      deliveryPanelDescription:
+        'La fecha de entrega aplica a todos los documentos enviados en esta operacion.',
+      deliveryDateLabel: 'Fecha de entrega global',
+      deliveryDateHint:
+        'Opcional. Si no se captura, el sistema usara la fecha actual.',
+      studentSearchLabel: 'Estudiante',
+      studentSearchHint:
+        'Busca por nombre, matricula, CURP o correo institucional.',
+      studentSearchPlaceholder: 'Nombre, matricula, CURP o correo',
+      studentNoResults: 'No se encontro ningun estudiante con ese criterio.',
+      studentChangeButton: 'Quitar',
+      staffSearchLabel: 'Personal',
+      staffSearchHint:
+        'Busca por ID, nombre, CURP, correo institucional, categoria o tipo de personal.',
+      staffSearchPlaceholder:
+        'ID, nombre, CURP, correo, categoria o tipo de personal',
+      staffNoResults: 'No se encontro ningun personal con ese criterio.',
+      staffChangeButton: 'Quitar',
+      documentsPanelTitle: 'Documentos a preparar',
+      documentsPanelDescription:
+        'Agrega una o varias filas. Cada documento puede quedar solo en persona, o vincularse tambien a estudiante o personal.',
+      addRowButton: 'Agregar documento',
+      clearRowsButton: 'Limpiar lista',
+      rowTitleLabel: 'Documento',
+      rowTypeLabel: 'Tipo de documento',
+      rowTypePlaceholder: 'Selecciona un tipo',
+      rowTypeEmpty: 'Sin tipos disponibles',
+      rowContextLabel: 'Contexto del documento',
+      rowContextHint:
+        'Cada archivo puede quedar solo en la persona, o relacionarse con estudiante o personal.',
+      rowContextNoneTitle: 'Solo persona',
+      rowContextNoneDescription: 'Sin expediente adicional',
+      rowContextStudentTitle: 'Estudiante',
+      rowContextStudentDescription: 'Relacionar este archivo con un alumno',
+      rowContextStaffTitle: 'Personal',
+      rowContextStaffDescription:
+        'Relacionar este archivo con un expediente laboral',
+      rowNotesLabel: 'Notas',
+      rowNotesPlaceholder: 'Original, escaneo legible...',
+      rowStudentSelectedLabel: 'Estudiante seleccionado',
+      rowStaffSelectedLabel: 'Personal seleccionado',
+      rowFileLabel: 'Archivo',
+      rowSelectFileButton: 'Seleccionar archivo',
+      rowReplaceFileButton: 'Reemplazar archivo',
+      rowRemoveButton: 'Quitar',
+      rowFileEmpty: 'Aun no hay archivo asignado.',
+      rowAllowedFormats: 'PDF, imagenes, Office, ZIP, JSON y XML',
+      rowMaxSize: 'Max 20 MB',
+      duplicateTypesTitle: 'Tipos duplicados',
+      duplicateTypesDescription:
+        'No repitas el mismo tipo de documento dentro de la misma carga.',
+      loadDocumentTypesError:
+        'No se pudieron cargar los tipos de documento disponibles.',
+      loadDocumentTypesEmpty:
+        'No hay tipos de documento disponibles en el catalogo.',
+      uploadButton: 'Subir todos',
+      uploadingButton: 'Subiendo documentos...',
+      cancelButton: 'Cancelar',
+      successEyebrow: 'Carga procesada',
+      successTitle: 'Carga masiva completada',
+      successDescription:
+        'Revisa el resumen para confirmar cuantos documentos se crearon, reemplazaron o fallaron.',
+      resultPersonLabel: 'Persona',
+      resultDeliveryDateLabel: 'Fecha de entrega',
+      resultTotalLabel: 'Documentos enviados',
+      resultCreatedLabel: 'Creados',
+      resultReplacedLabel: 'Reemplazados',
+      resultFailedLabel: 'Con error',
+      resultItemsTitle: 'Detalle por documento',
+      resultRetryFailed: 'Reintentar fallidos',
+      resultContinueSamePerson: 'Seguir con la misma persona',
+      resultFinish: 'Ir a documentos',
+      itemStatusCreated: 'Cargado',
+      itemStatusReplaced: 'Reemplazado',
+      itemStatusError: 'Error',
+      errorEyebrow: 'No se pudo procesar la carga',
+      errorTitle: 'Revisa la informacion enviada',
+      errorDescription:
+        'Ocurrio un error general antes de procesar la carga masiva.',
+      errorBackToForm: 'Volver al formulario',
+      errorRetry: 'Reintentar',
+      errorPersonRequired: 'Selecciona una persona titular.',
+      errorRowContextIncomplete:
+        'Completa la relacion de estudiante o personal en cada fila que la requiera.',
+      errorRowContextDuplicated:
+        'Cada documento solo puede vincularse a estudiante o a personal, no a ambos.',
+      errorRowsRequired: 'Agrega al menos un documento para continuar.',
+      errorRowTypeRequired: 'Selecciona el tipo de documento en cada fila.',
+      errorRowFileRequired: 'Selecciona un archivo en cada fila.',
+      errorRowFileInvalidType:
+        'Uno o varios archivos tienen un formato no permitido.',
+      errorRowFileTooLarge:
+        'Uno o varios archivos superan el tamano maximo permitido de 20 MB.',
+      errorDuplicateTypes:
+        'No repitas el mismo tipo de documento dentro de la misma carga.',
+      saveErrorFallback: 'No se pudo procesar la carga masiva.',
     },
   },
 
@@ -1715,6 +1841,12 @@ export const messages = {
         },
       },
       operationalActions: {
+        bulkUpload: {
+          title: 'Carga masiva de documentos',
+          description:
+            'Prepara varios documentos en una sola pantalla y envialos juntos a la persona seleccionada.',
+          badge: 'Masivo',
+        },
         list: {
           title: 'Ver documentos de la persona',
           description:
@@ -1743,9 +1875,116 @@ export const messages = {
           'El nombre del archivo se genera automaticamente con el patron {CURP}-{tipo-documento}.{ext}.',
         inlineView:
           'La visualizacion del archivo PDF es inline en el navegador y no fuerza descarga.',
-        noBulkDelete:
-          'Este modulo no cuenta con eliminacion ni con carga masiva.',
+        noBulkDelete: 'Este modulo no cuenta con eliminacion.',
       },
+    },
+    documentsEdit: {
+      eyebrow: 'Personas',
+      title: 'Actualizar metadatos del documento',
+      description:
+        'Busca una persona, selecciona un documento y actualiza fecha, contexto y notas sin reemplazar el archivo.',
+      meta: 'Edicion de documentos',
+      accessDenied:
+        'Solo usuarios con acceso al sistema de control escolar pueden actualizar metadatos de documentos.',
+      step1Eyebrow: 'Paso 1',
+      step1Label: 'Buscar persona',
+      step2Eyebrow: 'Paso 2',
+      step2Label: 'Seleccionar documento',
+      step3Eyebrow: 'Paso 3',
+      step3Label: 'Editar metadatos',
+      selectionPersonTitle: 'Selecciona la persona',
+      selectionPersonDescription:
+        'Busca la persona titular del documento por nombre, CURP, ID o correo.',
+      selectionPersonFieldLabel: 'Buscar persona',
+      selectionPersonFieldHint: 'Escribe al menos 3 caracteres para buscar.',
+      selectionPersonPlaceholder: 'ID, CURP, nombre o correo',
+      selectionPersonEmpty: 'No se encontro ninguna persona con ese criterio.',
+      selectedPersonTitle: 'Persona seleccionada',
+      selectedPersonDescription:
+        'A partir de esta persona puedes elegir el documento a editar.',
+      selectedPersonChange: 'Cambiar persona',
+      documentsTitle: 'Documentos de la persona',
+      documentsDescription:
+        'Selecciona el documento sobre el que quieres actualizar metadatos.',
+      documentsEmpty:
+        'La persona seleccionada no tiene documentos registrados.',
+      documentsLoading: 'Cargando documentos...',
+      documentsRefresh: 'Recargar',
+      documentSelectButton: 'Editar metadatos',
+      documentTypeLabel: 'Documento',
+      documentDateLabel: 'Fecha',
+      documentContextLabel: 'Contexto',
+      documentGeneralContext: 'General',
+      documentStudentContext: 'Estudiante',
+      documentStaffContext: 'Personal',
+      summaryTitle: 'Resumen del documento',
+      summaryDescription:
+        'Estos datos son de solo lectura y sirven como contexto para la edicion.',
+      summaryFileLabel: 'Archivo',
+      summaryPersonLabel: 'Persona',
+      summaryMimeLabel: 'Tipo de archivo',
+      formTitle: 'Metadatos editables',
+      formDescription:
+        'Solo se guardan los campos modificados. El archivo y el tipo de documento no cambian.',
+      fieldDeliveryDateLabel: 'Fecha de entrega',
+      fieldDeliveryDateHint:
+        'Deja vacio este campo si no quieres modificar la fecha actual.',
+      fieldStudentLabel: 'Contexto de estudiante',
+      fieldStudentHint:
+        'Puedes mantener, cambiar o desvincular el estudiante asociado.',
+      fieldStudentPlaceholder: 'ID o matricula del estudiante',
+      fieldStudentEmpty: 'No se encontro ningun estudiante con ese criterio.',
+      fieldStudentUnassigned: 'Sin asignar',
+      fieldStudentAssign: 'Asignar',
+      fieldStudentUnlink: 'Desvincular',
+      fieldStudentSelected: 'Estudiante vinculado',
+      fieldStaffLabel: 'Contexto de personal',
+      fieldStaffHint:
+        'Puedes mantener, cambiar o desvincular el personal asociado.',
+      fieldStaffPlaceholder: 'ID o numero de empleado',
+      fieldStaffEmpty: 'No se encontro ningun personal con ese criterio.',
+      fieldStaffUnassigned: 'Sin asignar',
+      fieldStaffAssign: 'Asignar',
+      fieldStaffUnlink: 'Desvincular',
+      fieldStaffSelected: 'Personal vinculado',
+      fieldNotesLabel: 'Notas',
+      fieldNotesHint: 'Si guardas vacio, las notas actuales se eliminaran.',
+      fieldNotesPlaceholder: 'Agrega notas sobre este documento...',
+      changedBadge: 'Cambio pendiente',
+      noChangesHint:
+        'No hay cambios pendientes. Modifica al menos un campo para guardar.',
+      saveButton: 'Guardar cambios',
+      savingButton: 'Guardando cambios...',
+      cancelButton: 'Cancelar',
+      searchButton: 'Buscar',
+      loadingTitle: 'Cargando documento',
+      loadingDescription:
+        'Espera un momento mientras recuperamos los metadatos del documento.',
+      successEyebrow: 'Actualizacion exitosa',
+      successTitle: 'Metadatos actualizados',
+      successDescription:
+        'Los cambios se guardaron correctamente y el archivo fisico no fue modificado.',
+      successContinueEditing: 'Seguir editando',
+      successFinish: 'Ir a documentos',
+      resultDocumentLabel: 'Documento',
+      resultFileLabel: 'Archivo',
+      resultPersonLabel: 'Persona',
+      resultDeliveryDateLabel: 'Fecha de entrega',
+      resultStudentLabel: 'Estudiante',
+      resultStaffLabel: 'Personal',
+      resultNotesLabel: 'Notas',
+      errorEyebrow: 'No se pudieron guardar los cambios',
+      errorTitle: 'Revisa la informacion enviada',
+      errorDescription:
+        'Ocurrio un error al actualizar los metadatos del documento.',
+      errorRetry: 'Reintentar',
+      errorBackToForm: 'Volver al formulario',
+      errorPersonRequired: 'Selecciona una persona para continuar.',
+      errorDocumentRequired: 'Selecciona un documento para continuar.',
+      errorStudentInvalid: 'Selecciona un estudiante valido para continuar.',
+      errorStaffInvalid: 'Selecciona un personal valido para continuar.',
+      errorNoChanges: 'No hay cambios pendientes por guardar.',
+      noData: 'Sin datos',
     },
     search: {
       eyebrow: 'Admision',

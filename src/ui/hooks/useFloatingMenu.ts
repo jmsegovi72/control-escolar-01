@@ -1,4 +1,4 @@
-import { $, useSignal } from '@builder.io/qwik';
+import { $, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 
 /**
  * Shared hook for all dropdown/menu components.
@@ -19,6 +19,30 @@ import { $, useSignal } from '@builder.io/qwik';
  *   })}
  *   <div style={menu.rightStyle.value} />
  */
+const getScrollableAncestor = (
+  element: HTMLElement | null,
+): HTMLElement | null => {
+  if (!element) return null;
+
+  let parent = element.parentElement;
+  while (parent) {
+    const style = window.getComputedStyle(parent);
+    if (
+      style.overflow === 'auto' ||
+      style.overflow === 'scroll' ||
+      style.overflowY === 'auto' ||
+      style.overflowY === 'scroll' ||
+      style.overflowX === 'auto' ||
+      style.overflowX === 'scroll'
+    ) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+
+  return null;
+};
+
 export const useFloatingMenu = () => {
   const open = useSignal(false);
   const anchorRef = useSignal<Element>();
@@ -57,6 +81,31 @@ export const useFloatingMenu = () => {
     menuRight.value = document.documentElement.clientWidth - rect.right;
     menuWidth.value = rect.width;
     open.value = true;
+  });
+
+  // Reposition the fixed menu while scrolling so it stays attached to the anchor
+  useVisibleTask$(({ track, cleanup }) => {
+    const isOpen = track(() => open.value);
+
+    if (!isOpen || !anchorRef.value) return;
+
+    const scrollable = getScrollableAncestor(anchorRef.value as HTMLElement);
+    if (!scrollable) return;
+
+    const handleScroll = () => {
+      if (!anchorRef.value) return;
+      const rect = (anchorRef.value as HTMLElement).getBoundingClientRect();
+      menuTop.value = rect.bottom + 4;
+      menuLeft.value = rect.left;
+      menuRight.value = document.documentElement.clientWidth - rect.right;
+      menuWidth.value = rect.width;
+    };
+
+    scrollable.addEventListener('scroll', handleScroll, { passive: true });
+
+    cleanup(() => {
+      scrollable.removeEventListener('scroll', handleScroll);
+    });
   });
 
   // Computed style strings used in inline style prop

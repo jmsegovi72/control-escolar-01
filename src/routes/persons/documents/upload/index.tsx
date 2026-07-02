@@ -4,6 +4,7 @@ import {
   useComputed$,
   useSignal,
   useTask$,
+  useVisibleTask$,
 } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
@@ -32,6 +33,7 @@ import {
   Panel,
   SearchSelect,
   Select,
+  StepIndicator,
 } from '~/ui';
 import { CreateResult, CreateResultRow } from '~/ui/composed/CreateResult';
 import { AppIcon } from '~/ui/icons';
@@ -105,7 +107,6 @@ export default component$(() => {
   const personResults = useSignal<PersonListItem[]>([]);
   const searchingPerson = useSignal(false);
   const selectedPerson = useSignal<PersonListItem | null>(null);
-  const personConfirmed = useSignal(false);
 
   const contextMode = useSignal<ContextMode>('none');
   const contextQuery = useSignal('');
@@ -116,7 +117,7 @@ export default component$(() => {
   const selectedStaff = useSignal<StaffSearchResult | null>(null);
 
   const documentTypes = useSignal<DocumentType[]>([]);
-  const loadingDocumentTypes = useSignal(true);
+  const loadingDocumentTypes = useSignal(false);
   const loadDocumentTypesError = useSignal('');
 
   const documentTypeId = useSignal('');
@@ -136,15 +137,18 @@ export default component$(() => {
 
   const currentStep = useComputed$(() => {
     if (mode.value === 'success' || mode.value === 'error') return 3;
-    return personConfirmed.value ? 2 : 1;
+    return selectedPerson.value ? 2 : 1;
   });
 
-  useTask$(async () => {
+  const loadDocumentTypes$ = $(async () => {
     loadingDocumentTypes.value = true;
     loadDocumentTypesError.value = '';
 
     try {
       documentTypes.value = await documentService.getDocumentTypes();
+      if (documentTypes.value.length === 0) {
+        loadDocumentTypesError.value = m.loadDocumentTypesEmpty;
+      }
     } catch (err) {
       documentTypes.value = [];
       loadDocumentTypesError.value = normalizeError(
@@ -154,6 +158,15 @@ export default component$(() => {
     } finally {
       loadingDocumentTypes.value = false;
     }
+  });
+
+  useVisibleTask$(({ track }) => {
+    track(() => selectedPerson.value?.id);
+
+    if (documentTypes.value.length > 0) {
+      return;
+    }
+    loadDocumentTypes$();
   });
 
   useTask$(async ({ track }) => {
@@ -314,7 +327,6 @@ export default component$(() => {
   const canSubmit = useComputed$(
     () =>
       Boolean(selectedPerson.value) &&
-      personConfirmed.value &&
       Boolean(documentTypeId.value) &&
       Boolean(selectedFile.value) &&
       (contextMode.value === 'none' ||
@@ -344,11 +356,7 @@ export default component$(() => {
     }
   });
 
-  const resetEntireFlow$ = $(() => {
-    personQuery.value = '';
-    personResults.value = [];
-    selectedPerson.value = null;
-    personConfirmed.value = false;
+  const resetDocumentForm$ = $(() => {
     contextMode.value = 'none';
     clearContextSelection$();
     documentTypeId.value = '';
@@ -363,17 +371,6 @@ export default component$(() => {
     submitError.value = '';
     resultWasReplace.value = false;
     summary.value = { ...emptySummary };
-  });
-
-  const goToStepTwo$ = $(() => {
-    if (!selectedPerson.value) {
-      errorField.value = 'person';
-      errorMessage.value = m.errorPersonRequired;
-      return;
-    }
-
-    personConfirmed.value = true;
-    clearValidation$();
   });
 
   const validateFile$ = $((file: File | null) => {
@@ -415,12 +412,6 @@ export default component$(() => {
     submitError.value = '';
 
     if (!selectedPerson.value) {
-      errorField.value = 'person';
-      errorMessage.value = m.errorPersonRequired;
-      return;
-    }
-
-    if (!personConfirmed.value) {
       errorField.value = 'person';
       errorMessage.value = m.errorPersonRequired;
       return;
@@ -502,70 +493,22 @@ export default component$(() => {
         onBack$={async () => await nav(ROUTES.PERSONS_DOCUMENTS)}
       />
 
-      <div q:slot="toolbar" class="upload-person-document-steps">
-        <div class="upload-person-document-step">
-          <div
-            class={[
-              'upload-person-document-step__num',
-              currentStep.value === 1
-                ? 'is-active'
-                : currentStep.value > 1
-                  ? 'is-done'
-                  : 'is-pending',
-            ]}
-          >
-            {currentStep.value > 1 ? <AppIcon intent="check" size="xs" /> : '1'}
-          </div>
-          <div class="upload-person-document-step__copy">
-            <span>{m.step1Eyebrow}</span>
-            <strong>{m.step1Label}</strong>
-          </div>
-        </div>
-        <div
-          class={[
-            'upload-person-document-step__connector',
-            currentStep.value > 1 ? 'is-done' : '',
-          ]}
-        />
-        <div class="upload-person-document-step">
-          <div
-            class={[
-              'upload-person-document-step__num',
-              currentStep.value === 2
-                ? 'is-active'
-                : currentStep.value > 2
-                  ? 'is-done'
-                  : 'is-pending',
-            ]}
-          >
-            {currentStep.value > 2 ? <AppIcon intent="check" size="xs" /> : '2'}
-          </div>
-          <div class="upload-person-document-step__copy">
-            <span>{m.step2Eyebrow}</span>
-            <strong>{m.step2Label}</strong>
-          </div>
-        </div>
-        <div
-          class={[
-            'upload-person-document-step__connector',
-            currentStep.value > 2 ? 'is-done' : '',
-          ]}
-        />
-        <div class="upload-person-document-step">
-          <div
-            class={[
-              'upload-person-document-step__num',
-              currentStep.value === 3 ? 'is-active' : 'is-pending',
-            ]}
-          >
-            3
-          </div>
-          <div class="upload-person-document-step__copy">
-            <span>{m.step3Eyebrow}</span>
-            <strong>{m.step3Label}</strong>
-          </div>
-        </div>
-      </div>
+      <StepIndicator
+        q:slot="toolbar"
+        steps={[
+          { eyebrow: m.step1Eyebrow, label: m.step1Label },
+          { eyebrow: m.step2Eyebrow, label: m.step2Label },
+          { eyebrow: m.step3Eyebrow, label: m.step3Label },
+        ]}
+        current={currentStep.value}
+        tone={
+          mode.value === 'success'
+            ? 'success'
+            : mode.value === 'error'
+              ? 'error'
+              : undefined
+        }
+      />
 
       <div class="upload-person-document-page">
         <div class="upload-person-document-page__content">
@@ -612,8 +555,11 @@ export default component$(() => {
                 fallback="Sin notas"
               />
 
-              <div q:slot="actions">
-                <Button variant="secondary" onClick$={resetEntireFlow$}>
+              <div
+                q:slot="actions"
+                class="upload-person-document-result-actions"
+              >
+                <Button variant="secondary" onClick$={resetDocumentForm$}>
                   {m.successCreateAnother}
                 </Button>
                 <Button
@@ -633,7 +579,10 @@ export default component$(() => {
               onRetry$={submit$}
               retryLabel={m.errorRetry}
             >
-              <div q:slot="actions">
+              <div
+                q:slot="actions"
+                class="upload-person-document-result-actions"
+              >
                 <Button
                   variant="secondary"
                   onClick$={() => (mode.value = 'idle')}
@@ -642,7 +591,7 @@ export default component$(() => {
                 </Button>
               </div>
             </CreateResult>
-          ) : currentStep.value === 1 ? (
+          ) : !selectedPerson.value ? (
             <div class="upload-person-document-step-shell">
               <Panel
                 title={m.searchPanelTitle}
@@ -676,59 +625,32 @@ export default component$(() => {
                         clearValidation$();
                       }
                     }}
-                    onSelect$={(option) => {
+                    onSelect$={async (option) => {
                       const person = personResults.value.find(
                         (item) => item.id === Number(option.value),
                       );
                       if (!person) return;
                       selectedPerson.value = person;
-                      personConfirmed.value = false;
                       personQuery.value = '';
                       personResults.value = [];
                       clearValidation$();
+
+                      if (
+                        documentTypes.value.length === 0 &&
+                        !loadingDocumentTypes.value
+                      ) {
+                        await loadDocumentTypes$();
+                      }
                     }}
                   />
                 </Field>
-              </Panel>
 
-              {selectedPerson.value && (
-                <div class="upload-person-document-person-found">
-                  <Avatar
-                    src={resolvePhotoUrl(selectedPerson.value.photoUrl)}
-                    name={selectedPerson.value.fullName}
-                    size="lg"
-                  />
-                  <div class="upload-person-document-person-found__info">
-                    <strong>{selectedPerson.value.fullName}</strong>
-                    <div class="upload-person-document-person-found__meta">
-                      <span>{selectedPerson.value.curp}</span>
-                      <span>ID {selectedPerson.value.id}</span>
-                    </div>
+                {loadDocumentTypesError.value && (
+                  <div class="upload-person-document-inline-error" role="alert">
+                    {loadDocumentTypesError.value}
                   </div>
-                  <Button
-                    variant="ghost"
-                    iconLeft="edit"
-                    onClick$={() => {
-                      selectedPerson.value = null;
-                      personConfirmed.value = false;
-                      personQuery.value = '';
-                      personResults.value = [];
-                    }}
-                  >
-                    {m.personChangeButton}
-                  </Button>
-                </div>
-              )}
-
-              <div class="upload-person-document-step-actions">
-                <Button
-                  iconRight="chevron-right"
-                  disabled={!selectedPerson.value}
-                  onClick$={goToStepTwo$}
-                >
-                  {m.continueButton}
-                </Button>
-              </div>
+                )}
+              </Panel>
             </div>
           ) : (
             <div class="upload-person-document-layout">
@@ -754,7 +676,7 @@ export default component$(() => {
                     variant="ghost"
                     iconLeft="edit"
                     onClick$={() => {
-                      personConfirmed.value = false;
+                      selectedPerson.value = null;
                       contextMode.value = 'none';
                       clearContextSelection$();
                     }}
@@ -984,6 +906,11 @@ export default component$(() => {
                     <Field
                       label={m.fieldDocumentTypeLabel}
                       required
+                      hint={
+                        loadingDocumentTypes.value
+                          ? m.fieldDocumentTypeLoading
+                          : undefined
+                      }
                       error={
                         errorField.value === 'documentType'
                           ? errorMessage.value
@@ -993,13 +920,14 @@ export default component$(() => {
                       <Select
                         name="document-type"
                         value={documentTypeId.value}
-                        placeholder={m.fieldDocumentTypePlaceholder}
-                        options={documentTypeOptions.value}
-                        disabled={
-                          loadingDocumentTypes.value ||
+                        placeholder={
                           documentTypeOptions.value.length === 0
+                            ? m.fieldDocumentTypeEmpty
+                            : m.fieldDocumentTypePlaceholder
                         }
+                        options={documentTypeOptions.value}
                         invalid={errorField.value === 'documentType'}
+                        disabled={loadingDocumentTypes.value}
                         onChange$={(value) => {
                           documentTypeId.value = value;
                           if (errorField.value === 'documentType') {

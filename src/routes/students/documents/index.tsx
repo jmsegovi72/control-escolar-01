@@ -29,7 +29,7 @@ const primaryActions = [
     id: 'detail',
     title: m.primaryActions.detail.title,
     description: m.primaryActions.detail.description,
-    href: ROUTES.STUDENTS_DOCUMENTS_DETAIL,
+    href: ROUTES.PERSONS_DOCUMENTS_DETAIL,
     icon: 'view' as const,
     tone: 'warning' as const,
     badge: m.primaryActions.detail.badge,
@@ -39,10 +39,20 @@ const primaryActions = [
 
 const operationalActions = [
   {
+    id: 'bulk-upload',
+    title: m.operationalActions.bulkUpload.title,
+    description: m.operationalActions.bulkUpload.description,
+    href: ROUTES.PERSONS_DOCUMENTS_BULK_UPLOAD,
+    icon: 'upload' as const,
+    tone: 'success' as const,
+    badge: m.operationalActions.bulkUpload.badge,
+    disabled: true,
+  },
+  {
     id: 'list',
     title: m.operationalActions.list.title,
     description: m.operationalActions.list.description,
-    href: ROUTES.STUDENTS_DOCUMENTS_LIST,
+    href: ROUTES.PERSONS_DOCUMENTS_LIST,
     icon: 'list' as const,
     tone: 'violet' as const,
     badge: m.operationalActions.list.badge,
@@ -52,7 +62,7 @@ const operationalActions = [
     id: 'file',
     title: m.operationalActions.file.title,
     description: m.operationalActions.file.description,
-    href: ROUTES.STUDENTS_DOCUMENTS_FILE,
+    href: ROUTES.PERSONS_DOCUMENTS_FILE,
     icon: 'download' as const,
     tone: 'slate' as const,
     badge: m.operationalActions.file.badge,
@@ -62,11 +72,11 @@ const operationalActions = [
     id: 'edit',
     title: m.operationalActions.edit.title,
     description: m.operationalActions.edit.description,
-    href: ROUTES.STUDENTS_DOCUMENTS_EDIT,
+    href: ROUTES.PERSONS_DOCUMENTS_EDIT,
     icon: 'edit' as const,
     tone: 'primary' as const,
     badge: m.operationalActions.edit.badge,
-    disabled: true,
+    disabled: false,
   },
 ];
 
